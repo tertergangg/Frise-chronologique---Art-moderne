@@ -1,0 +1,187 @@
+/* ---------- Couleurs et typographie ---------- */
+:root {
+  --fond: #FAFAF7;        /* mur de galerie */
+  --surface: #FFFFFF;
+  --surface-2: #F0F0EA;
+  --encre: #1D2027;
+  --doux: #5E6470;
+  --trait: #E2E2DB;
+  --focus: #2874A6;
+  --titre: "Syne", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --texte: "Newsreader", "Iowan Old Style", Georgia, serif;
+  color-scheme: light;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fond: #15171C; --surface: #1C1F25; --surface-2: #252830;
+    --encre: #ECEBE6; --doux: #A3A7B0; --trait: #2E313A; --focus: #7FB3E0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --fond: #15171C; --surface: #1C1F25; --surface-2: #252830;
+  --encre: #ECEBE6; --doux: #A3A7B0; --trait: #2E313A; --focus: #7FB3E0;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  height: 100%; margin: 0; display: flex; flex-direction: column;
+  background: var(--fond); color: var(--encre);
+  font-family: var(--texte); font-size: 17px; line-height: 1.55;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.visuellement-cache { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* ---------- En-tête ---------- */
+.entete {
+  padding: 1.25rem clamp(1rem, 3vw, 2.5rem) 0.75rem;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.5rem 2rem; align-items: end;
+  border-bottom: 1px solid var(--trait);
+}
+h1 {
+  font-family: var(--titre); font-weight: 800; font-size: clamp(1.9rem, 4.2vw, 3.1rem);
+  letter-spacing: -0.02em; line-height: 1; margin: 0;
+  display: flex; align-items: baseline; gap: 0.6em; flex-wrap: wrap;
+}
+h1 .dates { font-weight: 500; font-size: 0.42em; letter-spacing: 0; color: var(--doux); }
+.intro { margin: 0.5rem 0 0; color: var(--doux); max-width: 62ch; font-size: 0.98rem; }
+.outils { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.recherche { position: relative; }
+.recherche input {
+  font: 500 0.92rem var(--titre); width: 16rem; max-width: 70vw;
+  padding: 0.5rem 0.75rem; border: 1px solid var(--trait); border-radius: 6px;
+  background: var(--surface); color: var(--encre);
+}
+.resultats {
+  position: absolute; z-index: 30; right: 0; top: calc(100% + 4px); width: 22rem; max-width: 90vw;
+  max-height: 60vh; overflow: auto; margin: 0; padding: 0.25rem; list-style: none;
+  background: var(--surface); border: 1px solid var(--trait); border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(20, 22, 28, 0.14);
+}
+.resultats li { padding: 0.45rem 0.6rem; border-radius: 4px; cursor: pointer; font: 500 0.9rem var(--titre); }
+.resultats li small { display: block; font: 400 0.8rem var(--texte); color: var(--doux); }
+.resultats li[aria-selected="true"], .resultats li:hover { background: var(--surface-2); }
+.bascule { font: 500 0.88rem var(--titre); display: flex; gap: 0.4rem; align-items: center; cursor: pointer; }
+
+.filtres { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+.filtre {
+  font: 500 0.82rem var(--titre); display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.25rem 0.65rem 0.25rem 0.45rem; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--trait); background: var(--surface); color: var(--encre);
+}
+.filtre .pastille { width: 0.7rem; height: 0.7rem; border-radius: 50%; background: var(--c); }
+.filtre[aria-pressed="false"] { opacity: 0.45; }
+.filtre[aria-pressed="false"] .pastille { background: transparent; box-shadow: inset 0 0 0 1.5px var(--c); }
+
+/* ---------- Frise ---------- */
+.scene { flex: 1; min-height: 0; position: relative; }
+.frise { position: absolute !important; inset: 0; } /* vis-timeline impose position: relative */
+.commandes-zoom {
+  position: absolute; right: 1rem; bottom: 1rem; display: flex; gap: 0.25rem; z-index: 5;
+}
+.commandes-zoom button {
+  font: 600 0.9rem var(--titre); min-width: 2.25rem; height: 2.25rem; padding: 0 0.7rem;
+  border: 1px solid var(--trait); border-radius: 6px; background: var(--surface); color: var(--encre); cursor: pointer;
+}
+
+.frise .vis-timeline { border: none; font-family: var(--titre); color: var(--encre); }
+.frise .vis-panel.vis-center, .frise .vis-panel.vis-left, .frise .vis-panel.vis-right,
+.frise .vis-panel.vis-top, .frise .vis-panel.vis-bottom { border-color: var(--trait); }
+.frise .vis-labelset .vis-label { color: var(--encre); border-bottom-color: var(--trait); }
+.frise .vis-foreground .vis-group { border-bottom-color: var(--trait); }
+.frise .vis-time-axis .vis-text { color: var(--doux); font-size: 0.8rem; }
+.frise .vis-time-axis .vis-text.vis-major { font-weight: 700; color: var(--encre); }
+.frise .vis-time-axis .vis-grid.vis-minor { border-color: var(--trait); }
+.frise .vis-time-axis .vis-grid.vis-major { border-color: var(--doux); opacity: 0.35; }
+
+.etiquette { display: flex; align-items: center; gap: 0.55rem; padding: 0.35rem 0.9rem 0.35rem 0.6rem; cursor: pointer; }
+.etiquette .barre { width: 5px; align-self: stretch; min-height: 1.6rem; border-radius: 2px; background: var(--c); }
+.etiquette strong { font-weight: 700; font-size: 0.95rem; display: block; line-height: 1.15; }
+.etiquette small { font-weight: 500; font-size: 0.75rem; color: var(--doux); }
+.etiquette:hover strong { text-decoration: underline; text-underline-offset: 3px; }
+.etiquette.contexte strong { font-weight: 500; color: var(--doux); }
+
+.frise .vis-item.vis-background { border-radius: 0; }
+.frise .vis-item.vis-point {
+  background: transparent; border: none; color: var(--encre);
+  font-size: 0.8rem; font-weight: 500; cursor: pointer;
+}
+.frise .vis-item.vis-point .vis-item-content {
+  max-width: 12rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-left: 4px;
+}
+.frise .vis-item .vis-dot { border-color: var(--c); border-width: 5px; border-radius: 50%; }
+.frise .vis-item.majeure { font-weight: 700; }
+.frise .vis-item.evenement .vis-dot { border-radius: 1px; border-color: var(--doux); border-width: 4px; }
+.frise .vis-item.evenement { color: var(--doux); }
+.frise .vis-item.evenement .vis-item-content { max-width: 10rem; }
+.frise .vis-item.vis-point.vis-selected { background: transparent; }
+.frise .vis-item.vis-selected .vis-item-content { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; text-decoration-color: var(--c, var(--doux)); }
+.frise .vis-tooltip {
+  font-family: var(--texte) !important; font-size: 0.88rem !important; max-width: 20rem; white-space: normal !important;
+  background: var(--surface) !important; color: var(--encre) !important; border: 1px solid var(--trait) !important;
+  border-radius: 6px !important; box-shadow: 0 6px 18px rgba(20, 22, 28, 0.15) !important; padding: 0.5rem 0.7rem !important;
+}
+
+/* ---------- Panneau de fiche ---------- */
+.panneau {
+  position: fixed; z-index: 40; right: 0;
+  top: env(safe-area-inset-top, 0px); bottom: 0;
+  width: min(30rem, 100%); overflow-y: auto;
+  padding: 1.75rem 1.75rem calc(2rem + env(safe-area-inset-bottom, 0px));
+  background: var(--surface); border-left: 1px solid var(--trait);
+  box-shadow: -12px 0 32px rgba(20, 22, 28, 0.12);
+  transform: translateX(0); transition: transform 0.22s ease;
+}
+.panneau[hidden] { display: block; transform: translateX(105%); visibility: hidden; transition: transform 0.22s ease, visibility 0s 0.22s; }
+.fermer {
+  position: sticky; top: 0; float: right; margin: -0.5rem -0.75rem 0 0;
+  width: 2.25rem; height: 2.25rem; font-size: 1.5rem; line-height: 1;
+  border: none; border-radius: 50%; background: var(--surface-2); color: var(--encre); cursor: pointer;
+}
+.fiche-filet { height: 6px; width: 3.5rem; border-radius: 3px; background: var(--c); margin-bottom: 1rem; }
+.fiche h2 { font-family: var(--titre); font-weight: 800; font-size: 1.75rem; line-height: 1.1; letter-spacing: -0.01em; margin: 0 2.5rem 0.4rem 0; }
+.fiche .sous-titre { margin: 0 0 1rem; color: var(--doux); font-size: 1rem; }
+.fiche .resume { font-size: 1.15rem; line-height: 1.45; margin: 0 0 1.25rem; }
+.fiche dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.3rem 1rem; margin: 0 0 1.25rem; font-size: 0.95rem; }
+.fiche dt { font: 600 0.82rem var(--titre); color: var(--doux); padding-top: 0.15rem; }
+.fiche dd { margin: 0; }
+.fiche a { color: inherit; text-decoration-color: var(--c, var(--doux)); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.fiche .corps h2 { font-size: 1.15rem; margin: 1.5rem 0 0.4rem; }
+.fiche .corps h3 { font: 700 1rem var(--titre); margin: 1.25rem 0 0.3rem; }
+.fiche .corps blockquote { margin: 1rem 0; padding-left: 1rem; border-left: 3px solid var(--c, var(--trait)); font-style: italic; }
+.fiche .corps img { max-width: 100%; height: auto; }
+.a-venir {
+  margin: 1rem 0 1.5rem; padding: 0.9rem 1rem; border-radius: 6px; background: var(--surface-2);
+  font-size: 0.95rem; color: var(--doux);
+}
+.fiche h3.liste-titre { font: 700 0.95rem var(--titre); margin: 1.5rem 0 0.4rem; }
+.fiche ul.liens { list-style: none; padding: 0; margin: 0; }
+.fiche ul.liens li { padding: 0.3rem 0; border-bottom: 1px solid var(--trait); font-size: 0.95rem; display: flex; gap: 0.75rem; }
+.fiche ul.liens small { color: var(--doux); font-size: 0.85rem; }
+.fiche ul.liens .an { font: 600 0.82rem var(--titre); color: var(--doux); min-width: 2.6rem; padding-top: 0.15rem; }
+.fiche .image { width: 100%; border-radius: 4px; margin: 0 0 1rem; }
+
+@media (max-width: 720px) {
+  body { font-size: 16px; }
+  .entete { grid-template-columns: 1fr; }
+  .outils { justify-content: flex-start; }
+  .intro { display: none; }
+  .panneau {
+    top: auto; height: 78%; width: 100%; border-left: none; border-top: 1px solid var(--trait);
+    border-radius: 14px 14px 0 0; box-shadow: 0 -10px 30px rgba(20, 22, 28, 0.18);
+  }
+  .panneau[hidden] { transform: translateY(105%); }
+  .frise .vis-item.vis-point .vis-item-content { max-width: 9rem; }
+  .filtres { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 0.25rem; scrollbar-width: none; }
+  .filtre { flex: none; }
+  .etiquette { padding: 0.3rem 0.5rem 0.3rem 0.35rem; gap: 0.35rem; }
+  .etiquette strong { font-size: 0.74rem; max-width: 6rem; white-space: normal; hyphens: auto; overflow-wrap: anywhere; }
+  .etiquette small { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .panneau, .panneau[hidden] { transition: none; }
+}

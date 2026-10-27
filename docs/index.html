@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>L’art moderne, 1874–1960</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="entete">
+    <div class="titre">
+      <h1>L’art moderne<span class="dates">1874–1960</span></h1>
+      <p class="intro">Neuf mouvements, de la première exposition impressionniste à l’expressionnisme abstrait. Clique sur une œuvre, un événement ou le nom d’un mouvement pour ouvrir sa fiche.</p>
+    </div>
+    <div class="outils">
+      <div class="recherche">
+        <label for="champ-recherche" class="visuellement-cache">Rechercher</label>
+        <input id="champ-recherche" type="search" placeholder="Chercher un artiste, une œuvre…" autocomplete="off">
+        <ul id="resultats" class="resultats" role="listbox" hidden></ul>
+      </div>
+      <label class="bascule"><input type="checkbox" id="majeures" checked> Œuvres majeures seulement</label>
+    </div>
+    <nav id="filtres" class="filtres" aria-label="Afficher ou masquer les mouvements"></nav>
+  </header>
+
+  <main class="scene">
+    <div id="frise" class="frise"></div>
+    <div class="commandes-zoom">
+      <button type="button" id="zoom-plus" aria-label="Zoomer">+</button>
+      <button type="button" id="zoom-moins" aria-label="Dézoomer">−</button>
+      <button type="button" id="tout-voir">Tout voir</button>
+    </div>
+  </main>
+
+  <aside id="panneau" class="panneau" aria-live="polite" hidden>
+    <button type="button" id="fermer" class="fermer" aria-label="Fermer la fiche">×</button>
+    <div id="contenu-panneau"></div>
+  </aside>
+
+  <script src="https://cdn.jsdelivr.net/npm/vis-timeline@8.5.4/standalone/umd/vis-timeline-graph2d.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@18.0.14/lib/marked.umd.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
