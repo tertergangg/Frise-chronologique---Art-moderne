@@ -108,10 +108,10 @@ function vueDetail(f, largeurPiste) {
     const siennes = oeuvres.filter((o) => o.mouvement === m.id).map((o) => ({ ...o, x: xAn(o.annee, f) }));
     const lignes = empiler(siennes, f.carte);
     return `<section class="couloir" id="couloir-${esc(m.id)}" style="--c:${m.couleur}">
-      <div class="etiquette" data-aller="${esc(m.id)}" title="Aller au début du mouvement">
-        <button class="nom" data-id="${esc(m.id)}">${esc(m.nom)}</button>
+      <div class="etiquette" data-aller="${esc(m.id)}" data-bulle="Aller au début du mouvement">
+        <button class="nom" data-id="${esc(m.id)}" data-bulle="${esc(m.resume || "")}">${esc(m.nom)}</button>
         <small>${m.debut}–${m.fin}</small>
-        <span class="puces">${artistes.map((a) => `<button class="puce" data-id="${esc(a.id)}" data-artiste="${esc(a.id)}">${esc(nomCourt(a.nom))}</button>`).join("")}</span>
+        <span class="puces">${artistes.map((a) => `<button class="puce" data-id="${esc(a.id)}" data-artiste="${esc(a.id)}" data-bulle="${esc(a.phrase || "")}">${esc(nomCourt(a.nom))}</button>`).join("")}</span>
       </div>
       <div class="piste" style="width:${largeurPiste}px;min-height:${16 + lignes * REGLAGES.hauteurLigne}px">
         ${bande(m, f)}
@@ -131,10 +131,12 @@ function vueEnsemble(f, largeurPiste) {
     const etroite = !mobile && largeur < largeurNom;
     const aGauche = mobile ? gauche + largeurNom > largeurPiste : etroite && gauche + largeur + largeurNom > largeurPiste;
     return `<section class="couloir global" style="--c:${m.couleur}">
-      <div class="piste" style="width:${largeurPiste}px;min-height:${mobile ? 80 : 62}px">
-        <button class="bande-globale${etroite ? " etroite" : ""}${aGauche ? " a-gauche" : ""}" data-mouvement="${esc(m.id)}" style="left:${gauche}px;width:${largeur}px" title="Explorer ce mouvement en grand">
+      <div class="piste" style="width:${largeurPiste}px;min-height:${mobile ? 80 : m.resume ? 66 : 50}px">
+        <button class="bande-globale${etroite ? " etroite" : ""}${aGauche ? " a-gauche" : ""}" data-mouvement="${esc(m.id)}" style="left:${gauche}px;width:${largeur}px" data-bulle="Explorer ce mouvement en grand">
           <span class="texte"><strong>${esc(m.nom)}</strong><span>${m.debut}–${m.fin}</span></span>
         </button>
+        ${m.resume ? `<span class="resume-globale" style="${gauche + m.resume.length * 6.6 + 20 > largeurPiste
+          ? `right:${largeurPiste - gauche - largeur}px;text-align:right` : `left:${gauche}px`}">${esc(m.resume)}</span>` : ""}
       </div></section>`;
   }).join("");
 }
@@ -150,7 +152,7 @@ function vueMouvement(f, largeurPiste) {
     const vie = [Math.max(a.naissance ?? f.debut, f.debut), Math.min(a.deces ?? f.fin, f.fin + 1)];
     return `<section class="couloir artiste" style="--c:${m.couleur}">
       <div class="etiquette">
-        <button class="nom" data-id="${esc(a.id)}">${esc(a.nom)}</button>
+        <button class="nom" data-id="${esc(a.id)}" data-bulle="${esc(a.phrase || "")}">${esc(a.nom)}</button>
         <small>${a.naissance ?? "?"}–${a.deces ?? "?"}</small>
       </div>
       <div class="piste" style="width:${largeurPiste}px;min-height:${16 + lignes * REGLAGES.hauteurLigne}px">
@@ -294,6 +296,29 @@ toile.addEventListener("pointerover", (ev) => {
 });
 toile.addEventListener("pointerleave", () => toile.classList.remove("focus"));
 
+/* ---------- Bulles au survol : la phrase-clé d’un artiste, le résumé d’un mouvement ---------- */
+const bulle = $("#bulle");
+function placerBulle(ev) {
+  const marge = 14, largeur = bulle.offsetWidth, hauteur = bulle.offsetHeight;
+  let x = ev.clientX + marge, y = ev.clientY + marge + 4;
+  if (x + largeur > window.innerWidth - 8) x = ev.clientX - largeur - marge;
+  if (y + hauteur > window.innerHeight - 8) y = ev.clientY - hauteur - marge;
+  bulle.style.left = x + "px";
+  bulle.style.top = y + "px";
+}
+document.addEventListener("pointerover", (ev) => {
+  const el = ev.target.closest("[data-bulle]");
+  if (!el || !el.dataset.bulle || ev.pointerType !== "mouse") { bulle.hidden = true; return; }
+  const couloir = el.closest("[style*='--c']");
+  bulle.style.setProperty("--c", couloir ? getComputedStyle(couloir).getPropertyValue("--c") : "#8A8F99");
+  bulle.textContent = el.dataset.bulle;
+  bulle.hidden = false;
+  placerBulle(ev);
+});
+document.addEventListener("pointermove", (ev) => { if (!bulle.hidden) placerBulle(ev); });
+document.addEventListener("pointerdown", () => { bulle.hidden = true; });
+defile.addEventListener("scroll", () => { bulle.hidden = true; }, { passive: true });
+
 /* ---------- Clics dans la frise ---------- */
 toile.addEventListener("click", (ev) => {
   if (aGlisse) return;                                   // c’était un glisser, pas un clic
@@ -380,7 +405,6 @@ function ficheArtiste(a) {
   }).join("");
   return `<h2>${esc(a.nom)}</h2>
     <p class="sous-titre">${a.naissance ?? "?"}–${a.deces ?? "?"}${a.nationalite ? ", " + esc(a.nationalite) : ""}</p>
-    ${a.phrase ? `<p class="resume">${esc(a.phrase)}</p>` : ""}
     <dl>
       ${a.role ? `<dt>Rôle</dt><dd>${esc(a.role)}</dd>` : ""}
       ${m ? `<dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd>` : ""}
@@ -398,7 +422,6 @@ function ficheMouvement(m) {
   return `<h2>${esc(m.nom)}</h2>
     <p class="sous-titre">${m.debut}–${m.fin}${m.lieu ? ", " + esc(m.lieu) : ""}</p>
     ${etat.vue !== "mouvement" ? `<button type="button" class="explorer" data-explorer="${esc(m.id)}">Explorer ce mouvement en grand</button>` : ""}
-    ${m.resume ? `<p class="resume">${esc(m.resume)}</p>` : ""}
     ${m.ficheVide ? aVenir("de ce mouvement") : markdown(m.fiche)}
     ${artistes.length ? `<h3>Artistes</h3><ul class="liens-liste">${artistes.map((a) => `<li><span class="an">${a.naissance ?? ""}</span><span>${lien(a.id, a.nom)}</span></li>`).join("")}</ul>` : ""}
     ${evts.length ? `<h3>Moments clés</h3><ul class="liens-liste">${evts.map((x) => `<li><span class="an">${x.annee}</span><span>${lien(x.id, x.titre)}</span></li>`).join("")}</ul>` : ""}
@@ -435,6 +458,33 @@ function fermer() {
   try { history.replaceState(null, "", location.pathname + location.search); } catch (err) { /* idem */ }
 }
 $("#fermer").addEventListener("click", fermer);
+
+/* ---------- Largeur de la fiche : glisser son bord gauche pour l’agrandir ou la rétrécir ---------- */
+const poignee = $("#poignee");
+const LARGEUR_MIN = 380;                                         // en pixels
+const largeurMax = () => Math.min(960, window.innerWidth * 0.75);
+function fixerLargeur(px) {
+  const largeur = Math.round(Math.min(largeurMax(), Math.max(LARGEUR_MIN, px)));
+  panneau.style.setProperty("--largeur-panneau", largeur + "px");
+  try { localStorage.setItem("largeurFiche", largeur); } catch (err) { /* stockage indisponible */ }
+}
+try { const memo = Number(localStorage.getItem("largeurFiche")); if (memo) fixerLargeur(memo); } catch (err) { /* idem */ }
+
+let redimension = false;
+poignee.addEventListener("pointerdown", (ev) => {
+  redimension = true;
+  poignee.setPointerCapture(ev.pointerId);
+  document.body.classList.add("redimension");
+  ev.preventDefault();
+});
+poignee.addEventListener("pointermove", (ev) => { if (redimension) fixerLargeur(window.innerWidth - ev.clientX); });
+poignee.addEventListener("pointerup", () => { redimension = false; document.body.classList.remove("redimension"); });
+poignee.addEventListener("dblclick", () => fixerLargeur(window.innerWidth * 0.4));   // double-clic : taille par défaut
+poignee.addEventListener("keydown", (ev) => {                                         // au clavier : flèches
+  const actuelle = panneau.getBoundingClientRect().width;
+  if (ev.key === "ArrowLeft") { fixerLargeur(actuelle + 40); ev.preventDefault(); }
+  if (ev.key === "ArrowRight") { fixerLargeur(actuelle - 40); ev.preventDefault(); }
+});
 document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && !panneau.hidden) fermer(); });
 contenu.addEventListener("click", (ev) => {
   const bouton = ev.target.closest("[data-explorer]");
