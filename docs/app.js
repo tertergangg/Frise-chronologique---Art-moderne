@@ -16,7 +16,9 @@ const REGLAGES = {
   pxParAn: 66,           // largeur d’une année en vue détaillée, en pixels
   largeurCarte: 196,     // largeur d’une carte d’œuvre, en pixels
   hauteurLigne: 48,      // hauteur d’une ligne de cartes dans un couloir
-  largeurEtiquettes: 220 // largeur de la colonne des noms à gauche
+  largeurEtiquettes: 220, // largeur de la colonne des noms à gauche
+  margeAvant: 10,        // vue mouvement : on montre aussi les œuvres jusqu’à 10 ans avant le début (les œuvres fondatrices)
+  margeApres: 5          // … et jusqu’à 5 ans après la fin du mouvement
 };
 
 /* ---------- Outils ---------- */
@@ -39,6 +41,12 @@ const nomCourt = (nom) => NOMS_COURTS[nom] || nom.split(" ").pop();
 const etat = { vue: "detail", mouvement: null, majeures: true };
 const defile = $("#defile"), toile = $("#toile");
 
+// Les œuvres d’un mouvement, y compris celles un peu avant ou après ses dates (voir les marges)
+function oeuvresDuMouvement(m) {
+  return D.oeuvres.filter((o) => o.mouvement === m.id && o.annee != null
+    && o.annee >= m.debut - REGLAGES.margeAvant && o.annee <= m.fin + REGLAGES.margeApres);
+}
+
 /* ---------- Fenêtre : quelle période, à quelle échelle ---------- */
 function fenetre() {
   const mobile = petitEcran();
@@ -51,8 +59,10 @@ function fenetre() {
   }
   if (etat.vue === "mouvement") {
     const m = MOUV[etat.mouvement];
-    const debut = m.debut - 1, fin = Math.max(m.fin + 2, debut + 8);
-    return { debut, fin, lab, carte, ppa: Math.max(mobile ? 70 : 110, place / (fin - debut)) };
+    const annees = oeuvresDuMouvement(m).map((o) => o.annee);
+    const debut = Math.min(m.debut, ...annees) - 1;        // la fenêtre s’élargit pour inclure les œuvres fondatrices
+    const fin = Math.max(m.fin + 1, ...annees, debut + 9) + 1;
+    return { debut, fin, lab, carte, ppa: Math.max(mobile ? 60 : 70, place / (fin - debut)) };
   }
   return { debut: REGLAGES.debut, fin: REGLAGES.fin, lab, carte, ppa: mobile ? REGLAGES.pxParAn * 0.75 : REGLAGES.pxParAn };
 }
@@ -94,8 +104,14 @@ function couloirContexte(f, largeurPiste) {
     </div></section>`;
 }
 
+// Une œuvre est « hors période » si elle date d’avant ou d’après son mouvement
+function horsPeriode(o) {
+  const m = MOUV[o.mouvement];
+  if (!m || o.annee == null) return "";
+  return o.annee < m.debut ? "avant" : o.annee > m.fin ? "apres" : "";
+}
 const carteOeuvre = (o, haut) =>
-  `<button class="carte${o.majeure && !etat.majeures ? " majeure" : ""}" data-id="${esc(o.id)}" data-artiste="${esc(o.artiste)}" style="left:${o.x}px;top:${haut}px" title="${esc(o.titre)}"><span class="vignette"></span><span class="texte"><span class="t">${esc(o.titre)}</span><span class="a">${esc(ART[o.artiste]?.nom ?? "")}, ${o.annee}</span></span></button>`;
+  `<button class="carte${o.majeure && !etat.majeures ? " majeure" : ""}${horsPeriode(o) ? " hors-periode" : ""}" data-id="${esc(o.id)}" data-artiste="${esc(o.artiste)}" data-apercu="${esc(o.id)}" style="left:${o.x}px;top:${haut}px"><span class="vignette"></span><span class="texte"><span class="t">${esc(o.titre)}</span><span class="a">${esc(ART[o.artiste]?.nom ?? "")}, ${o.annee}</span></span></button>`;
 
 const bande = (m, f) =>
   `<div class="bande" data-mouvement="${esc(m.id)}" style="left:${xAn(m.debut, f)}px;width:${xAn(m.fin + 1, f) - xAn(m.debut, f)}px"></div>`;
@@ -144,7 +160,7 @@ function vueEnsemble(f, largeurPiste) {
 /* ---------- Vue mouvement : une ligne par artiste ---------- */
 function vueMouvement(f, largeurPiste) {
   const m = MOUV[etat.mouvement];
-  const oeuvres = D.oeuvres.filter((o) => o.mouvement === m.id && o.annee != null && o.annee >= f.debut && o.annee <= f.fin);
+  const oeuvres = oeuvresDuMouvement(m);
   const artistes = D.artistes.filter((a) => a.mouvement === m.id || oeuvres.some((o) => o.artiste === a.id));
   return artistes.map((a) => {
     const siennes = oeuvres.filter((o) => o.artiste === a.id).map((o) => ({ ...o, x: xAn(o.annee, f) }));
@@ -306,12 +322,32 @@ function placerBulle(ev) {
   bulle.style.left = x + "px";
   bulle.style.top = y + "px";
 }
+const estImage = (lien) => lien && /\.(jpe?g|png|webp|gif)(\?|$)/i.test(lien);
+
+// Aperçu d’une œuvre au survol de sa carte : image, titre, artiste, date, résumé
+function apercu(o) {
+  const m = MOUV[o.mouvement], hp = horsPeriode(o);
+  const note = hp && m ? `<span class="note">${hp === "avant" ? "Antérieure" : "Postérieure"} au mouvement (${m.debut}–${m.fin})</span>` : "";
+  return `${estImage(o.image) ? `<img src="${esc(o.image)}" alt="">` : ""}
+    <strong>${esc(o.titre)}</strong>
+    <span>${esc(ART[o.artiste]?.nom ?? "")}, ${esc(o.dateAffichee || o.annee)}</span>
+    ${o.resume ? `<span class="resume-apercu">${esc(o.resume)}</span>` : ""}${note}`;
+}
+
 document.addEventListener("pointerover", (ev) => {
-  const el = ev.target.closest("[data-bulle]");
-  if (!el || !el.dataset.bulle || ev.pointerType !== "mouse") { bulle.hidden = true; return; }
+  const el = ev.target.closest("[data-apercu], [data-bulle]");
+  const oeuvre = el && el.dataset.apercu ? OEU[el.dataset.apercu] : null;
+  if (!el || ev.pointerType !== "mouse" || (!oeuvre && !el.dataset.bulle)) { bulle.hidden = true; return; }
   const couloir = el.closest("[style*='--c']");
   bulle.style.setProperty("--c", couloir ? getComputedStyle(couloir).getPropertyValue("--c") : "#8A8F99");
-  bulle.textContent = el.dataset.bulle;
+  bulle.classList.toggle("riche", Boolean(oeuvre));
+  if (oeuvre) {
+    bulle.innerHTML = apercu(oeuvre);
+    const img = bulle.querySelector("img");
+    if (img) img.addEventListener("load", () => placerBulle(ev), { once: true });   // l’image change la taille de la bulle
+  } else {
+    bulle.textContent = el.dataset.bulle;
+  }
   bulle.hidden = false;
   placerBulle(ev);
 });
@@ -380,7 +416,7 @@ const listeOeuvres = (liste, avecArtiste = false) => liste.length ? `<ul class="
 function ficheOeuvre(o) {
   const a = ART[o.artiste], m = MOUV[o.mouvement];
   const lieu = [o.musee, o.ville].filter(Boolean).join(", ");
-  const image = o.image && /\.(jpe?g|png|webp|gif)(\?|$)/i.test(o.image) ? `<img class="image" src="${esc(o.image)}" alt="${esc(o.titre)}">` : "";
+  const image = estImage(o.image) ? `<img class="image" src="${esc(o.image)}" alt="${esc(o.titre)}">` : "";
   return `${image}<h2>${esc(o.titre)}</h2>
     <p class="sous-titre">${a ? lien(a.id, a.nom) + ", " : ""}${esc(o.dateAffichee || o.annee)}</p>
     ${o.resume ? `<p class="resume">${esc(o.resume)}</p>` : ""}

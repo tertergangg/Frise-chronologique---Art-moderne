@@ -556,7 +556,7 @@ window.FRISE = {
    "musee": "Musée Marmottan Monet",
    "ville": "Paris",
    "majeure": true,
-   "image": null,
+   "image": "images/impression-soleil-levant.jpg",
    "resume": null,
    "fiche": "",
    "ficheVide": true

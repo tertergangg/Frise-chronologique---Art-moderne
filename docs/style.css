@@ -310,3 +310,24 @@ body.redimension .panneau { transition: none; }
   .panneau { width: 100%; }
   .poignee { display: none; }
 }
+
+/* ---------- Ajouts de la version 7 : œuvres hors période et aperçu au survol ---------- */
+/* Une œuvre antérieure ou postérieure à son mouvement : bord en pointillés */
+.carte.hors-periode { border-style: dashed; }
+
+/* Aperçu d’une œuvre au survol */
+.bulle.riche { width: 17rem; max-width: 17rem; padding: 0.6rem; display: flex; flex-direction: column; gap: 0.2rem;
+  background: var(--surface); color: var(--encre); border: 2px solid var(--encre); }
+.bulle.riche img { width: 100%; max-height: 13rem; object-fit: contain; background: var(--surface-2); margin-bottom: 0.35rem; }
+.bulle.riche strong { font: 800 1rem/1.15 var(--police-titre); font-variation-settings: "wdth" 80; }
+.bulle.riche span { font-weight: 500; font-size: 0.8rem; color: var(--doux); }
+.bulle.riche .resume-apercu { color: var(--encre); font-size: 0.84rem; margin-top: 0.2rem; }
+.bulle.riche .note { margin-top: 0.3rem; padding-top: 0.3rem; border-top: 1px dashed var(--encre); font-weight: 700; color: var(--encre); }
+
+/* Bouton de fermeture de la fiche, plus petit et calé dans le coin */
+.fermer {
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 1.1rem;
+  margin: -1rem -1rem 0 0;
+}
