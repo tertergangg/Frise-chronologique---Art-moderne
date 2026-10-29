@@ -57,7 +57,7 @@ window.FRISE = {
   },
   {
    "id": "abstraction",
-   "nom": "Abstraction (pionniers)",
+   "nom": "Abstractionnisme",
    "debut": 1910,
    "fin": 1944,
    "lieu": "Europe",
@@ -101,19 +101,6 @@ window.FRISE = {
   }
  ],
  "artistes": [
-  {
-   "id": "manet",
-   "nom": "Édouard Manet",
-   "naissance": 1832,
-   "deces": 1883,
-   "nationalite": "française",
-   "role": "peintre (précurseur)",
-   "mouvement": "impressionnisme",
-   "autres": null,
-   "phrase": null,
-   "fiche": "",
-   "ficheVide": true
-  },
   {
    "id": "monet",
    "nom": "Claude Monet",
@@ -414,19 +401,6 @@ window.FRISE = {
    "ficheVide": true
   },
   {
-   "id": "ball",
-   "nom": "Hugo Ball",
-   "naissance": 1886,
-   "deces": 1927,
-   "nationalite": "allemande",
-   "role": "poète",
-   "mouvement": "dadaisme",
-   "autres": null,
-   "phrase": null,
-   "fiche": "",
-   "ficheVide": true
-  },
-  {
    "id": "arp",
    "nom": "Hans Arp",
    "naissance": 1886,
@@ -505,37 +479,11 @@ window.FRISE = {
    "ficheVide": true
   },
   {
-   "id": "eluard",
-   "nom": "Paul Éluard",
-   "naissance": 1895,
-   "deces": 1952,
-   "nationalite": "française",
-   "role": "poète",
-   "mouvement": "surrealisme",
-   "autres": "dadaisme",
-   "phrase": null,
-   "fiche": "",
-   "ficheVide": true
-  },
-  {
    "id": "magritte",
    "nom": "René Magritte",
    "naissance": 1898,
    "deces": 1967,
    "nationalite": "belge",
-   "role": "peintre",
-   "mouvement": "surrealisme",
-   "autres": null,
-   "phrase": null,
-   "fiche": "",
-   "ficheVide": true
-  },
-  {
-   "id": "miro",
-   "nom": "Joan Miró",
-   "naissance": 1893,
-   "deces": 1983,
-   "nationalite": "espagnole",
    "role": "peintre",
    "mouvement": "surrealisme",
    "autres": null,
@@ -597,22 +545,6 @@ window.FRISE = {
   }
  ],
  "oeuvres": [
-  {
-   "id": "le-dejeuner-sur-l-herbe",
-   "titre": "Le Déjeuner sur l’herbe",
-   "artiste": "manet",
-   "annee": 1863,
-   "mouvement": "impressionnisme",
-   "dateAffichee": null,
-   "type": "peinture",
-   "musee": "Musée d’Orsay",
-   "ville": "Paris",
-   "majeure": true,
-   "image": null,
-   "resume": null,
-   "fiche": "",
-   "ficheVide": true
-  },
   {
    "id": "impression-soleil-levant",
    "titre": "Impression, soleil levant",
@@ -1846,54 +1778,6 @@ window.FRISE = {
    "ficheVide": true
   },
   {
-   "id": "manifeste-dada",
-   "titre": "Manifeste Dada",
-   "artiste": "ball",
-   "annee": 1916,
-   "mouvement": "dadaisme",
-   "dateAffichee": null,
-   "type": "texte",
-   "musee": null,
-   "ville": null,
-   "majeure": false,
-   "image": null,
-   "resume": null,
-   "fiche": "",
-   "ficheVide": true
-  },
-  {
-   "id": "karawane",
-   "titre": "Karawane",
-   "artiste": "ball",
-   "annee": 1916,
-   "mouvement": "dadaisme",
-   "dateAffichee": null,
-   "type": "poème sonore",
-   "musee": null,
-   "ville": null,
-   "majeure": false,
-   "image": null,
-   "resume": null,
-   "fiche": "",
-   "ficheVide": true
-  },
-  {
-   "id": "la-fuite-hors-du-temps",
-   "titre": "La Fuite hors du temps",
-   "artiste": "ball",
-   "annee": 1927,
-   "mouvement": "dadaisme",
-   "dateAffichee": null,
-   "type": "texte (journal)",
-   "musee": null,
-   "ville": null,
-   "majeure": false,
-   "image": null,
-   "resume": null,
-   "fiche": "",
-   "ficheVide": true
-  },
-  {
    "id": "collages-selon-les-lois-du-hasard",
    "titre": "Collages selon les lois du hasard",
    "artiste": "arp",
@@ -2182,54 +2066,6 @@ window.FRISE = {
    "ficheVide": true
   },
   {
-   "id": "capitale-de-la-douleur",
-   "titre": "Capitale de la douleur",
-   "artiste": "eluard",
-   "annee": 1926,
-   "mouvement": "surrealisme",
-   "dateAffichee": null,
-   "type": "texte (poésie)",
-   "musee": null,
-   "ville": null,
-   "majeure": false,
-   "image": null,
-   "resume": null,
-   "fiche": "",
-   "ficheVide": true
-  },
-  {
-   "id": "l-amour-la-poesie",
-   "titre": "L’Amour la poésie",
-   "artiste": "eluard",
-   "annee": 1929,
-   "mouvement": "surrealisme",
-   "dateAffichee": null,
-   "type": "texte (poésie)",
-   "musee": null,
-   "ville": null,
-   "majeure": false,
-   "image": null,
-   "resume": null,
-   "fiche": "",
-   "ficheVide": true
-  },
-  {
-   "id": "liberte",
-   "titre": "Liberté",
-   "artiste": "eluard",
-   "annee": 1942,
-   "mouvement": "surrealisme",
-   "dateAffichee": null,
-   "type": "poème",
-   "musee": null,
-   "ville": null,
-   "majeure": false,
-   "image": null,
-   "resume": null,
-   "fiche": "",
-   "ficheVide": true
-  },
-  {
    "id": "la-trahison-des-images",
    "titre": "La Trahison des images",
    "artiste": "magritte",
@@ -2239,22 +2075,6 @@ window.FRISE = {
    "type": "peinture",
    "musee": "LACMA",
    "ville": "Los Angeles",
-   "majeure": true,
-   "image": null,
-   "resume": null,
-   "fiche": "",
-   "ficheVide": true
-  },
-  {
-   "id": "le-carnaval-d-arlequin",
-   "titre": "Le Carnaval d’Arlequin",
-   "artiste": "miro",
-   "annee": 1925,
-   "mouvement": "surrealisme",
-   "dateAffichee": "1924-1925",
-   "type": "peinture",
-   "musee": "Buffalo AKG Art Museum",
-   "ville": "Buffalo",
    "majeure": true,
    "image": null,
    "resume": null,
@@ -2519,12 +2339,6 @@ window.FRISE = {
   }
  ],
  "influences": [
-  {
-   "de": "manet",
-   "vers": "monet",
-   "type": "influence",
-   "explication": null
-  },
   {
    "de": "cezanne",
    "vers": "picasso",

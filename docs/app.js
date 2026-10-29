@@ -1,107 +1,309 @@
-/* Frise de l’art moderne — affichage et fiches.
-   Les données viennent de data.js (window.FRISE), produit par construire.py. */
+/* =====================================================================
+   Frise de l’art moderne — affichage
+   Les données viennent de data.js (window.FRISE), produit par construire.py.
 
+   Trois vues :
+   - « détail »     : la frise complète, une carte par œuvre (vue par défaut)
+   - « ensemble »   : toute la période d’un coup d’œil, sans défilement
+   - « mouvement »  : un mouvement en grand, avec une ligne par artiste
+   ===================================================================== */
+
+/* ---------- Réglages : tu peux modifier ces valeurs ---------- */
+const REGLAGES = {
+  debut: 1860,           // première année affichée
+  fin: 1966,             // dernière année affichée
+  depart: 1870,          // année affichée à gauche au chargement
+  pxParAn: 66,           // largeur d’une année en vue détaillée, en pixels
+  largeurCarte: 196,     // largeur d’une carte d’œuvre, en pixels
+  hauteurLigne: 48,      // hauteur d’une ligne de cartes dans un couloir
+  largeurEtiquettes: 220 // largeur de la colonne des noms à gauche
+};
+
+/* ---------- Outils ---------- */
 const D = window.FRISE;
-const par = (liste) => Object.fromEntries(liste.map((x) => [x.id, x]));
-const MOUV = par(D.mouvements), ART = par(D.artistes), OEU = par(D.oeuvres), EVT = par(D.evenements);
-
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const an = (y, fin = false) => new Date(y, fin ? 11 : 0, fin ? 31 : 1);
-const couleur = (idMouv) => (MOUV[idMouv] ? MOUV[idMouv].couleur : "#8A8F99");
+const indexer = (liste) => Object.fromEntries(liste.map((x) => [x.id, x]));
+const MOUV = indexer(D.mouvements), ART = indexer(D.artistes), OEU = indexer(D.oeuvres), EVT = indexer(D.evenements);
+const couleur = (id) => (MOUV[id] ? MOUV[id].couleur : "#8A8F99");
 const lien = (id, texte) => `<a href="#${esc(id)}" data-id="${esc(id)}">${esc(texte)}</a>`;
-
-/* ---------- Construction de la frise ---------- */
 const mouvementsTries = [...D.mouvements].sort((a, b) => a.debut - b.debut);
-const groupes = new vis.DataSet([
-  { id: "contexte", order: 0, content: etiquetteContexte() },
-  ...mouvementsTries.map((m, i) => ({ id: m.id, order: i + 1, content: etiquetteMouvement(m) })),
-]);
+const petitEcran = () => window.matchMedia("(max-width: 720px)").matches;
+const reduireMouvement = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const douceur = () => (reduireMouvement() ? "auto" : "smooth");
 
-function etiquetteMouvement(m) {
-  const el = document.createElement("div");
-  el.className = "etiquette";
-  el.style.setProperty("--c", m.couleur);
-  el.innerHTML = `<span class="barre"></span><span><strong>${esc(m.nom)}</strong><small>${m.debut}–${m.fin}</small></span>`;
-  return el;
-}
-function etiquetteContexte() {
-  const el = document.createElement("div");
-  el.className = "etiquette contexte";
-  el.innerHTML = `<span><strong>Contexte</strong><small>expositions, manifestes</small></span>`;
-  return el;
-}
+// Nom court des artistes : le dernier mot du nom, sauf exceptions
+const NOMS_COURTS = { "Vincent van Gogh": "Van Gogh", "Willem de Kooning": "De Kooning" };
+const nomCourt = (nom) => NOMS_COURTS[nom] || nom.split(" ").pop();
 
-function elementsFrise() {
-  const seulementMajeures = $("#majeures").checked;
-  const items = [];
-  for (const m of D.mouvements) {
-    items.push({ id: "bande:" + m.id, group: m.id, type: "background",
-      start: an(m.debut), end: an(m.fin, true), style: `background-color:${m.couleur}26` });
+const etat = { vue: "detail", mouvement: null, majeures: true };
+const defile = $("#defile"), toile = $("#toile");
+
+/* ---------- Fenêtre : quelle période, à quelle échelle ---------- */
+function fenetre() {
+  const mobile = petitEcran();
+  const lab = mobile ? 112 : REGLAGES.largeurEtiquettes;
+  const carte = mobile ? REGLAGES.largeurCarte * 0.82 : REGLAGES.largeurCarte;
+  const place = defile.clientWidth - lab - 16;   // largeur disponible pour la frise
+  if (etat.vue === "ensemble") {
+    const debut = REGLAGES.debut, fin = REGLAGES.fin;
+    return { debut, fin, lab: 0, carte, ppa: (defile.clientWidth - 40) / (fin - debut) };
   }
-  for (const o of D.oeuvres) {
-    if (o.annee == null || !MOUV[o.mouvement]) continue;
-    if (seulementMajeures && !o.majeure) continue;
-    const artiste = ART[o.artiste] ? ART[o.artiste].nom : "";
-    items.push({ id: o.id, group: o.mouvement, type: "point", start: an(o.annee),
-      content: esc(o.titre), className: o.majeure && !seulementMajeures ? "majeure" : "",
-      style: `--c:${couleur(o.mouvement)}`,
-      title: `<strong>${esc(o.titre)}</strong><br>${esc(artiste)}, ${esc(o.dateAffichee || o.annee)}` });
+  if (etat.vue === "mouvement") {
+    const m = MOUV[etat.mouvement];
+    const debut = m.debut - 1, fin = Math.max(m.fin + 2, debut + 8);
+    return { debut, fin, lab, carte, ppa: Math.max(mobile ? 70 : 110, place / (fin - debut)) };
   }
-  for (const e of D.evenements) {
-    if (e.annee == null) continue;
-    items.push({ id: e.id, group: "contexte", type: "point", start: an(e.annee),
-      content: esc(e.titre), className: "evenement",
-      title: `<strong>${esc(e.titre)}</strong><br>${esc(e.date || e.annee)}, ${esc(e.lieu)}` });
+  return { debut: REGLAGES.debut, fin: REGLAGES.fin, lab, carte, ppa: mobile ? REGLAGES.pxParAn * 0.75 : REGLAGES.pxParAn };
+}
+const xAn = (annee, f) => (annee - f.debut) * f.ppa;
+
+// Range les éléments en lignes sans chevauchement
+function empiler(elements, largeur) {
+  const finLigne = [];
+  for (const el of [...elements].sort((a, b) => a.x - b.x)) {
+    let ligne = finLigne.findIndex((fin) => fin + 8 <= el.x);
+    if (ligne === -1) { ligne = finLigne.length; finLigne.push(0); }
+    finLigne[ligne] = el.x + largeur;
+    el.ligne = ligne;
   }
-  return items;
+  return Math.max(1, finLigne.length);
 }
 
-const elements = new vis.DataSet(elementsFrise());
-const petitEcran = window.matchMedia("(max-width: 720px)").matches;
-const vueInitiale = petitEcran ? [an(1870), an(1915)] : [an(1868), an(1966)];
-const frise = new vis.Timeline($("#frise"), elements, groupes, {
-  stack: true,
-  start: vueInitiale[0], end: vueInitiale[1],
-  min: an(1840), max: an(1990, true),
-  zoomMin: 1000 * 60 * 60 * 24 * 365 * 6,
-  zoomMax: 1000 * 60 * 60 * 24 * 365 * 150,
-  orientation: { axis: "top", item: "top" },
-  showCurrentTime: false,
-  verticalScroll: true,
-  zoomKey: "ctrlKey",
-  height: "100%",
-  margin: { item: { horizontal: 6, vertical: 4 }, axis: 8 },
-  groupHeightMode: "auto",
-  format: { minorLabels: { year: "YYYY" }, majorLabels: { year: "" } },
-  tooltip: { followMouse: false, overflowMethod: "cap" },
-  selectable: true,
+/* ---------- Morceaux de frise réutilisables ---------- */
+function axe(f, largeurPiste) {
+  const pas = etat.vue === "ensemble" ? (petitEcran() ? 20 : 10) : etat.vue === "mouvement" ? 1 : 5;
+  let graduations = "";
+  for (let a = Math.ceil((f.debut + 0.5) / pas) * pas; a <= f.fin; a += pas) {
+    const fort = etat.vue === "mouvement" ? a % 5 === 0 : a % 10 === 0 || etat.vue === "ensemble";
+    const texte = fort || !petitEcran() ? a : "";
+    graduations += `<span class="an${fort ? " decennie" : ""}" style="left:${xAn(a, f)}px">${texte}</span>`;
+  }
+  return `<div class="axe"><div class="coin"></div><div class="piste" style="width:${largeurPiste}px">${graduations}</div></div>`;
+}
+
+function couloirContexte(f, largeurPiste) {
+  if (etat.vue === "ensemble") return "";   // la vue d’ensemble reste sans détail
+  const evts = D.evenements.filter((x) => x.annee != null && x.annee >= f.debut && x.annee <= f.fin)
+    .map((x) => ({ ...x, x: xAn(x.annee, f) }));
+  const lignes = empiler(evts, f.carte * 0.9);
+  return `<section class="couloir contexte">
+    <div class="etiquette"><strong>Contexte</strong><small>Expositions et manifestes</small></div>
+    <div class="piste" style="width:${largeurPiste}px;min-height:${lignes * 28 + 12}px">
+      ${evts.map((x) => `<button class="evenement" data-id="${esc(x.id)}" style="left:${x.x}px;top:${6 + x.ligne * 28}px" title="${esc(x.titre)}, ${esc(x.date || x.annee)}"><span class="repere"></span><span class="t">${esc(x.titre)}</span></button>`).join("")}
+    </div></section>`;
+}
+
+const carteOeuvre = (o, haut) =>
+  `<button class="carte${o.majeure && !etat.majeures ? " majeure" : ""}" data-id="${esc(o.id)}" data-artiste="${esc(o.artiste)}" style="left:${o.x}px;top:${haut}px" title="${esc(o.titre)}"><span class="vignette"></span><span class="texte"><span class="t">${esc(o.titre)}</span><span class="a">${esc(ART[o.artiste]?.nom ?? "")}, ${o.annee}</span></span></button>`;
+
+const bande = (m, f) =>
+  `<div class="bande" data-mouvement="${esc(m.id)}" style="left:${xAn(m.debut, f)}px;width:${xAn(m.fin + 1, f) - xAn(m.debut, f)}px"></div>`;
+
+/* ---------- Vue détaillée : un couloir par mouvement ---------- */
+function vueDetail(f, largeurPiste) {
+  const oeuvres = D.oeuvres.filter((o) => o.annee != null && MOUV[o.mouvement] && (!etat.majeures || o.majeure));
+  return mouvementsTries.map((m) => {
+    const artistes = D.artistes.filter((a) => a.mouvement === m.id);
+    const siennes = oeuvres.filter((o) => o.mouvement === m.id).map((o) => ({ ...o, x: xAn(o.annee, f) }));
+    const lignes = empiler(siennes, f.carte);
+    return `<section class="couloir" id="couloir-${esc(m.id)}" style="--c:${m.couleur}">
+      <div class="etiquette" data-aller="${esc(m.id)}" title="Aller au début du mouvement">
+        <button class="nom" data-id="${esc(m.id)}">${esc(m.nom)}</button>
+        <small>${m.debut}–${m.fin}</small>
+        <span class="puces">${artistes.map((a) => `<button class="puce" data-id="${esc(a.id)}" data-artiste="${esc(a.id)}">${esc(nomCourt(a.nom))}</button>`).join("")}</span>
+      </div>
+      <div class="piste" style="width:${largeurPiste}px;min-height:${16 + lignes * REGLAGES.hauteurLigne}px">
+        ${bande(m, f)}
+        ${siennes.map((o) => carteOeuvre(o, 12 + o.ligne * REGLAGES.hauteurLigne)).join("")}
+      </div></section>`;
+  }).join("");
+}
+
+/* ---------- Vue d’ensemble : les mouvements et leurs périodes, sur tout le siècle ---------- */
+function vueEnsemble(f, largeurPiste) {
+  return mouvementsTries.map((m) => {
+    const gauche = xAn(m.debut, f), largeur = xAn(m.fin + 1, f) - gauche;
+    // Si la bande est trop étroite pour son nom, le nom passe à côté (à droite, ou à gauche en fin de frise)
+    // (sur téléphone, le nom est toujours écrit au-dessus de la bande)
+    const mobile = petitEcran();
+    const largeurNom = m.nom.length * (mobile ? 8.5 : 11) + 30;
+    const etroite = !mobile && largeur < largeurNom;
+    const aGauche = mobile ? gauche + largeurNom > largeurPiste : etroite && gauche + largeur + largeurNom > largeurPiste;
+    return `<section class="couloir global" style="--c:${m.couleur}">
+      <div class="piste" style="width:${largeurPiste}px;min-height:${mobile ? 80 : 62}px">
+        <button class="bande-globale${etroite ? " etroite" : ""}${aGauche ? " a-gauche" : ""}" data-mouvement="${esc(m.id)}" style="left:${gauche}px;width:${largeur}px" title="Explorer ce mouvement en grand">
+          <span class="texte"><strong>${esc(m.nom)}</strong><span>${m.debut}–${m.fin}</span></span>
+        </button>
+      </div></section>`;
+  }).join("");
+}
+
+/* ---------- Vue mouvement : une ligne par artiste ---------- */
+function vueMouvement(f, largeurPiste) {
+  const m = MOUV[etat.mouvement];
+  const oeuvres = D.oeuvres.filter((o) => o.mouvement === m.id && o.annee != null && o.annee >= f.debut && o.annee <= f.fin);
+  const artistes = D.artistes.filter((a) => a.mouvement === m.id || oeuvres.some((o) => o.artiste === a.id));
+  return artistes.map((a) => {
+    const siennes = oeuvres.filter((o) => o.artiste === a.id).map((o) => ({ ...o, x: xAn(o.annee, f) }));
+    const lignes = empiler(siennes, f.carte);
+    const vie = [Math.max(a.naissance ?? f.debut, f.debut), Math.min(a.deces ?? f.fin, f.fin + 1)];
+    return `<section class="couloir artiste" style="--c:${m.couleur}">
+      <div class="etiquette">
+        <button class="nom" data-id="${esc(a.id)}">${esc(a.nom)}</button>
+        <small>${a.naissance ?? "?"}–${a.deces ?? "?"}</small>
+      </div>
+      <div class="piste" style="width:${largeurPiste}px;min-height:${16 + lignes * REGLAGES.hauteurLigne}px">
+        ${bande(m, f)}
+        <div class="vie" style="left:${xAn(vie[0], f)}px;width:${xAn(vie[1], f) - xAn(vie[0], f)}px"></div>
+        ${siennes.map((o) => carteOeuvre(o, 12 + o.ligne * REGLAGES.hauteurLigne)).join("")}
+      </div></section>`;
+  }).join("");
+}
+
+/* ---------- Dessin de la frise ---------- */
+function dessiner() {
+  const f = fenetre();
+  const largeurPiste = (f.fin - f.debut) * f.ppa;
+  toile.style.setProperty("--lab", f.lab + "px");
+  toile.style.setProperty("--carte", f.carte + "px");
+  toile.style.setProperty("--ligne", REGLAGES.hauteurLigne + "px");
+  toile.style.setProperty("--ppa", f.ppa + "px");
+  toile.style.setProperty("--grille-pas", etat.vue === "mouvement" ? f.ppa + "px" : f.ppa * 10 + "px");
+  toile.style.setProperty("--grille-depart", -((f.debut % (etat.vue === "mouvement" ? 1 : 10)) * f.ppa) + "px");
+  toile.style.width = f.lab + largeurPiste + "px";
+  document.body.dataset.vue = etat.vue;
+
+  const corps = etat.vue === "ensemble" ? vueEnsemble(f, largeurPiste)
+    : etat.vue === "mouvement" ? vueMouvement(f, largeurPiste)
+    : vueDetail(f, largeurPiste);
+  toile.innerHTML = axe(f, largeurPiste) + couloirContexte(f, largeurPiste) + corps;
+
+  // Bandeau de la vue mouvement
+  const bandeau = $("#bandeau");
+  if (etat.vue === "mouvement") {
+    const m = MOUV[etat.mouvement];
+    bandeau.hidden = false;
+    bandeau.style.setProperty("--c", m.couleur);
+    bandeau.innerHTML = `<button type="button" class="retour" data-action="detail">‹ Toute la frise</button>
+      <strong>${esc(m.nom)}</strong><span>${m.debut}–${m.fin}, une ligne par artiste, toutes les œuvres</span>
+      <button type="button" class="retour lire" data-id="${esc(m.id)}">Lire la fiche</button>`;
+  } else bandeau.hidden = true;
+
+  // Bouton « Vue d’ensemble »
+  $("[data-vue-bascule]").setAttribute("aria-pressed", String(etat.vue === "ensemble"));
+  majDecennies();
+}
+
+// Change de vue ; « annee » = année à placer au bord gauche ensuite
+function changerVue(vue, options = {}) {
+  etat.vue = vue;
+  if (options.mouvement) etat.mouvement = options.mouvement;
+  dessiner();
+  defile.scrollTop = 0;
+  if (vue === "detail") allerAnnee(options.annee ?? REGLAGES.depart, false);
+  else defile.scrollLeft = 0;
+}
+function explorer(idMouvement) {
+  fermer();
+  changerVue("mouvement", { mouvement: idMouvement });
+}
+
+/* ---------- Navigation dans le temps ---------- */
+// Fait défiler pour que l’année donnée soit au bord gauche de la frise
+function allerAnnee(annee, doux = true) {
+  defile.scrollTo({ left: xAn(annee, fenetre()) - 24, behavior: doux ? douceur() : "auto" });
+}
+// Année visible au bord gauche
+const anneeGauche = () => { const f = fenetre(); return f.debut + (defile.scrollLeft + 24) / f.ppa; };
+
+// Barre des décennies, en bas
+const decennies = [];
+for (let a = Math.floor(REGLAGES.debut / 10) * 10; a < REGLAGES.fin; a += 10) decennies.push(a);
+const barre = $("#decennies");
+barre.innerHTML = `<button type="button" class="ensemble" data-vue-bascule aria-pressed="false">Vue d’ensemble</button>
+  <button type="button" class="fleche" data-pas="-1" aria-label="Reculer">‹</button>
+  <div class="liste">${decennies.map((a) => `<button type="button" class="decennie" data-annee="${a}">${a}</button>`).join("")}</div>
+  <button type="button" class="fleche" data-pas="1" aria-label="Avancer">›</button>`;
+barre.addEventListener("click", (ev) => {
+  const b = ev.target.closest("button");
+  if (!b) return;
+  if ("vueBascule" in b.dataset) {
+    const annee = etat.vue === "mouvement" ? MOUV[etat.mouvement].debut - 2 : undefined;
+    changerVue(etat.vue === "ensemble" ? "detail" : "ensemble", { annee });
+  } else if (b.dataset.annee) {
+    if (etat.vue !== "detail") changerVue("detail", { annee: Number(b.dataset.annee) });
+    else allerAnnee(Number(b.dataset.annee));
+  } else {
+    defile.scrollBy({ left: Number(b.dataset.pas) * (defile.clientWidth - fenetre().lab) * 0.8, behavior: douceur() });
+  }
+});
+// Une seule décennie en noir : celle qui est au bord gauche de la frise
+function majDecennies() {
+  const courante = etat.vue === "detail" ? Math.floor((anneeGauche() + 0.5) / 10) * 10 : null;
+  barre.querySelectorAll(".decennie").forEach((b) => b.classList.toggle("visible", Number(b.dataset.annee) === courante));
+}
+defile.addEventListener("scroll", majDecennies, { passive: true });
+
+// Glisser la frise avec la souris
+let glisse = null, aGlisse = false;
+defile.addEventListener("pointerdown", (ev) => {
+  if (ev.pointerType !== "mouse" || ev.button !== 0 || ev.target.closest(".carte, .puce, .nom, .evenement, .bande-globale, a")) return;
+  glisse = { x: ev.clientX, y: ev.clientY, gauche: defile.scrollLeft, haut: defile.scrollTop };
+  aGlisse = false;
+});
+window.addEventListener("pointermove", (ev) => {
+  if (!glisse) return;
+  const dx = ev.clientX - glisse.x, dy = ev.clientY - glisse.y;
+  if (!aGlisse && Math.hypot(dx, dy) > 4) { aGlisse = true; defile.classList.add("saisi"); }
+  if (aGlisse) { defile.scrollLeft = glisse.gauche - dx; defile.scrollTop = glisse.haut - dy; }
+});
+window.addEventListener("pointerup", () => { glisse = null; defile.classList.remove("saisi"); setTimeout(() => { aGlisse = false; }, 0); });
+
+// Flèches du clavier
+defile.addEventListener("keydown", (ev) => {
+  if (ev.key === "ArrowRight") { defile.scrollBy({ left: 300 }); ev.preventDefault(); }
+  if (ev.key === "ArrowLeft") { defile.scrollBy({ left: -300 }); ev.preventDefault(); }
 });
 
-frise.on("click", (p) => {
-  if (p.what === "group-label" && MOUV[p.group]) ouvrir(p.group);
-  else if (p.item && !String(p.item).startsWith("bande:")) ouvrir(p.item);
+/* ---------- Retour depuis la vue mouvement, et sommaire des mouvements ---------- */
+$("#bandeau").addEventListener("click", (ev) => {
+  if (ev.target.closest("[data-action='detail']")) changerVue("detail", { annee: MOUV[etat.mouvement].debut - 2 });
+  const lire = ev.target.closest("[data-id]");
+  if (lire) ouvrir(lire.dataset.id);
 });
 
-/* ---------- Filtres ---------- */
-const nav = $("#filtres");
-for (const m of mouvementsTries) {
-  const b = document.createElement("button");
-  b.type = "button"; b.className = "filtre"; b.setAttribute("aria-pressed", "true");
-  b.style.setProperty("--c", m.couleur);
-  b.innerHTML = `<span class="pastille"></span>${esc(m.nom)}`;
-  b.addEventListener("click", () => {
-    const visible = b.getAttribute("aria-pressed") !== "true";
-    b.setAttribute("aria-pressed", String(visible));
-    groupes.update({ id: m.id, visible });
-  });
-  nav.appendChild(b);
-}
-$("#majeures").addEventListener("change", () => { elements.clear(); elements.add(elementsFrise()); });
+const sommaire = $("#sommaire");
+sommaire.innerHTML = mouvementsTries.map((m) =>
+  `<button type="button" class="filtre" data-mouvement="${esc(m.id)}" style="--c:${m.couleur}"><span class="pastille"></span>${esc(m.nom)}</button>`).join("");
+sommaire.addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-mouvement]");
+  if (b) explorer(b.dataset.mouvement);
+});
 
-$("#zoom-plus").addEventListener("click", () => frise.zoomIn(0.4));
-$("#zoom-moins").addEventListener("click", () => frise.zoomOut(0.4));
-$("#tout-voir").addEventListener("click", () => frise.setWindow(an(1868), an(1966)));
+const caseMajeures = $("#majeures");
+caseMajeures.checked = etat.majeures;
+caseMajeures.addEventListener("change", () => { etat.majeures = caseMajeures.checked; dessiner(); });
+
+/* ---------- Survol d’un artiste : ses œuvres ressortent ---------- */
+toile.addEventListener("pointerover", (ev) => {
+  const puce = ev.target.closest(".puce");
+  toile.querySelectorAll(".allume").forEach((n) => n.classList.remove("allume"));
+  toile.classList.toggle("focus", Boolean(puce));
+  if (puce) toile.querySelectorAll(`[data-artiste="${puce.dataset.artiste}"]`).forEach((n) => n.classList.add("allume"));
+});
+toile.addEventListener("pointerleave", () => toile.classList.remove("focus"));
+
+/* ---------- Clics dans la frise ---------- */
+toile.addEventListener("click", (ev) => {
+  if (aGlisse) return;                                   // c’était un glisser, pas un clic
+  const element = ev.target.closest("[data-id]");
+  if (element) { ouvrir(element.dataset.id); return; }
+  const etiquette = ev.target.closest("[data-aller]");     // fond coloré de l’étiquette
+  if (etiquette) { allerAnnee(MOUV[etiquette.dataset.aller].debut - 2); return; }
+  const zone = ev.target.closest(".bande[data-mouvement], .bande-globale");
+  if (zone && etat.vue !== "mouvement") explorer(zone.dataset.mouvement);
+});
 
 /* ---------- Recherche ---------- */
 const sansAccent = (s) => String(s ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -109,7 +311,7 @@ const index = [
   ...D.mouvements.map((m) => ({ id: m.id, texte: m.nom, detail: `Mouvement, ${m.debut}–${m.fin}` })),
   ...D.artistes.map((a) => ({ id: a.id, texte: a.nom, detail: `Artiste, ${a.naissance ?? "?"}–${a.deces ?? "?"}` })),
   ...D.oeuvres.map((o) => ({ id: o.id, texte: o.titre, detail: `${ART[o.artiste]?.nom ?? ""}, ${o.annee ?? ""}` })),
-  ...D.evenements.map((e) => ({ id: e.id, texte: e.titre, detail: `Événement, ${e.annee}` })),
+  ...D.evenements.map((x) => ({ id: x.id, texte: x.titre, detail: `Événement, ${x.annee}` })),
 ];
 const champ = $("#champ-recherche"), resultats = $("#resultats");
 let choix = 0, trouves = [];
@@ -118,21 +320,21 @@ champ.addEventListener("input", () => {
   trouves = q.length < 2 ? [] : index.filter((x) => sansAccent(x.texte).includes(q)).slice(0, 12);
   choix = 0; afficherResultats();
 });
-champ.addEventListener("keydown", (e) => {
+champ.addEventListener("keydown", (ev) => {
   if (!trouves.length) return;
-  if (e.key === "ArrowDown") { choix = (choix + 1) % trouves.length; afficherResultats(); e.preventDefault(); }
-  if (e.key === "ArrowUp") { choix = (choix - 1 + trouves.length) % trouves.length; afficherResultats(); e.preventDefault(); }
-  if (e.key === "Enter") { choisir(trouves[choix].id); e.preventDefault(); }
+  if (ev.key === "ArrowDown") { choix = (choix + 1) % trouves.length; afficherResultats(); ev.preventDefault(); }
+  if (ev.key === "ArrowUp") { choix = (choix - 1 + trouves.length) % trouves.length; afficherResultats(); ev.preventDefault(); }
+  if (ev.key === "Enter") { choisir(trouves[choix].id); ev.preventDefault(); }
 });
 function afficherResultats() {
-  resultats.hidden = !trouves.length && !champ.value.trim();
+  resultats.hidden = !trouves.length && champ.value.trim().length < 2;
   resultats.innerHTML = trouves.length
     ? trouves.map((x, i) => `<li role="option" data-id="${esc(x.id)}" aria-selected="${i === choix}">${esc(x.texte)}<small>${esc(x.detail)}</small></li>`).join("")
-    : champ.value.trim().length >= 2 ? `<li aria-disabled="true">Aucun résultat<small>Essaie un nom d’artiste ou un titre.</small></li>` : "";
+    : `<li aria-disabled="true">Aucun résultat<small>Essaie un nom d’artiste ou un titre.</small></li>`;
 }
-resultats.addEventListener("click", (e) => { const li = e.target.closest("li[data-id]"); if (li) choisir(li.dataset.id); });
+resultats.addEventListener("click", (ev) => { const li = ev.target.closest("li[data-id]"); if (li) choisir(li.dataset.id); });
 function choisir(id) { champ.value = ""; trouves = []; resultats.hidden = true; ouvrir(id, true); }
-document.addEventListener("click", (e) => { if (!e.target.closest(".recherche")) resultats.hidden = true; });
+document.addEventListener("click", (ev) => { if (!ev.target.closest(".recherche")) resultats.hidden = true; });
 
 /* ---------- Fiches ---------- */
 const panneau = $("#panneau"), contenu = $("#contenu-panneau");
@@ -143,20 +345,19 @@ function markdown(md) {
     const cible = MOUV[id] || ART[id] || OEU[id] || EVT[id];
     return `[${texte || (cible ? cible.nom || cible.titre : id)}](#${id})`;
   });
-  return `<div class="corps">${marked.parse(avecLiens)}</div>`;
+  return `<div class="corps">${window.marked ? marked.parse(avecLiens) : esc(avecLiens)}</div>`;
 }
 const aVenir = (quoi) => `<p class="a-venir">La fiche ${quoi} est à venir.</p>`;
-const listeOeuvres = (liste, avecArtiste = false) => liste.length ? `<ul class="liens">${liste
+const listeOeuvres = (liste, avecArtiste = false) => liste.length ? `<ul class="liens-liste">${[...liste]
   .sort((a, b) => (a.annee ?? 0) - (b.annee ?? 0))
-  .map((o) => `<li><span class="an">${o.annee ?? ""}</span><span>${lien(o.id, o.titre)}${avecArtiste && ART[o.artiste] ? `<br><small>${esc(ART[o.artiste].nom)}</small>` : ""}</span></li>`).join("")}</ul>` : "";
+  .map((o) => `<li><span class="an">${o.annee ?? ""}</span><span>${lien(o.id, o.titre)}${avecArtiste && ART[o.artiste] ? `<small>${esc(ART[o.artiste].nom)}</small>` : ""}</span></li>`).join("")}</ul>` : "";
 
 function ficheOeuvre(o) {
   const a = ART[o.artiste], m = MOUV[o.mouvement];
   const lieu = [o.musee, o.ville].filter(Boolean).join(", ");
-  const image = o.image && /\.(jpe?g|png|webp|gif)(\?|$)/i.test(o.image)
-    ? `<img class="image" src="${esc(o.image)}" alt="${esc(o.titre)}">` : "";
+  const image = o.image && /\.(jpe?g|png|webp|gif)(\?|$)/i.test(o.image) ? `<img class="image" src="${esc(o.image)}" alt="${esc(o.titre)}">` : "";
   return `${image}<h2>${esc(o.titre)}</h2>
-    <p class="sous-titre">${a ? lien(a.id, a.nom) : ""}${a ? ", " : ""}${esc(o.dateAffichee || o.annee)}</p>
+    <p class="sous-titre">${a ? lien(a.id, a.nom) + ", " : ""}${esc(o.dateAffichee || o.annee)}</p>
     ${o.resume ? `<p class="resume">${esc(o.resume)}</p>` : ""}
     <dl>
       ${m ? `<dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd>` : ""}
@@ -175,7 +376,7 @@ function ficheArtiste(a) {
     if (!autre) return "";
     const verbe = i.type === "influence" ? (i.de === a.id ? "A influencé" : "Influencé par")
       : i.type === "collaboration" ? "Collaboration avec" : i.type === "rivalité" ? "Rivalité avec" : "Lien avec";
-    return `<li><span>${verbe} ${lien(autre.id, autre.nom)}${i.explication ? `<br><small>${esc(i.explication)}</small>` : ""}</span></li>`;
+    return `<li><span>${verbe} ${lien(autre.id, autre.nom)}${i.explication ? `<small>${esc(i.explication)}</small>` : ""}</span></li>`;
   }).join("");
   return `<h2>${esc(a.nom)}</h2>
     <p class="sous-titre">${a.naissance ?? "?"}–${a.deces ?? "?"}${a.nationalite ? ", " + esc(a.nationalite) : ""}</p>
@@ -186,61 +387,69 @@ function ficheArtiste(a) {
       ${a.autres ? `<dt>Aussi</dt><dd>${esc(a.autres)}</dd>` : ""}
     </dl>
     ${a.ficheVide ? aVenir("de cet artiste") : markdown(a.fiche)}
-    ${oeuvres.length ? `<h3 class="liste-titre">Œuvres sur la frise</h3>${listeOeuvres(oeuvres)}` : ""}
-    ${relations ? `<h3 class="liste-titre">Liens</h3><ul class="liens">${relations}</ul>` : ""}`;
+    ${oeuvres.length ? `<h3>Œuvres</h3>${listeOeuvres(oeuvres)}` : ""}
+    ${relations ? `<h3>Liens</h3><ul class="liens-liste">${relations}</ul>` : ""}`;
 }
 
 function ficheMouvement(m) {
   const artistes = D.artistes.filter((a) => a.mouvement === m.id);
   const oeuvres = D.oeuvres.filter((o) => o.mouvement === m.id);
-  const evts = D.evenements.filter((e) => e.mouvement === m.id);
+  const evts = D.evenements.filter((x) => x.mouvement === m.id);
   return `<h2>${esc(m.nom)}</h2>
     <p class="sous-titre">${m.debut}–${m.fin}${m.lieu ? ", " + esc(m.lieu) : ""}</p>
+    ${etat.vue !== "mouvement" ? `<button type="button" class="explorer" data-explorer="${esc(m.id)}">Explorer ce mouvement en grand</button>` : ""}
     ${m.resume ? `<p class="resume">${esc(m.resume)}</p>` : ""}
     ${m.ficheVide ? aVenir("de ce mouvement") : markdown(m.fiche)}
-    ${artistes.length ? `<h3 class="liste-titre">Artistes</h3><ul class="liens">${artistes
-      .map((a) => `<li><span class="an">${a.naissance ?? ""}</span><span>${lien(a.id, a.nom)}</span></li>`).join("")}</ul>` : ""}
-    ${evts.length ? `<h3 class="liste-titre">Moments clés</h3><ul class="liens">${evts
-      .map((e) => `<li><span class="an">${e.annee}</span><span>${lien(e.id, e.titre)}</span></li>`).join("")}</ul>` : ""}
-    ${oeuvres.length ? `<h3 class="liste-titre">Œuvres</h3>${listeOeuvres(oeuvres, true)}` : ""}`;
+    ${artistes.length ? `<h3>Artistes</h3><ul class="liens-liste">${artistes.map((a) => `<li><span class="an">${a.naissance ?? ""}</span><span>${lien(a.id, a.nom)}</span></li>`).join("")}</ul>` : ""}
+    ${evts.length ? `<h3>Moments clés</h3><ul class="liens-liste">${evts.map((x) => `<li><span class="an">${x.annee}</span><span>${lien(x.id, x.titre)}</span></li>`).join("")}</ul>` : ""}
+    ${oeuvres.length ? `<h3>Œuvres</h3>${listeOeuvres(oeuvres, true)}` : ""}`;
 }
 
-function ficheEvenement(e) {
-  const m = MOUV[e.mouvement];
-  return `<h2>${esc(e.titre)}</h2>
-    <p class="sous-titre">${esc(e.date || e.annee)}${e.lieu ? ", " + esc(e.lieu) : ""}</p>
-    ${e.description ? `<p class="resume">${esc(e.description)}</p>` : `<p class="a-venir">La description de cet événement est à venir.</p>`}
+function ficheEvenement(x) {
+  const m = MOUV[x.mouvement];
+  return `<h2>${esc(x.titre)}</h2>
+    <p class="sous-titre">${esc(x.date || x.annee)}${x.lieu ? ", " + esc(x.lieu) : ""}</p>
+    ${x.description ? `<p class="resume">${esc(x.description)}</p>` : `<p class="a-venir">La description de cet événement est à venir.</p>`}
     ${m ? `<dl><dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd></dl>` : ""}`;
 }
 
+// Ouvre la fiche d’un élément, quel que soit son type
 function ouvrir(id, centrer = false) {
-  let html = "", c = "#8A8F99";
-  if (OEU[id]) { html = ficheOeuvre(OEU[id]); c = couleur(OEU[id].mouvement); }
+  let html = "", c = "#8A8F99", annee = null;
+  if (OEU[id]) { html = ficheOeuvre(OEU[id]); c = couleur(OEU[id].mouvement); annee = OEU[id].annee; }
   else if (ART[id]) { html = ficheArtiste(ART[id]); c = couleur(ART[id].mouvement); }
   else if (MOUV[id]) { html = ficheMouvement(MOUV[id]); c = MOUV[id].couleur; }
-  else if (EVT[id]) { html = ficheEvenement(EVT[id]); c = couleur(EVT[id].mouvement); }
+  else if (EVT[id]) { html = ficheEvenement(EVT[id]); c = couleur(EVT[id].mouvement); annee = EVT[id].annee; }
   else return;
-  contenu.innerHTML = `<article class="fiche" style="--c:${c}"><div class="fiche-filet"></div>${html}</article>`;
+  contenu.innerHTML = `<article class="fiche" style="--c:${c}"><div class="filet"></div>${html}</article>`;
   panneau.hidden = false;
   panneau.scrollTop = 0;
-  if (elements.get(id)) {
-    frise.setSelection(id);
-    if (centrer) frise.focus(id, { animation: { duration: 400 }, zoom: false });
-  } else frise.setSelection([]);
-  try { history.replaceState(null, "", "#" + id); } catch (e) { /* aperçu sans historique */ }
+  toile.querySelectorAll(".choisi").forEach((n) => n.classList.remove("choisi"));
+  toile.querySelectorAll(`[data-id="${CSS.escape(id)}"]`).forEach((n) => n.classList.add("choisi"));
+  if (centrer && annee && etat.vue === "detail") allerAnnee(annee - 3);
+  try { history.replaceState(null, "", "#" + id); } catch (err) { /* aperçu sans historique */ }
 }
 function fermer() {
-  panneau.hidden = true; frise.setSelection([]);
-  try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { /* idem */ }
+  panneau.hidden = true;
+  toile.querySelectorAll(".choisi").forEach((n) => n.classList.remove("choisi"));
+  try { history.replaceState(null, "", location.pathname + location.search); } catch (err) { /* idem */ }
 }
 $("#fermer").addEventListener("click", fermer);
-document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !panneau.hidden) fermer(); });
-contenu.addEventListener("click", (e) => {
-  const a = e.target.closest("a[data-id], a[href^='#']");
+document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && !panneau.hidden) fermer(); });
+contenu.addEventListener("click", (ev) => {
+  const bouton = ev.target.closest("[data-explorer]");
+  if (bouton) { explorer(bouton.dataset.explorer); return; }
+  const a = ev.target.closest("a[data-id], a[href^='#']");
   if (!a) return;
-  e.preventDefault();
+  ev.preventDefault();
   ouvrir(a.dataset.id || a.getAttribute("href").slice(1), true);
 });
 
+
+/* ---------- Démarrage ---------- */
+dessiner();
+allerAnnee(REGLAGES.depart, false);
+let attente;
+window.addEventListener("resize", () => { clearTimeout(attente); attente = setTimeout(dessiner, 150); });
 const depart = decodeURIComponent(location.hash.slice(1));
 if (depart) ouvrir(depart, true);
