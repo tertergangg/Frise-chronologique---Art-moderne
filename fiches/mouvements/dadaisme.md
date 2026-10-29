@@ -5,26 +5,24 @@ type: mouvement
 
 # Dadaïsme
 
-<!-- Fiche MOUVEMENT · cible : 300 à 400 mots. Les dates, artistes et œuvres viennent du tableur : inutile de les répéter ici. Les commentaires comme celui-ci ne s'affichent pas sur le site. -->
-
 ## En une phrase
-<!-- La définition du mouvement, qui ouvre la fiche. -->
+Le dadaïsme, ou Dada, est un mouvement de révolte né à Zurich en 1916, en pleine guerre : il rejette la raison, la morale et l’art lui-même, et fait du non-sens, du hasard et de la provocation ses armes.
 
 ## Contexte
-<!-- Contre quoi ou à partir de quoi il naît. 2 à 4 phrases. -->
+Le mouvement naît au Cabaret Voltaire, ouvert à Zurich en février 1916 par Hugo Ball et Emmy Hennings. La Suisse neutre sert alors de refuge à des artistes venus de toute l’Europe, écœurés par la boucherie de la guerre. Pour eux, une civilisation capable d’un tel massacre a perdu tout crédit : sa logique, sa morale, son bon goût et son art avec.
+
+Le nom lui-même est un pied de nez : selon la légende, il aurait été trouvé en ouvrant un dictionnaire au hasard (« dada » désigne un cheval de bois, en langage d’enfant). Le mouvement se répand ensuite à New York, Berlin, Cologne, puis Paris à partir de 1920.
 
 ## Ce qui le caractérise
-<!-- 3 à 5 points : couleur, touche, sujets, rapport au réel. -->
-- 
-- 
-- 
+- **L’anti-art** : Dada ne cherche pas à renouveler la peinture, mais à attaquer l’idée même d’art.
+- **Le hasard et le non-sens** comme moteurs de création.
+- **Tout peut devenir art** : collages, photomontages, objets du quotidien détournés (le ready-made).
+- **Le langage déconstruit** : poèmes sonores, textes absurdes, typographies éclatées.
+- **Le geste compte plus que l’œuvre** : soirées scandaleuses, performances, manifestes.
+- **Aucun style ni doctrine** : c’est un état d’esprit, international, qui réunit peintres, poètes, musiciens.
 
 ## Acteurs
-<!-- Qui joue quel rôle : chef de file, compagnons, critiques, marchands. Tu peux lier une fiche : [[matisse]] -->
+Tristan Tzara en est la voix, avec son *Manifeste Dada 1918*. Hugo Ball fonde le Cabaret Voltaire, Hans Arp y expérimente le hasard. À New York, Marcel Duchamp et Francis Picabia mènent leur propre Dada, avec Man Ray. À Berlin, Raoul Hausmann et Hannah Höch inventent le photomontage, et à Hanovre, Kurt Schwitters crée ses collages Merz.
 
 ## Héritage
-<!-- Ce qu'il ouvre, vers quels mouvements. 2 à 3 phrases. -->
-
-## Sources
-<!-- Où tu as vérifié : musée, monographie, article. -->
-- 
+Dada s’éteint vers 1922-1923, miné par les querelles entre Tzara et Breton. Mais il ne disparaît pas vraiment : le surréalisme naît directement de ses cendres. Et avec le ready-made de Duchamp, Dada pose une question qui hante encore l’art contemporain : et si c’était le regard qui faisait l’œuvre ? Derrière leur folie apparente, ces artistes « anti-tout » n’ont jamais perdu de vue la raison de leur combat.

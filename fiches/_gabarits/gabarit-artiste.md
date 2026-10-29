@@ -20,7 +20,4 @@ type: artiste
 <!-- Ce qu'il ou elle change dans la peinture. 3 à 5 phrases. -->
 
 ## Citation
-> 
-
-## Sources
-- 
+>

@@ -5,22 +5,19 @@ type: artiste
 
 # Maurice de Vlaminck
 
-<!-- Fiche ARTISTE · cible : 200 à 300 mots. Dates, nationalité et œuvres viennent du tableur. -->
-
 ## En une phrase
-<!-- Qui il ou elle est, et pourquoi on s'en souvient. -->
+Le plus fougueux des fauves, Vlaminck peignait avec la couleur pure sortie du tube, dans une véritable explosion d’énergie.
 
 ## Parcours
-<!-- 3 ou 4 dates clés, pas plus. -->
-- **....** : 
-- **....** : 
-- **....** : 
+- **1900** : né à Paris en 1876, coureur cycliste et violoniste, il rencontre André Derain dans un train. Les deux hommes partagent un atelier à Chatou.
+- **1901** : l’exposition Van Gogh chez Bernheim-Jeune est une révélation : il dira l’aimer plus que son propre père.
+- **1905** : il expose au Salon d’automne aux côtés de Matisse et Derain.
+- **Après 1907** : sous l’influence de Cézanne, sa peinture devient plus sombre et plus construite. Il meurt en 1958.
 
 ## Son apport
-<!-- Ce qu'il ou elle change dans la peinture. 3 à 5 phrases. -->
+Autodidacte et fier de l’être, Vlaminck propose une peinture débridée, presque sauvage. Il se vante de « vider ses tubes de peinture sur la toile » : coups de pinceau effrénés, matière épaisse, contrastes exacerbés.
+
+Là où Derain est plus structuré et réfléchi, Vlaminck est pure énergie brute. Son art, profondément émotionnel, est dans la droite lignée de Van Gogh. Après un bref passage par le cubisme, il revient à des paysages plus sobres, aux ciels lourds, dans une veine post-fauve qui marque un retour à la tradition.
 
 ## Citation
-> 
-
-## Sources
-- 
+> « Je voulais brûler avec mes cobalts et mes vermillons l’École des beaux-arts. »

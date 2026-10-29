@@ -24,7 +24,3 @@ type: mouvement
 
 ## Héritage
 <!-- Ce qu'il ouvre, vers quels mouvements. 2 à 3 phrases. -->
-
-## Sources
-<!-- Où tu as vérifié : musée, monographie, article. -->
-- 

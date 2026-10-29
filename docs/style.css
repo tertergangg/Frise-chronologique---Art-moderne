@@ -275,3 +275,15 @@ body[data-vue="ensemble"] .defile { cursor: default; }
   .bande-globale strong { font-size: 1rem; }
   .bande-globale .texte span { font-size: 0.7rem; }
 }
+
+/* ---------- Ajouts de la version 4 : le texte des fiches ---------- */
+.fiche .corps { font-size: 1rem; line-height: 1.6; }
+.fiche .corps h2 { font-size: 1.15rem; font-weight: 800; font-variation-settings: "wdth" 80; line-height: 1.2;
+  margin: 1.6rem 0 0.4rem; padding-top: 0.5rem; border-top: 2px solid var(--encre); }
+.fiche .corps h2:first-child { margin-top: 0.4rem; }
+.fiche .corps p { margin: 0 0 0.8rem; }
+.fiche .corps ul { padding-left: 1.1rem; margin: 0 0 0.8rem; }
+.fiche .corps li { margin-bottom: 0.35rem; }
+.fiche .corps blockquote { margin: 0.4rem 0 1rem; padding: 0.2rem 0 0.2rem 1rem; border-left: 5px solid var(--c);
+  font-size: 1.1rem; font-weight: 600; font-style: normal; }
+.fiche .corps blockquote p { margin: 0; }
