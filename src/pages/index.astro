@@ -1,0 +1,54 @@
+---
+// Page de la frise.
+// Les fichiers style.css, app.js, data.js et le dossier images se trouvent dans le dossier public :
+// Astro les publie tels quels. « is:inline » lui demande de ne pas transformer les scripts.
+---
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>L’art moderne, 1874–1960</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="entete">
+    <div class="titre">
+      <h1>L’art moderne<span>1874–1960</span></h1>
+      <p class="aide">Avance dans le temps avec les décennies en bas de page ou en faisant glisser la frise, et prends du recul avec la vue d’ensemble. Clique sur une bande de couleur pour explorer un mouvement en grand, sur un nom ou une œuvre pour ouvrir sa fiche.</p>
+    </div>
+    <div class="outils">
+      <div class="recherche">
+        <label for="champ-recherche" class="visuellement-cache">Rechercher</label>
+        <input id="champ-recherche" type="search" placeholder="Chercher un artiste, une œuvre…" autocomplete="off">
+        <ul id="resultats" class="resultats" role="listbox" hidden></ul>
+      </div>
+      <label class="bascule"><input type="checkbox" id="majeures"> Œuvres majeures seulement</label>
+    </div>
+    <nav id="sommaire" class="filtres" aria-label="Aller à un mouvement"></nav>
+  </header>
+
+  <div id="bandeau" class="bandeau" hidden></div>
+
+  <main id="defile" class="defile" tabindex="0" aria-label="Frise chronologique">
+    <div id="toile" class="toile"></div>
+  </main>
+
+  <nav id="decennies" class="decennies" aria-label="Aller à une décennie"></nav>
+
+  <div id="bulle" class="bulle" role="tooltip" hidden></div>
+
+  <aside id="panneau" class="panneau" aria-live="polite" hidden>
+    <div id="poignee" class="poignee" role="separator" aria-orientation="vertical" aria-label="Redimensionner la fiche" tabindex="0"></div>
+    <button type="button" id="fermer" class="fermer" aria-label="Fermer la fiche">×</button>
+    <div id="contenu-panneau"></div>
+  </aside>
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/marked@18.0.14/lib/marked.umd.js"></script>
+  <script is:inline src="/data.js"></script>
+  <script is:inline src="/app.js"></script>
+</body>
+</html>

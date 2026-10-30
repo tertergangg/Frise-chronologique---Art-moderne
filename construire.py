@@ -19,7 +19,7 @@ from openpyxl import load_workbook
 ICI = Path(__file__).parent
 TABLEUR = ICI / "donnees" / "frise_art_moderne_base.xlsx"
 FICHES = ICI / "fiches"
-SORTIE = ICI / "docs" / "data.js"
+SORTIE = ICI / "public" / "data.js"
 
 avertissements = []
 

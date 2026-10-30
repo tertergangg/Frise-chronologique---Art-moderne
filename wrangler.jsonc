@@ -2,6 +2,6 @@
   "name": "frise-chronologique---art-moderne",
   "compatibility_date": "2026-10-01",
   "assets": {
-    "directory": "./docs"
+    "directory": "./dist"
   }
 }
