@@ -439,13 +439,15 @@ function ficheArtiste(a) {
       : i.type === "collaboration" ? "Collaboration avec" : i.type === "rivalité" ? "Rivalité avec" : "Lien avec";
     return `<li><span>${verbe} ${lien(autre.id, autre.nom)}${i.explication ? `<small>${esc(i.explication)}</small>` : ""}</span></li>`;
   }).join("");
+  // Un mouvement connu devient un lien ; une valeur inconnue (signalée par construire.py) reste du texte
+  const aussi = a.autres.map((x) => (MOUV[x] ? lien(x, MOUV[x].nom) : esc(x))).join(", ");
   return `<h2>${esc(a.nom)}</h2>
     <p class="sous-titre">${a.naissance ?? "?"}–${a.deces ?? "?"}</p>
     <dl>
       ${a.nationalite ? `<dt>Nationalité</dt><dd>${esc(a.nationalite)}</dd>` : ""}
       ${a.role ? `<dt>Disciplines</dt><dd>${esc(a.role)}</dd>` : ""}
       ${m ? `<dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd>` : ""}
-      ${a.autres ? `<dt>Aussi</dt><dd>${esc(a.autres)}</dd>` : ""}
+      ${aussi ? `<dt>Aussi</dt><dd>${aussi}</dd>` : ""}
     </dl>
     ${a.ficheVide ? aVenir("de cet artiste") : markdown(a.fiche)}
     ${oeuvres.length ? `<h3>Œuvres</h3>${listeOeuvres(oeuvres)}` : ""}

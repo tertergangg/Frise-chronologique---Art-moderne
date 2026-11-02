@@ -75,6 +75,23 @@ def annee(v):
     except (TypeError, ValueError):
         return None
 
+def lire_autres(valeur, ident, ids_mouv, noms_mouv):
+    """Découpe la colonne « Autres mouvements » en liste d'identifiants.
+    Une valeur inconnue est signalée et gardée en texte simple, pour être affichée sans lien."""
+    if not isinstance(valeur, str):
+        return []
+    liste = []
+    for morceau in valeur.split(","):
+        morceau = morceau.strip()
+        if not morceau:
+            continue
+        if morceau not in ids_mouv:
+            suggestion = noms_mouv.get(typo(morceau).lower())
+            conseil = f" (identifiant : « {suggestion} » ?)" if suggestion else ""
+            avertir(f"Artiste {ident} : autre mouvement inconnu « {morceau} »{conseil}")
+            morceau = majuscule(typo(morceau))
+        liste.append(morceau)
+    return liste
 
 def main():
     if not TABLEUR.exists():
@@ -90,6 +107,7 @@ def main():
             "resume": typo(m.get("Résumé court (1 phrase)")), "fiche": md, "ficheVide": vide,
         })
     ids_mouv = {m["id"] for m in mouvements}
+    noms_mouv = {m["nom"].lower(): m["id"] for m in mouvements if m["nom"]}   # pour suggérer l'identifiant
 
     artistes = []
     for a in lire_onglet(wb, "Artistes"):
@@ -100,7 +118,8 @@ def main():
             "id": a["ID"], "nom": typo(a.get("Nom complet")), "naissance": annee(a.get("Naissance")),
             "deces": annee(a.get("Décès")), "nationalite": majuscule(typo(a.get("Nationalité"))),
             "role": majuscule(typo(a.get("Rôle"))),
-            "mouvement": a.get("Mouvement principal"), "autres": typo(a.get("Autres mouvements")),
+            "mouvement": a.get("Mouvement principal"),
+            "autres": lire_autres(a.get("Autres mouvements"), a["ID"], ids_mouv, noms_mouv),
             "phrase": typo(a.get("Phrase-clé (1 phrase)")), "fiche": md, "ficheVide": vide,
         })
     ids_art = {a["id"] for a in artistes}

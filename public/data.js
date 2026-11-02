@@ -109,7 +109,7 @@ window.FRISE = {
    "nationalite": "Française",
    "role": "Peintre",
    "mouvement": "impressionnisme",
-   "autres": null,
+   "autres": [],
    "phrase": "Le chef de file de l’impressionnisme, obsédé par les variations de la lumière.",
    "fiche": "## En une phrase\nChef de file de l’impressionnisme, Monet a passé sa vie à traquer les variations de la lumière, jusqu’à peindre le même motif des dizaines de fois.\n\n## Parcours\n- **Années 1850** : né à Paris en 1840 mais élevé au Havre, il est découvert par le peintre Eugène Boudin, qui l’initie à la peinture en plein air.\n- **1862** : à Paris, dans l’atelier de Charles Gleyre, il rencontre Renoir, Sisley et Bazille.\n- **1874** : il expose *Impression, soleil levant*, une vue du port du Havre à l’aube. Les critiques s’en moquent, et le tableau donne son nom au mouvement.\n- **1883** : il s’installe à Giverny. Grâce au marchand Durand-Ruel, le succès arrive dans les années 1890, avec ses grandes séries (*Meules*, *Cathédrales de Rouen*), puis les *Nymphéas*, qui l’occupent jusqu’à sa mort en 1926.\n\n## Son apport\nComme ses compagnons, Monet rejette les codes de l’art académique. Mais il va plus loin que tous : ce qui l’intéresse, ce n’est plus le sujet, c’est la lumière qui le touche à un moment précis. Les reflets sur l’eau, la brume, les vibrations de l’atmosphère deviennent ses véritables motifs.\n\nD’où ses séries : la même cathédrale, la même meule, peintes à différentes heures et saisons, pour montrer qu’un motif change complètement selon la lumière. À la fin de sa vie, ses *Nymphéas* se dissolvent presque dans la couleur, au point d’annoncer l’abstraction.\n\n## Citation\n> « La couleur est mon obsession quotidienne, ma joie et mon tourment. »",
    "ficheVide": false
@@ -122,7 +122,7 @@ window.FRISE = {
    "nationalite": "Française",
    "role": "Peintre",
    "mouvement": "impressionnisme",
-   "autres": null,
+   "autres": [],
    "phrase": "Le peintre des figures et des moments heureux, baignés de lumière.",
    "fiche": "## En une phrase\nMaître de l’impressionnisme et peintre des figures, Renoir a donné l’image d’un monde heureux, fait de fêtes, de femmes et d’enfants baignés de lumière.\n\n## Parcours\n- **1862** : dans l’atelier de Charles Gleyre, il se lie avec Monet, Bazille et Sisley. En 1869, il peint aux côtés de Monet à La Grenouillère, et les deux hommes inventent presque ensemble la touche impressionniste.\n- **1876** : *Le Bal du moulin de la Galette*, l’un des sommets du mouvement : la lumière filtre à travers les feuillages et danse sur les visages.\n- **1881** : après *Le Déjeuner des canotiers*, un voyage en Italie et la découverte de Raphaël le poussent vers un style plus classique, au dessin plus ferme.\n- **Années 1900** : installé dans le Midi, il peint jusqu’au bout de nombreux nus et portraits, malgré la maladie qui paralyse ses mains. Il meurt en 1919.\n\n## Son apport\nRenoir est impressionniste de 1869 au début des années 1880 environ. Il partage avec ses amis la touche rapide et la palette claire, mais là où Monet s’intéresse au paysage, lui s’intéresse avant tout aux êtres humains : la vie moderne, les loisirs, les moments de bonheur partagés.\n\nSa touche sensuelle et ses couleurs lumineuses en font, dans l’imaginaire populaire, le peintre de la femme et de l’enfance. À la fin de sa vie, il cherche à peindre quelque chose de plus intemporel, comme une forme d’éternité.\n\n## Citation\n> « Pour moi, un tableau doit être une chose aimable, joyeuse et jolie, oui jolie ! »",
    "ficheVide": false
@@ -135,7 +135,7 @@ window.FRISE = {
    "nationalite": "Française",
    "role": "Peintre",
    "mouvement": "impressionnisme",
-   "autres": null,
+   "autres": [],
    "phrase": "Le peintre du mouvement, des danseuses aux champs de courses.",
    "fiche": "## En une phrase\nSouvent classé parmi les impressionnistes, Degas se voulait pourtant réaliste et indépendant : un peintre du mouvement, des danseuses aux chevaux de course.\n\n## Parcours\n- **Années 1850** : issu d’une famille bourgeoise parisienne, très cultivé, il se forme en copiant les grands maîtres et voue une admiration sans limite à Ingres.\n- **1874** : ami de Manet, il participe à la première exposition impressionniste, puis à presque toutes les suivantes jusqu’en 1886.\n- **1881** : il expose *La Petite Danseuse de quatorze ans*, une sculpture habillée de vrais vêtements, qui fait scandale.\n- **Années 1890** : sa vue baisse, il se tourne vers le pastel, le fusain et la sculpture. Il meurt en 1917.\n\n## Son apport\nDegas refuse l’étiquette d’impressionniste : il peint rarement en plein air, et il n’abandonne jamais le dessin, hérité d’Ingres. Ce qui le passionne, c’est le mouvement et la vie de Paris : les répétitions de ballet, les courses hippiques, les cafés, les blanchisseuses, les théâtres.\n\nSa grande modernité tient à ses cadrages : décentrés, coupés, comme pris sur le vif, inspirés de la photographie et des estampes japonaises. Il offre des vues intimes, parfois mélancoliques, de la vie de ses contemporains (*L’Absinthe*).\n\n## Citation\n> « On ne peint bien que ce que l’on connaît par cœur. »",
    "ficheVide": false
@@ -148,7 +148,9 @@ window.FRISE = {
    "nationalite": "Franco-danoise (né aux Antilles danoises)",
    "role": "Peintre",
    "mouvement": "impressionnisme",
-   "autres": "post-impressionnisme",
+   "autres": [
+    "post-impressionnisme"
+   ],
    "phrase": "Le doyen et le mentor du groupe, seul présent aux huit expositions.",
    "fiche": "## En une phrase\nDoyen et pilier de l’impressionnisme, Pissarro est le seul à avoir participé à ses huit expositions, et le grand maître de toute une génération.\n\n## Parcours\n- **1855** : né en 1830 sur l’île de Saint-Thomas, dans les Antilles danoises, il arrive à Paris. Il se lie avec Monet, Manet, Cézanne.\n- **1863** : il expose au Salon des refusés, puis participe en 1874 à la première exposition impressionniste chez Nadar. Il rencontre aussi le marchand Paul Durand-Ruel.\n- **Années 1870** : installé à Pontoise, il peint inlassablement les paysages et les villages des environs, et y accueille Cézanne et Gauguin.\n- **1885-1890** : il s’essaie au pointillisme aux côtés de Seurat et Signac, avant de revenir à une touche plus libre. Il s’installe à Éragny, et meurt en 1903.\n\n## Son apport\nInfluencé d’abord par le réalisme poétique de Corot, Pissarro découvre ensuite l’impressionnisme, puis expérimente le pointillisme : il n’a cessé de faire évoluer sa touche tout au long de sa carrière.\n\nIl aime les sujets simples : les champs, les vergers, les paysans, les routes de campagne, puis à la fin de sa vie les vues de villes (Rouen, Paris). Mais son rôle va au-delà de ses toiles : généreux et ouvert, il a été un véritable mentor, avec une influence majeure sur Cézanne et Gauguin.\n\n## Citation\n> « Bienheureux ceux qui voient de belles choses dans des endroits humbles où d’autres ne voient rien. »",
    "ficheVide": false
@@ -161,7 +163,7 @@ window.FRISE = {
    "nationalite": "Française",
    "role": "Peintre",
    "mouvement": "impressionnisme",
-   "autres": null,
+   "autres": [],
    "phrase": "La première femme du groupe impressionniste, peintre de l’intimité.",
    "fiche": "## En une phrase\nPremière femme à rejoindre le groupe impressionniste, Berthe Morisot a peint avec une touche d’une rare légèreté l’intimité des femmes et des enfants.\n\n## Parcours\n- **Années 1860** : née en 1841 à Bourges, elle apprend la peinture en copiant au Louvre, puis travaille auprès de Camille Corot.\n- **1868** : elle rencontre Édouard Manet, pose pour lui (*Le Balcon*), et devient son amie.\n- **1874** : elle participe à la première exposition impressionniste, où elle présente *Le Berceau*. La même année, elle épouse Eugène Manet, frère du peintre. Elle exposera à sept des huit expositions du groupe.\n- **1886** : elle organise la dernière exposition impressionniste. Elle meurt en 1895.\n\n## Son apport\nÀ une époque où les femmes n’ont pas accès à l’École des beaux-arts et ne peuvent guère peindre seules dans la rue ou au café, Morisot s’impose comme une impressionniste à part entière. Ses sujets sont ceux de son monde : intérieurs, jardins, scènes de toilette, portraits de sa sœur et de sa fille.\n\nSa touche est l’une des plus libres du groupe : rapide, presque esquissée, avec des blancs lumineux qui donnent à ses toiles une grande fraîcheur. Longtemps restée dans l’ombre de ses collègues masculins, elle est aujourd’hui reconnue comme l’une des grandes figures du mouvement.\n\n## Citation\n> « Je ne crois pas qu’il y ait jamais eu un homme traitant une femme d’égal à égal, et c’est tout ce que j’aurais demandé, car je sais que je les vaux. »",
    "ficheVide": false
@@ -174,7 +176,7 @@ window.FRISE = {
    "nationalite": "Néerlandaise",
    "role": "Peintre",
    "mouvement": "post-impressionnisme",
-   "autres": null,
+   "autres": [],
    "phrase": "La couleur comme langage des émotions.",
    "fiche": "## En une phrase\nPionnier du post-impressionnisme, Van Gogh a fait de la couleur le langage de ses émotions, et annonce à lui seul le fauvisme et l’expressionnisme.\n\n## Parcours\n- **1880** : après avoir été marchand d’art puis prédicateur, il décide à 27 ans de devenir peintre. Ses premières toiles, aux Pays-Bas, sont sombres et terriennes (*Les Mangeurs de pommes de terre*, 1885).\n- **1886** : à Paris, chez son frère Theo, il découvre les impressionnistes et les estampes japonaises : sa palette s’éclaircit d’un coup.\n- **1888** : il s’installe à Arles, où il rêve de fonder un atelier d’artistes. Gauguin le rejoint, mais les deux hommes s’entendent mal ; après une violente dispute, Van Gogh se tranche l’oreille. Il entre ensuite à l’asile de Saint-Rémy-de-Provence, où il peint *La Nuit étoilée*.\n- **1890** : à Auvers-sur-Oise, suivi par le docteur Gachet, il peint frénétiquement, avant de mourir en juillet, à 37 ans.\n\n## Son apport\nÀ Arles, Van Gogh fait de la couleur l’objet même de son œuvre : il cherche l’intensité maximale des tons et des contrastes. La couleur n’est plus tenue de ressembler au réel (ses ciels en sont le meilleur exemple) : c’est en cela qu’il dépasse l’impressionnisme. Sa touche épaisse et tourbillonnante rend visible son état intérieur.\n\nIl laisse plus de 800 toiles, mais n’en aurait vendu qu’une seule de son vivant, *La Vigne rouge*. Mort dans un quasi-anonymat, il devient quelques années plus tard une référence absolue pour les fauves et les expressionnistes.\n\n## Citation\n> « Au lieu de chercher à rendre exactement ce que j’ai devant les yeux, je me sers de la couleur plus arbitrairement pour m’exprimer fortement. »",
    "ficheVide": false
@@ -187,7 +189,9 @@ window.FRISE = {
    "nationalite": "Française",
    "role": "Peintre",
    "mouvement": "post-impressionnisme",
-   "autres": "impressionnisme",
+   "autres": [
+    "impressionnisme"
+   ],
    "phrase": "Le « père de l’art moderne », qui construit la nature par volumes.",
    "fiche": "## En une phrase\nSouvent appelé le « père de l’art moderne », Cézanne a voulu rendre l’impressionnisme solide, en construisant ses tableaux par volumes et par plans de couleur.\n\n## Parcours\n- **Années 1860** : né à Aix-en-Provence en 1839, ami d’enfance d’Émile Zola, il rejoint Paris et fréquente les futurs impressionnistes.\n- **1872** : il travaille aux côtés de Pissarro à Pontoise, qui l’initie à la peinture claire. Il participe aux expositions impressionnistes de 1874 et 1877, sous les moqueries.\n- **Années 1880** : il se retire en Provence et peint inlassablement les mêmes motifs : la montagne Sainte-Victoire, les natures mortes aux pommes, les joueurs de cartes, les baigneuses.\n- **1895** : le marchand Ambroise Vollard lui consacre sa première exposition personnelle. Il meurt en 1906, un an avant une grande rétrospective qui bouleverse les jeunes peintres.\n\n## Son apport\nS’il partage avec les impressionnistes le goût de la lumière et du paysage, Cézanne n’est pas un peintre de l’instant : c’est un peintre de la durée et de la structure. Il décompose la nature en formes simples et abandonne le clair-obscur pour modeler les volumes avec la couleur seule, posée en petites touches comme des briques. Il voulait, disait-il, refaire « du Poussin sur nature ».\n\nCe travail sur la géométrie ouvre directement la voie au cubisme. Picasso dira de lui qu’il était « notre père à tous ».\n\n## Citation\n> « Traitez la nature par le cylindre, la sphère, le cône. »",
    "ficheVide": false
@@ -200,7 +204,7 @@ window.FRISE = {
    "nationalite": "Française",
    "role": "Peintre",
    "mouvement": "post-impressionnisme",
-   "autres": null,
+   "autres": [],
    "phrase": "Des aplats de couleur symboliques, et un ailleurs rêvé jusqu’en Polynésie.",
    "fiche": "## En une phrase\nFigure majeure du post-impressionnisme, Gauguin a fait de la couleur un langage spirituel et symbolique, et cherché loin de l’Occident une peinture plus « primitive ».\n\n## Parcours\n- **1874** : né à Paris en 1848 et élevé au Pérou jusqu’à sept ans, ancien marin devenu agent de change, il rencontre Pissarro et peint d’abord en amateur. Il participe à cinq expositions impressionnistes entre 1879 et 1886.\n- **1888** : à Pont-Aven, en Bretagne, il invente avec Émile Bernard le synthétisme : des aplats de couleurs franches, des contours marqués et une forte charge symbolique (*La Vision après le sermon*). La même année, il rejoint Van Gogh à Arles, un séjour qui tourne au drame.\n- **1891** : déçu par l’Occident et par le faible succès de ses toiles, il part pour Tahiti.\n- **1901** : il s’installe aux îles Marquises, où il meurt en 1903.\n\n## Son apport\nGauguin s’éloigne de l’impressionnisme dès 1886 : il ne veut plus copier la nature, mais la recréer à partir de son imagination et de ses rêves. Ses couleurs, posées en grands aplats, sont choisies pour leur force expressive plus que pour leur vérité.\n\nEn Polynésie, il cherche une inspiration tournée vers la spiritualité et ce qu’il appelle la « pureté » des civilisations dites primitives, ouvrant la voie au primitivisme. Son œuvre est aujourd’hui regardée avec un œil plus critique, notamment pour son regard colonial et ses relations avec de très jeunes Tahitiennes.\n\n## Citation\n> « Un conseil, ne copiez pas trop d’après nature, l’art est une abstraction, tirez-la de la nature en rêvant devant, et pensez plus à la création qu’au résultat. »",
    "ficheVide": false
@@ -213,7 +217,9 @@ window.FRISE = {
    "nationalite": "Française",
    "role": "Peintre",
    "mouvement": "post-impressionnisme",
-   "autres": "néo-impressionnisme",
+   "autres": [
+    "Néo-impressionnisme"
+   ],
    "phrase": "L’inventeur du pointillisme, qui peint avec la science des couleurs.",
    "fiche": "## En une phrase\nChef de file du pointillisme, Seurat a voulu dépasser l’impressionnisme par la science : des milliers de petits points de couleur pure, posés selon des règles précises.\n\n## Parcours\n- **1878** : né en 1859 à Paris, il entre à l’École des beaux-arts, où il reçoit une formation très classique, dans la tradition d’Ingres.\n- **1884** : *Une baignade à Asnières*, refusée au Salon officiel, est exposée au Salon des indépendants. Il y rencontre Paul Signac.\n- **1886** : il présente *Un dimanche après-midi à l’île de la Grande Jatte* à la dernière exposition impressionniste. C’est l’événement : le critique Félix Fénéon parle de « néo-impressionnisme ».\n- **1891** : il meurt brutalement à 31 ans, et Signac reprend le flambeau.\n\n## Son apport\nAdmirateur de Monet, Seurat veut aller plus loin que lui, mais dans la direction opposée. Passionné par les théories scientifiques de la couleur (le chimiste Chevreul notamment), il ne mélange plus ses couleurs sur la palette : il les juxtapose en petits points, et c’est l’œil du spectateur qui fait le mélange.\n\nLà où l’impressionnisme capte l’instant, Seurat veut figer le temps. Ses compositions sont rigoureuses, ses personnages presque immobiles, comme des statues : ils prennent une dimension symbolique qui donne à son œuvre une gravité nouvelle.\n\n## Citation\n> « L’art, c’est l’harmonie. L’harmonie, c’est l’analogie des contraires, l’analogie des semblables, de ton, de teinte, de ligne. »",
    "ficheVide": false
@@ -226,7 +232,7 @@ window.FRISE = {
    "nationalite": "Française",
    "role": "Peintre",
    "mouvement": "fauvisme",
-   "autres": null,
+   "autres": [],
    "phrase": "Le chef de file des fauves, qui a fait de la couleur une libération.",
    "fiche": "## En une phrase\nChef de file du fauvisme, Matisse a fait de la couleur pure le cœur de sa peinture, et n’a jamais cessé de se réinventer, jusqu’à ses célèbres papiers découpés.\n\n## Parcours\n- **1891** : il abandonne une courte carrière dans le droit pour étudier l’art à Paris. Il fréquente l’atelier de Gustave Moreau, qui pousse ses élèves à briser les codes et lui prédit : « Vous allez simplifier la peinture. »\n- **1905** : il expose *La Femme au chapeau*, un portrait de sa femme, au Salon d’automne. Le scandale fait de lui le chef de file des « Fauves ».\n- **De 1906 à 1930** : ses voyages en Algérie, au Maroc puis à Tahiti lui font découvrir d’autres rapports à la couleur et à l’ornement. Dans les années 1920, avec ses *Odalisques*, il étudie longuement le corps féminin, qu’il simplifie jusqu’à l’essentiel.\n- **Années 1940** : il invente les gouaches découpées, qu’il décrit comme « dessiner avec des ciseaux » : des papiers peints à la gouache, découpés puis collés en grandes compositions (*Jazz*, 1947).\n\n## Son apport\nAvec Matisse, la couleur n’a plus besoin de ressembler au réel : elle sert à exprimer. Mais il ne s’arrête pas au fauvisme, et c’est d’ailleurs le seul du groupe à poursuivre dans cette voie. Pour lui, le tableau se pense comme un tout : les corps, les vides autour d’eux et les proportions comptent autant les uns que les autres, et les couleurs doivent s’accorder entre elles un peu comme les notes d’un morceau de musique.\n\nC’est aussi un artiste qui touche à tout : peinture, dessin, gravure, sculpture, et enfin découpage. Pourtant, derrière toutes ces évolutions, son œuvre suit au fond une seule ligne : la recherche d’un équilibre, d’une harmonie entre les couleurs et les formes.\n\n## Citation\n> « La couleur surtout, peut-être plus que le dessin, est une libération. »",
    "ficheVide": false
@@ -239,7 +245,7 @@ window.FRISE = {
    "nationalite": "Française",
    "role": "Peintre",
    "mouvement": "fauvisme",
-   "autres": null,
+   "autres": [],
    "phrase": "Le fauve des contrastes violents, revenu ensuite à la tradition.",
    "fiche": "## En une phrase\nGrande figure du fauvisme aux côtés de Matisse, Derain a poussé la couleur pure jusqu’à une violence somptueuse, avant de revenir à la tradition.\n\n## Parcours\n- **1900** : né à Chatou en 1880, il rencontre Maurice de Vlaminck, avec qui il partage un atelier.\n- **1905** : il passe l’été à Collioure avec Matisse, puis expose au Salon d’automne, dans la fameuse « cage aux fauves ».\n- **1906** : le marchand Ambroise Vollard l’envoie à Londres, où il peint une série de vues de la Tamise, en écho à celles de Monet.\n- **Années 1910-1920** : après de brèves expériences cubistes, il revient à une peinture classique et devient l’un des peintres français les plus célèbres au monde. En 1941, sa participation à un voyage de propagande en Allemagne nazie ternit durablement sa réputation. Il meurt en 1954.\n\n## Son apport\nDe 1905 à 1909, Derain incarne parfaitement la révolution fauve. Là où Matisse privilégie la fluidité et la sensualité, Derain travaille par zones de couleur bien délimitées, avec des contrastes très forts : ses paysages de Collioure ressemblent à des mosaïques vibrantes. Chez lui, on ressent toute l’intensité de la couleur pure, presque agressive.\n\nEnsuite, il prend le contre-pied des avant-gardes : inspiré par Poussin, Cézanne et les maîtres anciens, il cherche une harmonie intemporelle. Il réalise aussi des décors et costumes pour les Ballets russes de Diaghilev, des sculptures et des gravures.\n\n## Citation\n> « Les couleurs devenaient des cartouches de dynamite. »",
    "ficheVide": false
@@ -252,7 +258,7 @@ window.FRISE = {
    "nationalite": "Française",
    "role": "Peintre",
    "mouvement": "fauvisme",
-   "autres": null,
+   "autres": [],
    "phrase": "Le plus fougueux des fauves, qui peignait avec la couleur sortie du tube.",
    "fiche": "## En une phrase\nLe plus fougueux des fauves, Vlaminck peignait avec la couleur pure sortie du tube, dans une véritable explosion d’énergie.\n\n## Parcours\n- **1900** : né à Paris en 1876, coureur cycliste et violoniste, il rencontre André Derain dans un train. Les deux hommes partagent un atelier à Chatou.\n- **1901** : l’exposition Van Gogh chez Bernheim-Jeune est une révélation : il dira l’aimer plus que son propre père.\n- **1905** : il expose au Salon d’automne aux côtés de Matisse et Derain.\n- **Après 1907** : sous l’influence de Cézanne, sa peinture devient plus sombre et plus construite. Il meurt en 1958.\n\n## Son apport\nAutodidacte et fier de l’être, Vlaminck propose une peinture débridée, presque sauvage. Il se vante de « vider ses tubes de peinture sur la toile » : coups de pinceau effrénés, matière épaisse, contrastes exacerbés.\n\nLà où Derain est plus structuré et réfléchi, Vlaminck est pure énergie brute. Son art, profondément émotionnel, est dans la droite lignée de Van Gogh. Après un bref passage par le cubisme, il revient à des paysages plus sobres, aux ciels lourds, dans une veine post-fauve qui marque un retour à la tradition.\n\n## Citation\n> « Je voulais brûler avec mes cobalts et mes vermillons l’École des beaux-arts. »",
    "ficheVide": false
@@ -265,7 +271,7 @@ window.FRISE = {
    "nationalite": "Espagnole",
    "role": "Peintre",
    "mouvement": "cubisme",
-   "autres": "surréalisme (proche)",
+   "autres": [],
    "phrase": "Le cofondateur du cubisme, qui n’a jamais cessé de se réinventer.",
    "fiche": "## En une phrase\nCofondateur du cubisme et peintre le plus célèbre du XXe siècle, Picasso n’a jamais cessé de se réinventer, comme s’il avait vécu plusieurs vies d’artiste en une seule.\n\n## Parcours\n- **1896** : né à Málaga en 1881, il entre à l’école des beaux-arts de Barcelone à 15 ans. Après plusieurs séjours, il s’installe à Paris en 1904, au Bateau-Lavoir.\n- **1901-1906** : la période bleue, mélancolique, peuplée de misère et de solitude, puis la période rose, plus lumineuse, avec ses arlequins et ses saltimbanques.\n- **1907** : *Les Demoiselles d’Avignon*, véritable tremblement de terre esthétique. Avec Braque, il invente le cubisme.\n- **1937** : *Guernica*, peint après le bombardement de la ville basque par l’aviation allemande, transforme l’horreur de la guerre en symbole universel. Il meurt en 1973, à Mougins.\n\n## Son apport\nPicasso a provoqué des ruptures en série, d’abord dans sa propre œuvre, ensuite dans tout le monde de l’art. Après le cubisme viennent le retour au classicisme, les expériences surréalistes, les collages, la sculpture, la céramique… Il ne cherche jamais la perfection d’un style, mais la découverte d’un nouveau langage.\n\nMais derrière le génie, il y a l’homme : autoritaire, méprisant envers ses proches, et souvent cruel envers les femmes qui ont partagé sa vie. Picasso fascine autant qu’il dérange, parce qu’il a fait de sa vie une extension de son œuvre : libre, excessive, démesurée.\n\n## Citation\n> « Chercher ne signifie rien en peinture. Ce qui compte, c’est trouver. »",
    "ficheVide": false
@@ -278,7 +284,9 @@ window.FRISE = {
    "nationalite": "Française",
    "role": "Peintre",
    "mouvement": "cubisme",
-   "autres": "fauvisme",
+   "autres": [
+    "fauvisme"
+   ],
    "phrase": "L’autre inventeur du cubisme, peintre de l’équilibre et de la mesure.",
    "fiche": "## En une phrase\nCofondateur du cubisme aux côtés de Picasso, Braque est le peintre de l’équilibre et de la mesure, là où Picasso est celui du fracas.\n\n## Parcours\n- **1905-1907** : né en 1882 à Argenteuil et élevé au Havre, il passe par le fauvisme, sous l’influence de Matisse et Derain, avec des toiles aux couleurs explosives.\n- **1907-1908** : sa rencontre avec Picasso transforme son art. Ses *Maisons à L’Estaque* (1908), refusées au Salon d’automne, inspirent le mot « cubisme ».\n- **1912** : il invente le papier collé, en intégrant des morceaux de papier peint imitant le bois dans ses dessins.\n- **1915** : grièvement blessé à la tête pendant la guerre, il reprend la peinture plus tard, dans un style plus apaisé. En 1953, il peint le plafond d’une salle du Louvre, où il est exposé de son vivant en 1961. Il meurt en 1963.\n\n## Son apport\nAvec Picasso, Braque renonce à la frénésie colorée pour chercher l’essence des formes : le réel est décomposé puis reconstruit en volumes, la peinture devient architecture. Les deux hommes avancent si près l’un de l’autre que Braque comparait leur duo à une cordée en montagne.\n\nMais Braque n’est pas un peintre de la rupture violente : chez lui, tout se joue dans le rythme, l’harmonie des formes, la densité de l’espace. Après la guerre, il développe un cubisme plus doux, où les natures mortes, les instruments de musique et les oiseaux envahissent ses toiles, et où le chaos du monde se transforme en ordre poétique.\n\n## Citation\n> « Le but, c’est d’atteindre à une chose jamais vue et qui pourtant existe. »",
    "ficheVide": false
@@ -291,7 +299,7 @@ window.FRISE = {
    "nationalite": "Espagnole",
    "role": "Peintre",
    "mouvement": "cubisme",
-   "autres": null,
+   "autres": [],
    "phrase": "Le plus rigoureux des cubistes, architecte de toiles parfaitement équilibrées.",
    "fiche": "## En une phrase\nTroisième pilier du cubisme, Juan Gris en est le plus rigoureux : chaque toile est une architecture parfaitement équilibrée, où le monde se reconstruit.\n\n## Parcours\n- **1906** : né à Madrid en 1887, José Victoriano González-Pérez vend tout ce qu’il possède pour rejoindre Paris, où il s’installe au Bateau-Lavoir, près de Picasso.\n- **1911** : après avoir vécu de dessins pour des journaux satiriques, il se consacre entièrement à la peinture, sous l’influence de Picasso et de Braque.\n- **1912** : il expose son *Portrait de Pablo Picasso*, hommage à son aîné et manifeste de son propre cubisme.\n- **1914-1918** : ses années les plus abouties, où il devient l’un des grands maîtres du cubisme synthétique. Il meurt en 1927, à seulement 40 ans.\n\n## Son apport\nDe 1911 à 1913, Gris explore le cubisme analytique avec méthode et précision. Mais c’est dans le cubisme synthétique qu’il donne toute sa mesure : chaque toile devient un édifice d’équilibre et de cohérence.\n\nGris, c’est la rigueur absolue, la construction minutieuse de la toile. Mais il y introduit aussi une forme de douceur et de sérénité, qui adoucit cet univers géométrique. Contrairement à Picasso, il n’a jamais quitté le cubisme : il l’a approfondi jusqu’au bout, fidèle à ses trois mots d’ordre : travail, silence, patience. Dalí voyait en lui « le plus grand et le plus orthodoxe des peintres cubistes », et Picasso lui-même dira : « C’est beau, un peintre qui savait ce qu’il faisait. » Gris, c’est l’ordre dans le désordre, le calme dans le fracas.\n\n## Citation\n> « Cézanne d’une bouteille fait un cylindre, moi d’un cylindre je fais une bouteille. »",
    "ficheVide": false
@@ -304,7 +312,7 @@ window.FRISE = {
    "nationalite": "Allemande",
    "role": "Peintre",
    "mouvement": "expressionnisme",
-   "autres": null,
+   "autres": [],
    "phrase": "Le fondateur de Die Brücke, peintre de la fièvre de la ville moderne.",
    "fiche": "## En une phrase\nFondateur du groupe Die Brücke, Kirchner est le peintre de la fièvre de la vie moderne : ses rues de Berlin, aux corps anguleux et aux couleurs acides, sont devenues l’image même de l’expressionnisme.\n\n## Parcours\n- **1905** : né en 1880 à Aschaffenburg, étudiant en architecture à Dresde, il fonde Die Brücke avec Erich Heckel, Karl Schmidt-Rottluff et Fritz Bleyl.\n- **1911** : il s’installe à Berlin, où il peint ses célèbres *Scènes de rue* (1913-1915).\n- **1915** : mobilisé, il s’effondre nerveusement et est réformé. Il est soigné puis s’installe en Suisse, près de Davos, où il peint surtout des paysages de montagne.\n- **1937** : les nazis classent son œuvre parmi l’« art dégénéré » et en confisquent plus de 600 pièces. Dévasté, il met fin à ses jours en 1938.\n\n## Son apport\nAvec ses compagnons de Die Brücke, Kirchner revendique un art libre, instinctif, viscéral, contre la société bourgeoise et industrielle. Dès ses débuts, il cherche à exprimer ses émotions plutôt que l’apparence du monde : lignes brisées, gestes rapides, teintes acides. Kirchner peint comme on respire trop vite.\n\nFasciné par l’art dit primitif, il simplifie ses traits et pratique beaucoup la gravure sur bois. Après la guerre, en Suisse, son style s’apaise au contact des paysages, qui deviennent une forme de refuge. Sa peinture ne le sauve pas, mais elle témoigne de ce qu’il traverse, jusqu’au bout.",
    "ficheVide": false
@@ -317,7 +325,7 @@ window.FRISE = {
    "nationalite": "Allemande (citoyen danois après 1920)",
    "role": "Peintre",
    "mouvement": "expressionnisme",
-   "autres": null,
+   "autres": [],
    "phrase": "Un maître de la couleur brute, à l’engagement nazi longtemps caché.",
    "fiche": "## En une phrase\nPilier aussi fascinant que controversé de l’expressionnisme, Nolde a peint la foi, la nature et les fleurs avec une couleur brute et flamboyante.\n\n## Parcours\n- **1902** : né Emil Hansen en 1867 dans le village de Nolde, dans le nord de l’Allemagne, il prend le nom de son village natal. Il a d’abord été sculpteur sur bois et professeur de dessin.\n- **1906-1907** : il rejoint brièvement Die Brücke, puis quitte le groupe après des désaccords.\n- **1911-1912** : il peint *La Vie du Christ*, un polyptyque d’une violence qui choque, inhabituelle pour un sujet religieux.\n- **1937** : bien que membre du parti nazi depuis le milieu des années 1930, il voit plus de 1 000 de ses œuvres confisquées comme « art dégénéré ». Il meurt en 1956.\n\n## Son apport\nL’art de Nolde est le fruit d’une longue maturation. Après des débuts influencés par l’impressionnisme, il forge un style très personnel : chez lui, la couleur n’est pas un ornement, mais une force vivante, posée en larges touches épaisses, avec des tons crus, presque violents. Ses paysages, ses mers déchaînées et ses fleurs dégagent une atmosphère mystique.\n\nMais derrière l’éclat de la couleur se cache l’ombre du peintre : ouvertement antisémite, il a soutenu le régime nazi. Après la guerre, il se présente comme une simple victime de la censure, et ce n’est que dans les années 2010 que des recherches approfondies révèlent l’ampleur de son engagement.",
    "ficheVide": false
@@ -330,7 +338,7 @@ window.FRISE = {
    "nationalite": "Allemande",
    "role": "Peintre",
    "mouvement": "expressionnisme",
-   "autres": null,
+   "autres": [],
    "phrase": "Les animaux et la couleur symbolique, miroirs d’une harmonie perdue.",
    "fiche": "## En une phrase\nCofondateur du Blaue Reiter, Franz Marc a peint les animaux comme le miroir d’une harmonie perdue, avec des couleurs symboliques qui l’ont mené jusqu’à l’abstraction.\n\n## Parcours\n- **1900** : né à Munich en 1880, il abandonne la théologie pour les Beaux-Arts. À Paris, il découvre Van Gogh, Gauguin et Cézanne, qui deviennent ses modèles.\n- **1910** : il rencontre August Macke, puis Vassily Kandinsky.\n- **1911** : il fonde avec Kandinsky Der Blaue Reiter, et peint ses célèbres chevaux bleus.\n- **1916** : après ses premières toiles abstraites en 1913-1914, il est tué au front, près de Verdun, à 36 ans.\n\n## Son apport\nTrès tôt, Marc se détourne de la figure humaine, qu’il juge corrompue. Il ne peint pas les animaux pour eux-mêmes, mais à travers eux : leur regard, leur instinct, leur innocence deviennent l’image d’une harmonie que la modernité a brisée. Ses couleurs ont un sens précis : le bleu pour le principe masculin et spirituel, le jaune pour la douceur féminine, le rouge pour la matière.\n\nAu contact du cubisme et du futurisme, ses formes se fragmentent, et la sérénité de ses débuts laisse place à l’angoisse d’un monde au bord du gouffre. Jusqu’à l’abstraction, où il cherche « la pureté du sentiment de la vie ».\n\n## Citation\n> « Très tôt, j’ai trouvé l’homme laid ; l’animal me paraissait plus beau, plus pur. »",
    "ficheVide": false
@@ -343,7 +351,9 @@ window.FRISE = {
    "nationalite": "Russe (puis allemande, puis française)",
    "role": "Peintre, théoricien",
    "mouvement": "abstraction",
-   "autres": "expressionnisme",
+   "autres": [
+    "expressionnisme"
+   ],
    "phrase": "Le grand théoricien de l’abstraction, qui voulait peindre la musique.",
    "fiche": "## En une phrase\nPionnier et grand théoricien de l’art abstrait, Kandinsky a voulu faire de la peinture une musique pour les yeux, où les couleurs chantent et les lignes dansent.\n\n## Parcours\n- **1896** : né à Moscou en 1866, juriste brillant, il est bouleversé par une *Meule* de Monet exposée à Moscou. À 30 ans, il abandonne le droit pour la peinture et part pour Munich.\n- **1911** : il publie *Du spirituel dans l’art* et fonde Der Blaue Reiter avec Franz Marc. Ses toiles deviennent pleinement abstraites.\n- **1922-1933** : il enseigne au Bauhaus, en Allemagne, où son abstraction devient plus géométrique.\n- **1933** : chassé par les nazis, il s’installe à Neuilly-sur-Seine, où il meurt en 1944.\n\n## Son apport\nOn le présente souvent comme le fondateur de l’art abstrait, ce qui n’est pas tout à fait exact : d’autres, comme Malevitch, Mondrian ou Kupka, y arrivent au même moment. Mais c’est lui qui l’a le plus marqué. Attention, ses toiles ne sont jamais un chaos : Kandinsky ne jette pas ses émotions sur la toile, il les compose. Il a théorisé chaque couleur, chaque forme, avec une rigueur presque scientifique.\n\nLa musique est au cœur de tout son travail : il associe les couleurs à des sons et à des émotions, et ce n’est pas un hasard si ses toiles s’appellent *Compositions* ou *Improvisations*. Pour lui, l’art est une « nécessité intérieure », une quête spirituelle. Sa peinture se regarde, s’écoute et se danse.\n\n## Citation\n> « Les couleurs sont les touches d’un clavier, les yeux sont les marteaux, et l’âme est le piano lui-même, aux cordes nombreuses, qui entrent en vibration. »",
    "ficheVide": false
@@ -356,7 +366,7 @@ window.FRISE = {
    "nationalite": "Russe (né à Kiev)",
    "role": "Peintre, théoricien",
    "mouvement": "abstraction",
-   "autres": null,
+   "autres": [],
    "phrase": "L’inventeur du suprématisme et de son célèbre carré noir.",
    "fiche": "## En une phrase\nInventeur du suprématisme, Malevitch a poussé la peinture jusqu’à son point zéro, avec un simple carré noir sur fond blanc, pour la reconstruire à partir de rien.\n\n## Parcours\n- **1904** : né en 1879 près de Kiev, il s’installe à Moscou et traverse en autodidacte tous les mouvements d’avant-garde : impressionnisme, fauvisme, puis cubo-futurisme.\n- **1915** : à l’exposition « 0,10 » de Petrograd, il présente ses toiles suprématistes, dont le *Carré noir*, accroché en hauteur dans un angle, à la place traditionnelle des icônes.\n- **1918** : *Carré blanc sur fond blanc*, l’aboutissement de sa démarche.\n- **Fin des années 1920** : il revient à la figuration, mais le régime stalinien le marginalise. Il meurt en 1935.\n\n## Son apport\nPour Malevitch, le sujet a tué l’essence de la peinture, qui est la couleur et la matière. Il faut donc faire table rase et revenir au « zéro des formes », pour reconstruire un art totalement pur. C’est le plus radical des peintres : il ne veut pas réformer l’art, il veut le recréer.\n\nIl faut avoir ce contexte en tête devant ses toiles : du noir, du blanc, un carré… mais ce vide n’est pas une fin, c’est une renaissance. Comme Kandinsky, il cherche à révéler l’essence invisible des choses, mais par le chemin inverse : non pas l’abondance des couleurs et des formes, mais le dépouillement le plus total.\n\n## Citation\n> « Ce qui a valeur en soi dans la création picturale, c’est la couleur et la facture, c’est l’essence picturale, mais cette essence a été tuée par le sujet. »",
    "ficheVide": false
@@ -369,7 +379,7 @@ window.FRISE = {
    "nationalite": "Néerlandaise",
    "role": "Peintre, théoricien",
    "mouvement": "abstraction",
-   "autres": null,
+   "autres": [],
    "phrase": "L’abstraction réduite à des lignes droites et à quelques couleurs pures.",
    "fiche": "## En une phrase\nPionnier de l’abstraction géométrique, Mondrian a réduit la peinture à des lignes droites et à quelques couleurs pures, pour atteindre une harmonie universelle.\n\n## Parcours\n- **1908-1911** : né en 1872 aux Pays-Bas, paysagiste d’abord, il peint une série d’arbres qui se simplifient de toile en toile, jusqu’à devenir un réseau de lignes.\n- **1912** : à Paris, il découvre le cubisme, qu’il pousse vers l’abstraction.\n- **1917** : il fonde avec Theo van Doesburg la revue *De Stijl*, et invente le néoplasticisme : une grille de lignes noires, des rectangles de couleurs primaires, du blanc et du gris.\n- **1940** : fuyant la guerre, il s’installe à New York, dont les avenues et le jazz boogie-woogie lui inspirent ses dernières toiles. Il y meurt en 1944.\n\n## Son apport\nMondrian rejette toute référence au monde visible et à la perspective, pour ne garder que les relations pures entre lignes et couleurs. Derrière cette rigueur, il y a une vraie quête spirituelle : ordonner le chaos du monde, révéler l’équilibre caché qui relie les contraires (vertical et horizontal, masculin et féminin, intérieur et extérieur).\n\nSes toiles semblent figées, mais elles ont atteint un équilibre parfait : calmes, imperturbables, comme hors du temps. Un enfant pourrait peindre une *Composition* de Mondrian ? Peut-être, mais aucun n’y aurait pensé le premier. À New York, la couleur envahit les lignes et ses toiles se mettent à vibrer, comme une musique.",
    "ficheVide": false
@@ -382,7 +392,7 @@ window.FRISE = {
    "nationalite": "Tchèque",
    "role": "Peintre",
    "mouvement": "abstraction",
-   "autres": null,
+   "autres": [],
    "phrase": "Le premier à exposer des toiles abstraites à Paris, en 1912.",
    "fiche": "## En une phrase\nPionnier oublié de l’abstraction, Kupka a été le premier à exposer des toiles abstraites à Paris, où ses tourbillons de couleurs ont fait scandale.\n\n## Parcours\n- **1896** : né en 1871 en Bohême (alors dans l’Empire austro-hongrois), formé aux Beaux-Arts de Prague et de Vienne, il s’installe à Paris. Il vit de dessins satiriques pour des journaux comme *L’Assiette au beurre*, contre le colonialisme et le capitalisme.\n- **1906** : installé à Puteaux, voisin des frères Duchamp, il s’intéresse au cubisme, qui finit par le décevoir.\n- **1912** : au Salon d’automne, il expose *Amorpha, fugue à deux couleurs*, l’une des premières toiles abstraites montrées au public en France.\n- **Après 1918** : volontaire dans l’armée française pendant la guerre, il poursuit ses recherches, mais tombe peu à peu dans l’oubli. Il n’est vraiment reconnu que dans les années 1950, et meurt en 1957.\n\n## Son apport\nPour Kupka, copier la nature est une impasse : le peintre finit toujours par trahir soit la nature, soit sa propre vision. Il faut donc se débarrasser du figuratif pour retrouver une vraie liberté.\n\nSes toiles abstraites sont très variées, mais le mouvement circulaire en est le cœur : disques, tourbillons, formes qui s’entremêlent et hypnotisent le spectateur. Pour lui, chaque couleur a une existence propre, un rythme, une énergie : elle peut créer du mouvement à elle seule. Comme Kandinsky, il s’inspire de la musique, d’où les titres de ses toiles (*Fugue*).",
    "ficheVide": false
@@ -395,7 +405,9 @@ window.FRISE = {
    "nationalite": "Roumaine (puis française)",
    "role": "Poète, théoricien",
    "mouvement": "dadaisme",
-   "autres": "surréalisme",
+   "autres": [
+    "surrealisme"
+   ],
    "phrase": "La voix de Dada et l’auteur de ses manifestes.",
    "fiche": "## En une phrase\nPoète et agitateur, Tristan Tzara est la voix de Dada : c’est lui qui en fait un mouvement international, au nom d’un idéal radical, tout détruire pour mieux protester.\n\n## Parcours\n- **1915** : né Samuel Rosenstock en 1896 en Roumanie, il s’installe à Zurich, où il participe dès 1916 aux soirées du Cabaret Voltaire.\n- **1917-1918** : il lance la revue *Dada*, puis publie son *Manifeste Dada 1918*, texte fondateur du mouvement.\n- **1920** : il arrive à Paris, accueilli par André Breton et Francis Picabia. Mais les tensions avec Breton éclatent vite, et la rupture est consommée en 1922-1923.\n- **Années 1930-1950** : il se rapproche du Parti communiste et participe à la Résistance pendant l’Occupation, avant de quitter le Parti en 1956, quand les Soviétiques écrasent l’insurrection hongroise. Il meurt à Paris en 1963.\n\n## Son apport\nPour Tzara, Dada est révolte, exaltation de la vie et liberté de la langue contre toutes les conventions : c’est la destruction qui crée. Tzara s’était mis en tête de tout détruire, pour pouvoir « balayer, nettoyer ». Ses poèmes, ses pièces et ses manifestes bousculent la littérature autant que l’art, à coups d’absurde, de hasard et de provocation.\n\nC’était un adolescent incandescent, capable de fédérer autour de lui des artistes de renom. S’il n’a pas connu la célébrité de Breton ou de Picabia, le surréalisme et l’art moderne doivent beaucoup à sa fougue et à sa volonté de rompre avec tous les codes de son temps.\n\n## Citation\n> « Il nous faut des œuvres fortes, droites, précises, à jamais incomprises. »",
    "ficheVide": false
@@ -408,7 +420,9 @@ window.FRISE = {
    "nationalite": "Franco-allemande (alsacien)",
    "role": "Peintre, sculpteur, poète",
    "mouvement": "dadaisme",
-   "autres": "surréalisme",
+   "autres": [
+    "surrealisme"
+   ],
    "phrase": "Le hasard érigé en méthode, entre Dada, surréalisme et abstraction.",
    "fiche": "## En une phrase\nPeintre, sculpteur et poète, Hans Arp (ou Jean Arp) a fait du hasard un véritable outil de création, et sert de pont entre Dada, le surréalisme et l’abstraction.\n\n## Parcours\n- **Années 1900-1910** : né à Strasbourg en 1886, il se forme à Weimar et à l’Académie Julian à Paris, et côtoie Delaunay, Modigliani et Picasso.\n- **1916** : réfugié à Zurich, il fait partie des fondateurs de Dada au Cabaret Voltaire, aux côtés de Ball et de Tzara. Il y rencontre Sophie Taeuber, sa future femme et partenaire de création.\n- **1916-1917** : il réalise ses *Collages selon les lois du hasard*, en laissant tomber des papiers sur une feuille avant de les coller là où ils sont tombés.\n- **Années 1930** : installé près de Paris, proche des surréalistes, il se consacre de plus en plus à la sculpture et crée ses formes organiques, les « concrétions ». Il meurt en 1966.\n\n## Son apport\nArp est l’un des premiers artistes à accepter de « perdre le contrôle » de son œuvre : il laisse le hasard décider, et ne donne parfois un titre à ses œuvres qu’après les avoir terminées, pour limiter l’intervention de l’esprit conscient.\n\nEn sculpture, il travaille volontiers le plâtre, un matériau malléable qui lui permet de laisser naître des formes douces et arrondies, qui évoquent le vivant sans jamais rien représenter. Par cette approche poétique du hasard et de la nature, il ouvre la voie à toute une abstraction organique d’après-guerre.\n\n## Citation\n> « L’art est un fruit qui pousse dans l’homme, comme un fruit sur une plante. »",
    "ficheVide": false
@@ -421,7 +435,7 @@ window.FRISE = {
    "nationalite": "Française",
    "role": "Peintre",
    "mouvement": "dadaisme",
-   "autres": null,
+   "autres": [],
    "phrase": "Le touche-à-tout insaisissable qui a poussé Dada à rire de tout.",
    "fiche": "## En une phrase\nTouche-à-tout insaisissable, Picabia a essayé presque tous les styles de son temps, et poussé Dada à se moquer de tout, à commencer par l’art lui-même.\n\n## Parcours\n- **1905** : né à Paris en 1879, il connaît très tôt le succès avec des paysages impressionnistes, exposés dans une galerie parisienne.\n- **1912-1913** : il passe à l’abstraction et expose à l’Armory Show de New York, où il explique peindre « son âme sur la toile ». Les critiques parlent de canular.\n- **1917** : il fonde la revue *391* et invente ses œuvres « mécanomorphes », qui tournent en dérision les machines de la société industrielle. En Suisse, il rencontre les dadaïstes de Zurich.\n- **1920-1924** : il fait venir Dada à Paris avec Tzara et Breton, avant de rompre avec eux et de dénoncer le surréalisme naissant, qu’il qualifie de « mouvement fabriqué ». Il poursuit ensuite son œuvre en solitaire et meurt en 1953.\n\n## Son apport\nImpressionnisme, fauvisme, cubisme, orphisme, abstraction, Dada, puis retours au figuratif : Picabia ne tient jamais en place. Insatisfait, il cherche sans relâche un langage capable de traduire son état intérieur.\n\nAu sein de Dada, son influence est considérable : il pousse le mouvement à devenir « anti-tout », à tout tourner en dérision, y compris les artistes eux-mêmes, au point d’être surnommé « Funny Guy ». Chez Picabia, la cohérence n’est pas dans le style, mais dans l’attitude : refuser toute appartenance et tout système, au nom de la seule liberté de créer.\n\n## Citation\n> « Notre tête est ronde pour permettre à la pensée de changer de direction. »",
    "ficheVide": false
@@ -434,7 +448,7 @@ window.FRISE = {
    "nationalite": "Française (puis américaine)",
    "role": "Artiste",
    "mouvement": "dadaisme",
-   "autres": null,
+   "autres": [],
    "phrase": "L’inventeur du ready-made, qui a fait du regard le cœur de l’œuvre.",
    "fiche": "## En une phrase\nInventeur du ready-made, Duchamp a posé la question qui a bouleversé tout l’art du XXe siècle : et si un objet devenait une œuvre d’art par le simple choix de l’artiste ?\n\n## Parcours\n- **1912** : né en 1887 en Normandie, frère des artistes Jacques Villon et Raymond Duchamp-Villon, il peint *Nu descendant un escalier n° 2*, qui fait scandale l’année suivante à l’Armory Show de New York.\n- **1913** : il fixe une roue de bicyclette sur un tabouret : c’est le premier ready-made.\n- **1917** : à New York, il présente à une exposition un urinoir signé « R. Mutt », intitulé *Fontaine*. L’œuvre est refusée, et devient l’une des plus célèbres du siècle.\n- **1919** : *L.H.O.O.Q.*, une reproduction de *La Joconde* affublée d’une moustache. Il se consacre ensuite de plus en plus aux échecs, tout en travaillant en secret à une dernière œuvre, *Étant donnés*. Il meurt en 1968.\n\n## Son apport\nAprès des débuts influencés par le cubisme, Duchamp rejette ce qu’il appelle la peinture « rétinienne », faite seulement pour plaire à l’œil. Pour lui, l’art doit d’abord passer par l’esprit.\n\nAvec le ready-made, il prend un objet ordinaire, le sort de son usage et le présente comme une œuvre : c’est le choix de l’artiste, et le regard du spectateur, qui font l’œuvre. Proche de Dada à New York, il n’a jamais vraiment appartenu à aucun mouvement. Mais l’art conceptuel, le pop art et une bonne partie de l’art contemporain lui doivent presque tout.\n\n## Citation\n> « Ce sont les regardeurs qui font les tableaux. »",
    "ficheVide": false
@@ -447,7 +461,9 @@ window.FRISE = {
    "nationalite": "Française",
    "role": "Poète, théoricien",
    "mouvement": "surrealisme",
-   "autres": "dadaisme",
+   "autres": [
+    "dadaisme"
+   ],
    "phrase": "Le fondateur et chef d’orchestre du surréalisme.",
    "fiche": "## En une phrase\nPoète et théoricien, André Breton est le fondateur et le chef d’orchestre du surréalisme, qu’il a dirigé avec passion et autorité pendant plus de quarante ans.\n\n## Parcours\n- **1916** : né en 1896, étudiant en médecine, il est affecté pendant la guerre à un centre de neuropsychiatrie, où il découvre Freud. Il y rencontre aussi Jacques Vaché, dont l’humour noir le marque profondément.\n- **1919** : il fonde la revue *Littérature* avec Louis Aragon et Philippe Soupault, et écrit avec ce dernier *Les Champs magnétiques*, premier texte en écriture automatique.\n- **1924** : après avoir participé aux scandales de Dada à Paris, puis rompu avec Tzara, il publie le *Manifeste du surréalisme*.\n- **1941-1946** : exilé aux États-Unis pendant la guerre, il y diffuse le surréalisme. De retour en France, il s’emploie à faire vivre le mouvement jusqu’à sa mort en 1966.\n\n## Son apport\nPour Breton, le surréalisme est une conquête du merveilleux : réconcilier le rêve et la réalité en abolissant la frontière entre les deux. Il multiplie les expériences pour libérer l’inconscient (écriture automatique, sommeils hypnotiques) et publie des textes majeurs comme *Nadja* (1928).\n\nMais il veut aussi un surréalisme politique : il adhère au Parti communiste en 1927, et attend des autres membres qu’ils le suivent. Les tensions se multiplient, les exclusions aussi. Breton incarne ainsi un paradoxe : celui d’un chef autoritaire, à la tête d’un mouvement qui revendiquait la liberté absolue de l’esprit.\n\n## Citation\n> « C’est peut-être l’enfance qui approche le plus de la vraie vie. »",
    "ficheVide": false
@@ -460,7 +476,7 @@ window.FRISE = {
    "nationalite": "Espagnole",
    "role": "Peintre",
    "mouvement": "surrealisme",
-   "autres": null,
+   "autres": [],
    "phrase": "Le surréaliste virtuose, qui peint ses rêves avec la précision d’un maître ancien.",
    "fiche": "## En une phrase\nPeintre extravagant et virtuose, Dalí a mis une technique digne des maîtres anciens au service de ses rêves, de ses obsessions et de ses délires.\n\n## Parcours\n- **1904** : il naît à Figueres, en Catalogne, neuf mois après la mort d’un premier fils de ses parents, qui portait déjà le prénom Salvador. Il grandit avec le sentiment d’être un enfant de substitution.\n- **1922-1926** : élève aux Beaux-Arts de Madrid, il se lie avec Federico García Lorca et Luis Buñuel, avec qui il réalise plus tard le film *Un chien andalou* (1929).\n- **1929** : il rejoint les surréalistes à Paris et rencontre Gala, alors femme de Paul Éluard, qui devient sa muse et sa compagne. Il peint *La Persistance de la mémoire* en 1931.\n- **1939** : Breton l’exclut du groupe. Il connaît ensuite une immense célébrité, crée son propre musée à Figueres en 1974 et meurt en 1989.\n\n## Son apport\nFasciné par les maîtres italiens de la Renaissance, Dalí allie la folie des avant-gardes à un réalisme d’une précision presque photographique. Ses toiles sont nourries de ses souvenirs, de ses peurs (la mort, la sexualité, le temps qui passe) : il se met à nu, sans autocensure.\n\nDans les années 1930, il invente la méthode « paranoïaque-critique » : provoquer consciemment un état de délire pour faire surgir des images obsessionnelles, puis les exploiter avec toute sa maîtrise technique. Contrairement à l’écriture automatique, il ne subit pas son inconscient, il l’exploite. Dalí est aussi fou que sain d’esprit, et le revendique : « Le surréalisme, c’est moi ! »\n\n## Citation\n> « L’unique différence entre un fou et moi, c’est que moi je ne suis pas fou. »",
    "ficheVide": false
@@ -473,7 +489,9 @@ window.FRISE = {
    "nationalite": "Allemande (puis américaine, puis française)",
    "role": "Peintre",
    "mouvement": "surrealisme",
-   "autres": "dadaisme",
+   "autres": [
+    "dadaisme"
+   ],
    "phrase": "L’inventeur du frottage et des créatures hybrides, entre Dada et surréalisme.",
    "fiche": "## En une phrase\nInventeur infatigable de techniques nouvelles, Max Ernst a peuplé ses toiles de créatures hybrides et de forêts inquiétantes, à la frontière entre Dada et le surréalisme.\n\n## Parcours\n- **1910** : né en 1891 près de Cologne, initié à la peinture par son père, il étudie la philosophie et la psychologie à l’université de Bonn, mais se forme seul à l’art.\n- **1914-1918** : il passe quatre ans au front, dans l’artillerie. La guerre le traumatise et nourrit une profonde révolte contre la société bourgeoise.\n- **1919-1922** : il fonde Dada à Cologne avec Hans Arp, réalise ses premiers collages, puis s’installe à Paris, où il devient l’un des premiers peintres surréalistes.\n- **1941** : interné comme Allemand au début de la guerre, il s’enfuit aux États-Unis avec l’aide de Peggy Guggenheim. Il revient en France en 1953 et meurt à Paris en 1976.\n\n## Son apport\nErnst cherche sans cesse à dépasser les contraintes techniques pour laisser parler son inconscient. Il invente le frottage (frotter un crayon sur une feuille posée sur du bois ou une feuille d’arbre, puis interpréter les formes qui apparaissent), le grattage, et des romans-collages comme *La Femme 100 têtes* (1929). Fasciné par les oiseaux, il se crée un alter ego, Loplop.\n\nAux États-Unis, il fait couler de la peinture d’un pot percé qu’il balance au-dessus de la toile : une forme de dripping avant l’heure, qui influence directement Jackson Pollock. Son œuvre est souvent rapprochée de l’« inquiétante étrangeté » décrite par Freud : un monde familier qui bascule dans l’étrange.\n\n## Citation\n> « Il faut vivre avec ses toiles. Non les conserver, mais les mettre à l’épreuve du temps. »",
    "ficheVide": false
@@ -486,7 +504,7 @@ window.FRISE = {
    "nationalite": "Belge",
    "role": "Peintre",
    "mouvement": "surrealisme",
-   "autres": null,
+   "autres": [],
    "phrase": "Des images parfaitement nettes pour semer le doute sur ce que l’on voit.",
    "fiche": "## En une phrase\nPeintre belge du surréalisme, Magritte a peint des images d’une précision parfaite pour mieux semer le doute sur ce que l’on voit.\n\n## Parcours\n- **1923** : né en 1898 en Belgique, formé à l’Académie des beaux-arts de Bruxelles, il gagne d’abord sa vie dans la publicité et le papier peint. La découverte d’un tableau de Giorgio de Chirico, *Le Chant d’amour*, le bouleverse.\n- **1927-1930** : il s’installe près de Paris et fréquente le groupe surréaliste d’André Breton.\n- **1929** : il peint *La Trahison des images*, une pipe soigneusement représentée, avec l’inscription « Ceci n’est pas une pipe ».\n- **Années 1950-1960** : de retour à Bruxelles, il peint ses séries les plus célèbres, comme *L’Empire des lumières* ou *Le Fils de l’homme* (1964). Il meurt en 1967.\n\n## Son apport\nContrairement à beaucoup de surréalistes, Magritte ne cherche pas l’automatisme : sa peinture est lisse, précise, presque banale. C’est justement ce qui la rend si troublante. Il assemble des éléments ordinaires (un ciel, une pomme, un chapeau melon) de façon impossible, pour montrer que l’image n’est jamais la chose elle-même.\n\n*Ceci n’est pas une pipe* : en effet, ce n’est que la peinture d’une pipe. Avec ses jeux entre les mots et les images, Magritte invente un surréalisme du doute et de la réflexion, qui inspirera plus tard le pop art et l’art conceptuel.\n\n## Citation\n> « Tout ce que nous voyons cache une autre chose, nous voulons toujours voir ce qui est caché par ce que nous voyons. »",
    "ficheVide": false
@@ -499,7 +517,7 @@ window.FRISE = {
    "nationalite": "Américaine",
    "role": "Peintre",
    "mouvement": "expressionnisme-abstrait",
-   "autres": null,
+   "autres": [],
    "phrase": "La toile posée au sol, et la peinture devenue la trace d’une danse.",
    "fiche": "## En une phrase\nFigure de proue de l’expressionnisme abstrait, Pollock a posé ses toiles au sol pour y projeter la peinture : avec lui, le tableau devient la trace d’une danse.\n\n## Parcours\n- **1930** : né en 1912 dans le Wyoming, dans une famille souvent en déménagement, il s’installe à New York et suit les cours de Thomas Hart Benton à l’Art Students League.\n- **1943** : la collectionneuse Peggy Guggenheim lui offre un contrat et sa première exposition personnelle. Il peint pour elle *Mural*, une immense toile.\n- **1947-1950** : installé à la campagne, à Long Island, avec la peintre Lee Krasner, il met au point le dripping. En 1949, le magazine *Life* se demande s’il est « le plus grand peintre vivant des États-Unis ».\n- **1956** : après un retour à une peinture plus figurative et des années marquées par l’alcoolisme, il meurt dans un accident de voiture, à 44 ans.\n\n## Son apport\nPollock pose d’immenses toiles à même le sol, abandonne le pinceau et fait couler ou projeter la peinture avec des bâtons, en tournant autour de la toile. Il s’inspire en partie des peintures de sable des Amérindiens. C’est la naissance de l’action painting (même si Janet Sobel avait déjà expérimenté le dripping avant lui).\n\nUne toile de Pollock n’a plus de centre, ni de haut, ni de bas : c’est un champ d’énergie continu. Chercher à y voir des formes ou un message, c’est passer à côté : l’œuvre n’est pas un résultat, mais la trace d’un acte. Il faudrait presque la regarder les yeux fermés, pour ressentir chacun des gestes du peintre.\n\n## Citation\n> « Sur le sol, je suis plus à l’aise. Je me sens plus proche du tableau, j’en fais davantage partie. »",
    "ficheVide": false
@@ -512,7 +530,7 @@ window.FRISE = {
    "nationalite": "Américaine (né en Russie)",
    "role": "Peintre",
    "mouvement": "expressionnisme-abstrait",
-   "autres": null,
+   "autres": [],
    "phrase": "De grands rectangles de couleur pour une expérience presque spirituelle.",
    "fiche": "## En une phrase\nPrincipal représentant du color field, Rothko a peint d’immenses rectangles de couleur aux bords flous, pour plonger le spectateur dans une expérience presque spirituelle.\n\n## Parcours\n- **1913** : né Markus Rothkowitz en 1903 dans l’Empire russe (dans l’actuelle Lettonie), dans une famille juive, il émigre enfant aux États-Unis.\n- **Années 1920-1930** : après avoir quitté l’université de Yale, il suit les cours de l’Art Students League à New York et commence comme peintre figuratif, tout en enseignant le dessin à des enfants.\n- **1949-1950** : après une période inspirée du surréalisme, il trouve son style : de grands rectangles de couleur superposés, qui semblent flotter sur la toile.\n- **1958-1959** : il peint les *Peintures murales Seagram* pour un restaurant new-yorkais, qu’il finit par refuser de livrer. Il travaille ensuite à la chapelle de Houston qui porte son nom. Malade, il met fin à ses jours en 1970.\n\n## Son apport\nAmi de nombreux peintres de l’action painting, Rothko en rejette pourtant la gestuelle spectaculaire : chez lui, la main de l’artiste s’efface, il ne reste que la couleur. Il refuse d’ailleurs d’être classé parmi les abstraits : pour lui, ses toiles sont vivantes.\n\nIl pensait ses tableaux autant comme un spectateur que comme un peintre : il voulait qu’on les regarde de près, dans des salles où ne seraient accrochées que ses œuvres. Comme Kandinsky, il voulait « élever la peinture au même rang que la musique ou la poésie » : ce qui nous fait frissonner sans qu’on puisse l’expliquer. Une mélodie, des mots, de la couleur.\n\n## Citation\n> « Mon art n’est pas abstrait, il vit et il respire. »",
    "ficheVide": false
@@ -525,7 +543,7 @@ window.FRISE = {
    "nationalite": "Américaine",
    "role": "Peintre",
    "mouvement": "expressionnisme-abstrait",
-   "autres": null,
+   "autres": [],
    "phrase": "De vastes champs de couleur traversés par ses fameux « zips ».",
    "fiche": "## En une phrase\nFigure du color field, Barnett Newman a réduit ses toiles à d’immenses champs de couleur traversés par de fines bandes verticales, ses fameux « zips ».\n\n## Parcours\n- **Années 1930-1940** : né à New York en 1905, fils d’immigrés juifs polonais, il est d’abord professeur, critique et organisateur d’expositions, avant de détruire une grande partie de ses premières œuvres.\n- **1948** : il peint *Onement I*, une toile rouge sombre coupée en deux par une bande orange : c’est la naissance du « zip ». La même année, il publie son essai « Le sublime, c’est maintenant ».\n- **1950-1951** : il peint *Vir Heroicus Sublimis*, plus de cinq mètres de rouge. Ses premières expositions sont très mal reçues, même par ses amis peintres.\n- **1958-1966** : reconnu sur le tard, il réalise la série des *Stations de la Croix*, puis sa sculpture *Broken Obelisk*. Il meurt en 1970.\n\n## Son apport\nNewman veut une peinture débarrassée de tout ce qui vient de la tradition européenne : pas de sujet, pas de composition savante, pas de geste visible. Il ne reste qu’un champ de couleur et le « zip », une simple ligne verticale qui organise tout l’espace.\n\nSes toiles sont immenses et doivent être regardées de près : le spectateur se retrouve littéralement entouré par la couleur, seul face à elle. Newman cherche ainsi à retrouver le sentiment du sublime, une émotion forte, presque religieuse, sans rien représenter. Méconnu de son vivant, il deviendra une référence pour le minimalisme.\n\n## Citation\n> « Le sublime, c’est maintenant. »",
    "ficheVide": false
@@ -538,7 +556,7 @@ window.FRISE = {
    "nationalite": "Américaine (né aux Pays-Bas)",
    "role": "Peintre",
    "mouvement": "expressionnisme-abstrait",
-   "autres": null,
+   "autres": [],
    "phrase": "La figure humaine surgie du chaos de l’action painting.",
    "fiche": "## En une phrase\nGrand nom de l’action painting, De Kooning a mêlé gestuelle violente et figure humaine, notamment dans sa série des *Women*, qui fit scandale.\n\n## Parcours\n- **1926** : né à Rotterdam en 1904, formé en cours du soir à l’académie de la ville, il embarque clandestinement pour les États-Unis à 22 ans. Il vit d’abord comme peintre en bâtiment.\n- **1948** : sa première exposition personnelle à New York, avec des toiles abstraites en noir et blanc, le fait connaître.\n- **1950-1953** : il peint *Woman I*, puis toute une série de femmes aux traits déformés et aux sourires carnassiers. Le scandale est immense : un peintre abstrait revient à la figure, et de quelle manière.\n- **Années 1960-1980** : installé à Long Island, il peint des paysages abstraits de plus en plus lumineux. Il meurt en 1997.\n\n## Son apport\nDe Kooning n’a jamais voulu choisir entre l’abstraction et la figuration. Chez lui, la peinture est un combat : coups de pinceau larges et rapides, couches peintes puis grattées, formes qui apparaissent et disparaissent. Le tableau garde la trace de toutes ces luttes.\n\nSes *Women* ont choqué autant les critiques qui défendaient l’abstraction pure que le grand public. Elles sont pourtant devenues l’une des images les plus fortes de l’expressionnisme abstrait : une figure qui surgit du chaos de la peinture.\n\n## Citation\n> « La chair est la raison pour laquelle la peinture à l’huile a été inventée. »",
    "ficheVide": false
