@@ -3,5 +3,8 @@
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./dist"
-  }
+  },
+  // Exigé par « wrangler preview », qui publie les versions de test des branches autres que main.
+  // Il peut rester vide : les réglages ci-dessus valent aussi pour les versions de test.
+  "previews": {}
 }
