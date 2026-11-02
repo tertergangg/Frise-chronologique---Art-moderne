@@ -34,6 +34,12 @@ def typo(texte):
         return texte
     return texte.replace("'", "\u2019")
 
+def majuscule(texte):
+    """Majuscule à la première lettre, sans toucher au reste : « peintre, sculpteur » -> « Peintre, sculpteur »."""
+    if not isinstance(texte, str) or not texte:
+        return texte
+    return texte[0].upper() + texte[1:]
+
 
 def lire_onglet(wb, nom):
     """Renvoie une liste de dictionnaires {en-tête: valeur}, une par ligne remplie."""
@@ -92,7 +98,8 @@ def main():
             avertir(f"Artiste {a['ID']} : mouvement inconnu « {a.get('Mouvement principal')} »")
         artistes.append({
             "id": a["ID"], "nom": typo(a.get("Nom complet")), "naissance": annee(a.get("Naissance")),
-            "deces": annee(a.get("Décès")), "nationalite": typo(a.get("Nationalité")), "role": typo(a.get("Rôle")),
+            "deces": annee(a.get("Décès")), "nationalite": majuscule(typo(a.get("Nationalité"))),
+            "role": majuscule(typo(a.get("Rôle"))),
             "mouvement": a.get("Mouvement principal"), "autres": typo(a.get("Autres mouvements")),
             "phrase": typo(a.get("Phrase-clé (1 phrase)")), "fiche": md, "ficheVide": vide,
         })

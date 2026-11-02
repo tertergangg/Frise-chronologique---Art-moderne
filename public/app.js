@@ -440,9 +440,10 @@ function ficheArtiste(a) {
     return `<li><span>${verbe} ${lien(autre.id, autre.nom)}${i.explication ? `<small>${esc(i.explication)}</small>` : ""}</span></li>`;
   }).join("");
   return `<h2>${esc(a.nom)}</h2>
-    <p class="sous-titre">${a.naissance ?? "?"}–${a.deces ?? "?"}${a.nationalite ? ", " + esc(a.nationalite) : ""}</p>
+    <p class="sous-titre">${a.naissance ?? "?"}–${a.deces ?? "?"}</p>
     <dl>
-      ${a.role ? `<dt>Rôle</dt><dd>${esc(a.role)}</dd>` : ""}
+      ${a.nationalite ? `<dt>Nationalité</dt><dd>${esc(a.nationalite)}</dd>` : ""}
+      ${a.role ? `<dt>Disciplines</dt><dd>${esc(a.role)}</dd>` : ""}
       ${m ? `<dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd>` : ""}
       ${a.autres ? `<dt>Aussi</dt><dd>${esc(a.autres)}</dd>` : ""}
     </dl>
