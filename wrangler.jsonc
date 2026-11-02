@@ -1,6 +1,11 @@
 {
   "name": "frise-chronologique---art-moderne",
   "compatibility_date": "2026-10-01",
+  // Avant chaque publication, Wrangler fabrique le site avec Astro, dans le dossier dist/.
+  // La commande est ici, et non dans le tableau de bord de Cloudflare, qui l’ignorait pour les versions de test.
+  "build": {
+    "command": "npm run build"
+  },
   "assets": {
     "directory": "./dist"
   },
