@@ -409,9 +409,19 @@ function markdown(md) {
   return `<div class="corps">${window.marked ? marked.parse(avecLiens) : esc(avecLiens)}</div>`;
 }
 const aVenir = (quoi) => `<p class="a-venir">La fiche ${quoi} est à venir.</p>`;
-const listeOeuvres = (liste, avecArtiste = false) => liste.length ? `<ul class="liens-liste">${[...liste]
-  .sort((a, b) => (a.annee ?? 0) - (b.annee ?? 0))
-  .map((o) => `<li><span class="an">${o.annee ?? ""}</span><span>${lien(o.id, o.titre)}${avecArtiste && ART[o.artiste] ? `<small>${esc(ART[o.artiste].nom)}</small>` : ""}</span></li>`).join("")}</ul>` : "";
+
+// Liste d’œuvres triée par année ; avec « avecArtiste », le nom court de l’artiste s’affiche à droite de la ligne
+function listeOeuvres(liste, avecArtiste = false) {
+  if (!liste.length) return "";
+  const lignes = [...liste]
+    .sort((a, b) => (a.annee ?? 0) - (b.annee ?? 0))
+    .map((o) => {
+      const artiste = avecArtiste && ART[o.artiste]
+        ? `<small class="artiste">${esc(nomCourt(ART[o.artiste].nom))}</small>` : "";
+      return `<li><span class="an">${o.annee ?? ""}</span><span>${lien(o.id, o.titre)}</span>${artiste}</li>`;
+    }).join("");
+  return `<ul class="liens-liste${avecArtiste ? " avec-artiste" : ""}">${lignes}</ul>`;
+}
 
 function ficheOeuvre(o) {
   const a = ART[o.artiste], m = MOUV[o.mouvement];
@@ -457,14 +467,18 @@ function ficheArtiste(a) {
 function ficheMouvement(m) {
   const artistes = D.artistes.filter((a) => a.mouvement === m.id);
   const oeuvres = D.oeuvres.filter((o) => o.mouvement === m.id);
+  // Les œuvres majeures (colonne « Majeure (Bible) ») sont les seules à recevoir une analyse : elles passent en premier
+  const majeures = oeuvres.filter((o) => o.majeure);
+  const autresOeuvres = oeuvres.filter((o) => !o.majeure);
   const evts = D.evenements.filter((x) => x.mouvement === m.id);
   return `<h2>${esc(m.nom)}</h2>
     <p class="sous-titre">${m.debut}–${m.fin}${m.lieu ? ", " + esc(m.lieu) : ""}</p>
     ${etat.vue !== "mouvement" ? `<button type="button" class="explorer" data-explorer="${esc(m.id)}">Explorer ce mouvement en grand</button>` : ""}
     ${m.ficheVide ? aVenir("de ce mouvement") : markdown(m.fiche)}
-    ${artistes.length ? `<h3>Artistes</h3><ul class="liens-liste">${artistes.map((a) => `<li><span class="an">${a.naissance ?? ""}</span><span>${lien(a.id, a.nom)}</span></li>`).join("")}</ul>` : ""}
+    ${artistes.length ? `<h3>Artistes majeurs</h3><ul class="liens-liste">${artistes.map((a) => `<li><span class="an">${a.naissance ?? ""}</span><span>${lien(a.id, a.nom)}</span></li>`).join("")}</ul>` : ""}
     ${evts.length ? `<h3>Moments clés</h3><ul class="liens-liste">${evts.map((x) => `<li><span class="an">${x.annee}</span><span>${lien(x.id, x.titre)}</span></li>`).join("")}</ul>` : ""}
-    ${oeuvres.length ? `<h3>Œuvres</h3>${listeOeuvres(oeuvres, true)}` : ""}`;
+    ${majeures.length ? `<h3>Œuvres majeures</h3>${listeOeuvres(majeures, true)}` : ""}
+    ${autresOeuvres.length ? `<h3>Autres œuvres</h3>${listeOeuvres(autresOeuvres, true)}` : ""}`;
 }
 
 function ficheEvenement(x) {

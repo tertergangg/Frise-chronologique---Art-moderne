@@ -81,6 +81,8 @@ button { font: inherit; color: inherit; }
 .liens-liste li { padding: 0.3rem 0; display: flex; gap: 0.75rem; }
 .liens-liste small { display: block; }
 .liens-liste .an { min-width: 2.6rem; }
+.liens-liste.avec-artiste li { align-items: baseline; }
+.liens-liste .artiste { margin-left: auto; text-align: right; white-space: nowrap; }
 .a-venir { margin: 1rem 0 1.5rem; padding: 0.9rem 1rem; }
 
 @media (max-width: 720px) {
@@ -169,12 +171,13 @@ body { font-size: 15px; line-height: 1.45; }
 .fiche h2 { font-weight: 900; font-variation-settings: "wdth" 66; font-size: 2.6rem; line-height: 0.92; }
 .fiche .sous-titre { font-weight: 600; }
 .fiche .resume { font-size: 1.2rem; font-weight: 500; line-height: 1.35; }
-.fiche dt { font-weight: 800; font-size: 0.8rem; font-variation-settings: "wdth" 80; padding-top: 0.12rem; }
+.fiche dt { font-weight: 800; font-size: 0.9rem; font-variation-settings: "wdth" 80; padding-top: 0.05rem; }
 .fiche h3 { font-weight: 900; font-variation-settings: "wdth" 70; font-size: 1.35rem; border-top: 2px solid var(--encre); padding-top: 0.5rem; }
 .fiche .corps { font-size: 1rem; line-height: 1.6; }
 .liens-liste li { border-bottom: 1px solid var(--encre); font-size: 0.92rem; }
 .liens-liste small { color: var(--doux); }
 .liens-liste .an { font-weight: 800; font-variant-numeric: tabular-nums; }
+.liens-liste .artiste { font-size: 0.8rem; font-weight: 600; font-variation-settings: "wdth" 85; }
 .a-venir { border: 2px dashed var(--encre); font-weight: 500; }
 
 /* ---------- Ajouts de la version 2 ---------- */
