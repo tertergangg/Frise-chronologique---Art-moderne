@@ -351,3 +351,16 @@ body.redimension .panneau { transition: none; }
 }
 .fermer::before { transform: translate(-50%, -50%) rotate(45deg); }
 .fermer::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+/* ---------- Image d’une œuvre en grand ---------- */
+/* L’image de la fiche est dans un bouton, pour s’ouvrir aussi au clavier ; le bouton lui-même ne se voit pas */
+.agrandir { display: block; width: 100%; padding: 0; border: none; background: none; cursor: zoom-in; }
+
+.visionneuse { max-width: 94vw; max-height: 94vh; padding: 0; overflow: hidden;
+  border: 3px solid var(--encre); background: var(--surface); cursor: zoom-out; }
+/* Voile écrit en dur, exception à la règle des variables : dans certains navigateurs, ::backdrop ne voit pas
+   les variables de :root. Il est identique en mode clair et en mode sombre. */
+.visionneuse::backdrop { background: rgba(0, 0, 0, 0.8); }
+.visionneuse img { display: block; max-width: calc(94vw - 6px); max-height: calc(94vh - 6px); object-fit: contain; }
+/* La croix de la fiche, posée dans le coin de l’image */
+.visionneuse .fermer { position: absolute; top: 0.5rem; right: 0.5rem; float: none; margin: 0; }

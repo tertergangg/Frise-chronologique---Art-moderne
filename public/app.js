@@ -426,7 +426,8 @@ function listeOeuvres(liste, avecArtiste = false) {
 function ficheOeuvre(o) {
   const a = ART[o.artiste], m = MOUV[o.mouvement];
   const lieu = [o.musee, o.ville].filter(Boolean).join(", ");
-  const image = estImage(o.image) ? `<img class="image" src="${esc(o.image)}" alt="${esc(o.titre)}">` : "";
+  const image = estImage(o.image)
+    ? `<button type="button" class="agrandir" data-agrandir aria-label="Agrandir l’image : ${esc(o.titre)}"><img class="image" src="${esc(o.image)}" alt="${esc(o.titre)}"></button>` : "";
   return `${image}<h2>${esc(o.titre)}</h2>
     <p class="sous-titre">${a ? lien(a.id, a.nom) + ", " : ""}${esc(o.dateAffichee || o.annee)}</p>
     ${o.resume ? `<p class="resume">${esc(o.resume)}</p>` : ""}
@@ -512,6 +513,18 @@ function fermer() {
 }
 $("#fermer").addEventListener("click", fermer);
 
+/* ---------- Image d’une œuvre en grand ---------- */
+// <dialog> est un élément HTML natif : showModal() l’ouvre par-dessus la page, garde le focus dedans,
+// le ferme avec Échap et rend ensuite le focus au bouton qui l’a ouvert
+const visionneuse = $("#visionneuse"), imageGrande = $("#image-grande");
+function agrandir(img) {
+  imageGrande.src = img.src;
+  imageGrande.alt = img.alt;
+  visionneuse.showModal();
+}
+// Un clic n’importe où (image, voile sombre ou croix) referme l’image
+visionneuse.addEventListener("click", () => visionneuse.close());
+
 /* ---------- Largeur de la fiche : glisser son bord gauche pour l’agrandir ou la rétrécir ---------- */
 const poignee = $("#poignee");
 const LARGEUR_MIN = 380;                                         // en pixels
@@ -538,10 +551,12 @@ poignee.addEventListener("keydown", (ev) => {                                   
   if (ev.key === "ArrowLeft") { fixerLargeur(actuelle + 40); ev.preventDefault(); }
   if (ev.key === "ArrowRight") { fixerLargeur(actuelle - 40); ev.preventDefault(); }
 });
-document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && !panneau.hidden) fermer(); });
+document.addEventListener("keydown", (ev) => { if (ev.key === "Escape" && !panneau.hidden && !visionneuse.open) fermer(); });
 contenu.addEventListener("click", (ev) => {
   const bouton = ev.target.closest("[data-explorer]");
   if (bouton) { explorer(bouton.dataset.explorer); return; }
+  const boutonImage = ev.target.closest("[data-agrandir]");
+  if (boutonImage) { agrandir(boutonImage.querySelector("img")); return; }
   const a = ev.target.closest("a[data-id], a[href^='#']");
   if (!a) return;
   ev.preventDefault();

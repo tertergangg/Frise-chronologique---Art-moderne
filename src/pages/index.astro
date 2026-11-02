@@ -50,6 +50,12 @@
     </div>
   </aside>
 
+  <!-- Image d’une œuvre en grand, ouverte depuis sa fiche. app.js y place l’image au moment du clic. -->
+  <dialog id="visionneuse" class="visionneuse" aria-label="Image en grand">
+    <button type="button" class="fermer" aria-label="Fermer l’image">×</button>
+    <img id="image-grande" alt="">
+  </dialog>
+
   <script is:inline src="https://cdn.jsdelivr.net/npm/marked@18.0.14/lib/marked.umd.js"></script>
   <script is:inline src="/data.js"></script>
   <script is:inline src="/app.js"></script>
