@@ -111,18 +111,20 @@ button { font: inherit; color: inherit; }
   --police-texte: "Archivo", "Helvetica Neue", Arial, sans-serif;
   color-scheme: light;
 }
+/* Mode sombre : brun très foncé, texte blanc cassé, ombres brunes un peu plus claires que le fond.
+   Les deux blocs portent les mêmes valeurs : le premier suit le réglage du système, le second force le thème sombre. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --fond: #000000; --fond-etiquette: #000000; --surface: #000000; --surface-2: #1E1E1E;
-    --encre: #FFFFFF; --doux: #B5B5B5; --trait: #FFFFFF; --grille: rgba(255, 255, 255, 0.1); --focus: #FF6B5B;
-    --carte-fond: #000000; --ombre: #FFFFFF;
+    --fond: #1E1A16; --fond-etiquette: #000000; --surface: #27221D; --surface-2: #332C25;
+    --encre: #F2EBDD; --doux: #B8AE9F; --trait: #F2EBDD; --grille: rgba(242, 235, 221, 0.1); --focus: #FF6B5B;
+    --carte-fond: #27221D; --ombre: #574B3E;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --fond: #000000; --fond-etiquette: #000000; --surface: #000000; --surface-2: #1E1E1E;
-  --encre: #FFFFFF; --doux: #B5B5B5; --trait: #FFFFFF; --grille: rgba(255, 255, 255, 0.1); --focus: #FF6B5B;
-  --carte-fond: #000000; --ombre: #FFFFFF;
+  --fond: #1E1A16; --fond-etiquette: #000000; --surface: #27221D; --surface-2: #332C25;
+  --encre: #F2EBDD; --doux: #B8AE9F; --trait: #F2EBDD; --grille: rgba(242, 235, 221, 0.1); --focus: #FF6B5B;
+  --carte-fond: #27221D; --ombre: #574B3E;
   color-scheme: dark;
 }
 body { font-size: 15px; line-height: 1.45; }
