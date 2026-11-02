@@ -102,10 +102,11 @@ button { font: inherit; color: inherit; }
 /* =====================================================================
    Apparence : couleurs, polices, détails visuels (thème « Affiche »)
    ===================================================================== */
+/* Fond « papier ambré » ; cartes et panneau en ivoire, un cran plus clair, pour rester lisibles sur les bandes de couleur */
 :root {
-  --fond: #FFFFFF; --fond-etiquette: #FFFFFF; --surface: #FFFFFF; --surface-2: #F0F0F0;
+  --fond: #F5EEDF; --fond-etiquette: #FFFFFF; --surface: #FAF7F0; --surface-2: #EBE1CC;
   --encre: #000000; --doux: #4B4B4B; --trait: #000000; --grille: rgba(0, 0, 0, 0.08); --focus: #C0392B;
-  --carte-fond: #FFFFFF; --ombre: #000000;
+  --carte-fond: #FAF7F0; --ombre: #000000;
   --police-titre: "Archivo", "Arial Narrow", "Helvetica Neue", sans-serif;
   --police-texte: "Archivo", "Helvetica Neue", Arial, sans-serif;
   color-scheme: light;
