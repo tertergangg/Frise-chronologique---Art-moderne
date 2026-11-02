@@ -292,7 +292,8 @@ body[data-vue="ensemble"] .defile { cursor: default; }
 .bulle { position: fixed; z-index: 60; max-width: 19rem; pointer-events: none;
   padding: 0.5rem 0.7rem; background: var(--encre); color: var(--fond);
   font: 600 0.84rem/1.35 var(--police-texte); box-shadow: 4px 4px 0 var(--c); }
-.bulle[hidden] { display: none; }
+/* « .riche » impose display: flex plus bas : sans le second sélecteur, l’aperçu d’une œuvre ignorerait hidden */
+.bulle[hidden], .bulle.riche[hidden] { display: none; }
 .resume-globale { position: absolute; top: 45px; z-index: 2; white-space: nowrap; pointer-events: none;
   font: 500 0.82rem var(--police-texte); color: var(--doux); }
 @media (max-width: 720px) { .resume-globale { display: none; } }
