@@ -482,7 +482,7 @@ function ouvrir(id, centrer = false) {
   else return;
   contenu.innerHTML = `<article class="fiche" style="--c:${c}"><div class="filet"></div>${html}</article>`;
   panneau.hidden = false;
-  panneau.scrollTop = 0;
+  $("#interieur-panneau").scrollTop = 0;
   toile.querySelectorAll(".choisi").forEach((n) => n.classList.remove("choisi"));
   toile.querySelectorAll(`[data-id="${CSS.escape(id)}"]`).forEach((n) => n.classList.add("choisi"));
   if (centrer && annee && etat.vue === "detail") allerAnnee(annee - 3);

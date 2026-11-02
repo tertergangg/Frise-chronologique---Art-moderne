@@ -61,8 +61,11 @@ button { font: inherit; color: inherit; }
 .toile.focus .carte:not(.allume) { opacity: 0.2; }
 
 /* Panneau de fiche */
-.panneau { position: fixed; z-index: 40; right: 0; top: env(safe-area-inset-top, 0px); bottom: 0; width: min(30rem, 100%); overflow-y: auto;
-  padding: 1.75rem 1.75rem calc(2rem + env(safe-area-inset-bottom, 0px)); transition: transform 0.22s ease; }
+.panneau { position: fixed; z-index: 40; right: 0; top: env(safe-area-inset-top, 0px); bottom: 0; width: min(30rem, 100%);
+  transition: transform 0.22s ease; }
+/* C’est l’intérieur qui défile, pour que la poignée, attachée au panneau, reste visible */
+.interieur-panneau { height: 100%; overflow-y: auto;
+  padding: 1.75rem 1.75rem calc(2rem + env(safe-area-inset-bottom, 0px)); }
 .panneau[hidden] { display: block; transform: translateX(105%); visibility: hidden; transition: transform 0.22s ease, visibility 0s 0.22s; }
 .fermer { position: sticky; top: 0; float: right; margin: -0.5rem -0.75rem 0 0; width: 2.25rem; height: 2.25rem; font-size: 1.4rem; line-height: 1; border: none; cursor: pointer; }
 .fiche .filet { height: 6px; width: 3.5rem; background: var(--c); margin-bottom: 1rem; }

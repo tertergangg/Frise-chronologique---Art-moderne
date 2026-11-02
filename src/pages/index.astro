@@ -43,8 +43,11 @@
 
   <aside id="panneau" class="panneau" aria-live="polite" hidden>
     <div id="poignee" class="poignee" role="separator" aria-orientation="vertical" aria-label="Redimensionner la fiche" tabindex="0"></div>
-    <button type="button" id="fermer" class="fermer" aria-label="Fermer la fiche">×</button>
-    <div id="contenu-panneau"></div>
+    <!-- C’est ce bloc qui défile, et non le panneau : la poignée reste ainsi en place -->
+    <div id="interieur-panneau" class="interieur-panneau">
+      <button type="button" id="fermer" class="fermer" aria-label="Fermer la fiche">×</button>
+      <div id="contenu-panneau"></div>
+    </div>
   </aside>
 
   <script is:inline src="https://cdn.jsdelivr.net/npm/marked@18.0.14/lib/marked.umd.js"></script>
