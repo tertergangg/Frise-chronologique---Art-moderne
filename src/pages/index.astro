@@ -29,6 +29,8 @@
       </div>
       <!-- Deux libellés : le long sur ordinateur, le court sur téléphone (style.css n’en affiche qu’un) -->
       <button type="button" id="hasard" class="hasard"><span class="long">Une œuvre au hasard</span><span class="court">Au hasard</span></button>
+      <!-- Ouvre l’Index dans le panneau des fiches (app.js, section « Index ») -->
+      <button type="button" id="ouvrir-index" class="bouton-index"><span class="trois-traits" aria-hidden="true"></span>Index</button>
     </div>
     <nav id="sommaire" class="filtres" aria-label="Aller à un mouvement"></nav>
     <label class="bascule"><input type="checkbox" id="majeures"> Œuvres majeures seulement</label>
@@ -44,11 +46,12 @@
 
   <div id="bulle" class="bulle" role="tooltip" hidden></div>
 
+  <!-- Le panneau affiche une fiche ou l’Index -->
   <aside id="panneau" class="panneau" aria-live="polite" hidden>
-    <div id="poignee" class="poignee" role="separator" aria-orientation="vertical" aria-label="Redimensionner la fiche" tabindex="0"></div>
+    <div id="poignee" class="poignee" role="separator" aria-orientation="vertical" aria-label="Redimensionner le panneau" tabindex="0"></div>
     <!-- C’est ce bloc qui défile, et non le panneau : la poignée reste ainsi en place -->
     <div id="interieur-panneau" class="interieur-panneau">
-      <button type="button" id="fermer" class="fermer" aria-label="Fermer la fiche">×</button>
+      <button type="button" id="fermer" class="fermer" aria-label="Fermer le panneau">×</button>
       <div id="contenu-panneau"></div>
     </div>
   </aside>

@@ -26,7 +26,8 @@ button { font: inherit; color: inherit; }
 .resultats { position: absolute; z-index: 30; right: 0; top: calc(100% + 4px); width: 22rem; max-width: 90vw; max-height: 60vh; overflow: auto; margin: 0; padding: 0.25rem; list-style: none; }
 .resultats li { padding: 0.45rem 0.6rem; cursor: pointer; }
 .resultats li small { display: block; }
-.hasard { display: inline-flex; align-items: center; cursor: pointer; white-space: nowrap; }
+/* Les boutons bordés : « Une œuvre au hasard », « Index » et les onglets de l’Index */
+.hasard, .bouton-index, .onglet { display: inline-flex; align-items: center; cursor: pointer; white-space: nowrap; }
 .hasard .court { display: none; }
 /* Calée en haut, à la hauteur de la première rangée de mouvements, même quand le sommaire tient sur deux lignes */
 .bascule { display: flex; gap: 0.4rem; align-items: center; cursor: pointer; white-space: nowrap; align-self: start; margin-top: 0.3rem; }
@@ -139,9 +140,10 @@ body { font-size: 15px; line-height: 1.45; }
 .entete { border-bottom: 3px solid var(--encre); }
 .entete h1 { font-family: var(--police-titre); font-weight: 900; font-stretch: 70%; font-variation-settings: "wdth" 66; font-size: clamp(2.2rem, 3.8vw, 3rem); line-height: 0.95; letter-spacing: -0.01em; }
 .sous-titre-site { font-size: 0.9rem; font-weight: 600; font-variation-settings: "wdth" 85; }
-.hasard { font: 700 0.95rem var(--police-texte); font-variation-settings: "wdth" 85; padding: 0.5rem 0.9rem; border: 2px solid var(--encre); background: var(--surface); }
-.hasard:hover { background: var(--encre); color: var(--fond); }
-.recherche input { font: 500 1rem var(--police-texte); border: 2px solid var(--encre); border-radius: 0; background: var(--surface); color: var(--encre); }
+.hasard, .bouton-index, .onglet { font: 700 0.95rem var(--police-texte); font-variation-settings: "wdth" 85; padding: 0.5rem 0.9rem; border: 2px solid var(--encre); background: var(--surface); }
+/* L’onglet choisi de l’Index reste noir, comme un bouton survolé */
+.hasard:hover, .bouton-index:hover, .onglet:hover, .onglet[aria-pressed="true"] { background: var(--encre); color: var(--fond); }
+.recherche input, .champ-index { font: 500 1rem var(--police-texte); border: 2px solid var(--encre); border-radius: 0; background: var(--surface); color: var(--encre); }
 .resultats { background: var(--surface); border: 2px solid var(--encre); box-shadow: 5px 5px 0 var(--ombre); }
 .resultats li { font-weight: 600; }
 .resultats li[aria-selected="true"], .resultats li:hover { background: var(--encre); color: var(--fond); }
@@ -375,3 +377,36 @@ body.redimension .panneau { transition: none; }
 .visionneuse img { display: block; max-width: calc(94vw - 6px); max-height: calc(94vh - 6px); object-fit: contain; }
 /* La croix de la fiche, posée dans le coin de l’image */
 .visionneuse .fermer { position: absolute; top: 0.5rem; right: 0.5rem; float: none; margin: 0; }
+
+/* ---------- Index, affiché dans le panneau des fiches (lot 3) ---------- */
+/* Le trait sous le titre passe aussi sous la croix ; le texte, lui, s’écarte de la croix (qui est flottante) */
+.index h2 { margin: 0 0 1.25rem; padding-bottom: 0.9rem; border-bottom: 3px solid var(--encre);
+  font: 900 2.6rem/0.92 var(--police-titre); font-variation-settings: "wdth" 66; }
+
+/* « Comment lire la frise » : <details> se replie et se déplie tout seul, sans JavaScript */
+.comment-lire { margin: 0 0 1.25rem; font-size: 0.92rem; }
+.comment-lire summary { cursor: pointer; font: 800 0.95rem var(--police-titre); font-variation-settings: "wdth" 80; }
+.comment-lire p { margin: 0.5rem 0 0; line-height: 1.5; }
+
+.onglets { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 1rem; }
+.champ-index { display: block; width: 100%; padding: 0.6rem 0.75rem; margin: 0 0 1.25rem; }
+
+.compteur { margin: 0; padding-bottom: 0.35rem; border-bottom: 2px solid var(--encre); font-size: 0.8rem; font-weight: 600; }
+.index-liste { list-style: none; margin: 0; padding: 0; }
+.index-liste li { border-bottom: 2px solid var(--encre); }
+/* Chaque ligne est un lien sur deux rangées : le nom puis le détail à gauche, la flèche à droite */
+.index-liste a { display: grid; grid-template-columns: 1fr auto; gap: 0.15rem 1rem; padding: 0.8rem 0; color: inherit; text-decoration: none; }
+.index-nom { grid-column: 1; font: 900 1.3rem/1.1 var(--police-titre); font-variation-settings: "wdth" 70; }
+.index-detail { grid-column: 1; font-size: 0.8rem; color: var(--doux); }
+.index-fleche { grid-column: 2; grid-row: 1 / span 2; font-size: 1.1rem; line-height: 1; }
+.index-liste a:hover .index-nom { text-decoration: underline; text-decoration-thickness: 2px; }
+.index-vide { margin: 1rem 0; color: var(--doux); }
+
+/* Bouton « Index » : trois traits avant le mot, dessinés en CSS.
+   Ils sont en currentColor : ils passent donc en clair, comme le texte, quand le bouton devient noir au survol */
+.bouton-index { gap: 0.55rem; padding-left: 0.8rem; padding-right: 1.1rem; }
+.trois-traits { flex: none; width: 1.1rem; height: 0.8rem;
+  background:
+    linear-gradient(currentColor, currentColor) top / 100% 2px no-repeat,
+    linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat,
+    linear-gradient(currentColor, currentColor) bottom / 100% 2px no-repeat; }

@@ -527,6 +527,7 @@ function ouvrir(id, centrer = false) {
   else return;
   contenu.innerHTML = `<article class="fiche" style="--c:${c}"><div class="filet"></div>${html}</article>`;
   panneau.hidden = false;
+  panneau.setAttribute("aria-live", "polite");   // l’Index coupe l’annonce automatique : une fiche la remet
   $("#interieur-panneau").scrollTop = 0;
   toile.querySelectorAll(".choisi").forEach((n) => n.classList.remove("choisi"));
   toile.querySelectorAll(`[data-id="${CSS.escape(id)}"]`).forEach((n) => n.classList.add("choisi"));
@@ -539,6 +540,105 @@ function fermer() {
   try { history.replaceState(null, "", location.pathname + location.search); } catch (err) { /* idem */ }
 }
 $("#fermer").addEventListener("click", fermer);
+
+/* ---------- Index : les mouvements, les artistes et les œuvres, dans le panneau des fiches ---------- */
+// L’Index prend la place d’une fiche dans le panneau : il en garde la croix, la poignée et la touche Échap.
+// etatIndex retient l’onglet choisi et le texte cherché, pour retrouver l’Index tel qu’on l’a laissé.
+const etatIndex = { onglet: "mouvements", recherche: "" };
+
+const ONGLETS_INDEX = {
+  mouvements: { titre: "Mouvements", singulier: "mouvement", pluriel: "mouvements" },
+  artistes: { titre: "Artistes", singulier: "artiste", pluriel: "artistes" },
+  oeuvres: { titre: "Œuvres", singulier: "œuvre", pluriel: "œuvres" }
+};
+
+// Le texte d’aide retiré du bandeau à l’étape 2a
+const AIDE_FRISE = "Avance dans le temps avec les décennies en bas de page ou en faisant glisser la frise, "
+  + "et prends du recul avec la vue d’ensemble. Clique sur une bande de couleur pour explorer un mouvement en grand, "
+  + "sur un nom ou une œuvre pour ouvrir sa fiche.";
+
+// « 1 œuvre », « 2 œuvres » ; en français, zéro prend le singulier
+function compter(nombre, onglet) {
+  const mots = ONGLETS_INDEX[onglet];
+  return `${nombre} ${nombre > 1 ? mots.pluriel : mots.singulier}`;
+}
+
+// Les lignes d’un onglet, déjà triées : { id, titre, detail }
+function lignesIndex(onglet) {
+  if (onglet === "mouvements") {
+    return mouvementsTries.map((m) => ({
+      id: m.id, titre: m.nom, detail: [`${m.debut}–${m.fin}`, m.lieu].filter(Boolean).join(" · ")
+    }));
+  }
+  if (onglet === "artistes") {
+    // localeCompare trie à la française : « Édouard » se range avec les E, et non après le Z
+    return [...D.artistes]
+      .sort((a, b) => nomCourt(a.nom).localeCompare(nomCourt(b.nom), "fr"))
+      .map((a) => ({
+        id: a.id, titre: a.nom,
+        detail: [`${a.naissance ?? "?"}–${a.deces ?? "?"}`, MOUV[a.mouvement]?.nom].filter(Boolean).join(" · ")
+      }));
+  }
+  // Œuvres par année, puis par titre ; une œuvre sans année (Infinity) passe en fin de liste
+  return [...D.oeuvres]
+    .sort((a, b) => ((a.annee ?? Infinity) - (b.annee ?? Infinity)) || String(a.titre ?? "").localeCompare(String(b.titre ?? ""), "fr"))
+    .map((o) => ({
+      id: o.id, titre: o.titre, detail: [o.annee, ART[o.artiste]?.nom].filter(Boolean).join(" · ")
+    }));
+}
+
+// Le compteur et la liste, filtrés par le texte cherché (sans tenir compte des accents)
+function htmlListeIndex() {
+  const q = sansAccent(etatIndex.recherche.trim());
+  const lignes = lignesIndex(etatIndex.onglet).filter((x) => sansAccent(x.titre).includes(q));
+  const liste = lignes.length
+    ? `<ul class="index-liste">${lignes.map((x) => `<li><a href="#${esc(x.id)}" data-id="${esc(x.id)}">
+        <span class="index-nom">${esc(x.titre)}</span>
+        <span class="index-detail">${esc(x.detail)}</span>
+        <span class="index-fleche" aria-hidden="true">↗</span></a></li>`).join("")}</ul>`
+    : `<p class="index-vide">Aucun résultat. Essaie un autre mot, ou un autre onglet.</p>`;
+  return `<p class="compteur">${compter(lignes.length, etatIndex.onglet)}</p>${liste}`;
+}
+
+// Ne redessine que le compteur et la liste : redessiner tout l’Index ferait sortir le curseur du champ
+function majListeIndex() {
+  $("#liste-index").innerHTML = htmlListeIndex();
+}
+
+function afficherIndex() {
+  const onglets = Object.entries(ONGLETS_INDEX).map(([cle, o]) =>
+    `<button type="button" class="onglet" data-onglet="${cle}" aria-pressed="${cle === etatIndex.onglet}">${o.titre}</button>`).join("");
+  contenu.innerHTML = `<section class="index" aria-label="Index">
+    <h2>Index.</h2>
+    <details class="comment-lire"><summary>Comment lire la frise</summary><p>${AIDE_FRISE}</p></details>
+    <div class="onglets">${onglets}</div>
+    <label for="champ-index" class="visuellement-cache">Rechercher dans l’index</label>
+    <input id="champ-index" class="champ-index" type="search" placeholder="Rechercher…" autocomplete="off" value="${esc(etatIndex.recherche)}">
+    <div id="liste-index">${htmlListeIndex()}</div>
+  </section>`;
+  panneau.hidden = false;
+  // Sans cela, un lecteur d’écran lirait tout l’Index à l’ouverture, puis à chaque lettre tapée
+  panneau.setAttribute("aria-live", "off");
+  $("#interieur-panneau").scrollTop = 0;
+  toile.querySelectorAll(".choisi").forEach((n) => n.classList.remove("choisi"));
+  try { history.replaceState(null, "", location.pathname + location.search); } catch (err) { /* aperçu sans historique */ }
+  // Sur téléphone, le clavier s’ouvrirait d’office et cacherait la liste
+  if (!petitEcran()) $("#champ-index").focus();
+}
+
+function choisirOnglet(onglet) {
+  etatIndex.onglet = onglet;
+  contenu.querySelectorAll("[data-onglet]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.onglet === onglet)));
+  majListeIndex();
+}
+
+$("#ouvrir-index").addEventListener("click", afficherIndex);
+// Le champ est recréé à chaque ouverture de l’Index : on écoute donc sur « contenu », qui, lui, ne change pas
+contenu.addEventListener("input", (ev) => {
+  if (ev.target.id !== "champ-index") return;
+  etatIndex.recherche = ev.target.value;
+  majListeIndex();
+});
 
 /* ---------- Image d’une œuvre en grand ---------- */
 // <dialog> est un élément HTML natif : showModal() l’ouvre par-dessus la page, garde le focus dedans,
@@ -584,6 +684,8 @@ contenu.addEventListener("click", (ev) => {
   if (bouton) { explorer(bouton.dataset.explorer); return; }
   const boutonImage = ev.target.closest("[data-agrandir]");
   if (boutonImage) { agrandir(boutonImage.querySelector("img")); return; }
+  const onglet = ev.target.closest("[data-onglet]");                                 // onglets de l’Index
+  if (onglet) { choisirOnglet(onglet.dataset.onglet); return; }
   const a = ev.target.closest("a[data-id], a[href^='#']");
   if (!a) return;
   ev.preventDefault();
