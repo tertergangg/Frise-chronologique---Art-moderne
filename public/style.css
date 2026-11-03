@@ -281,6 +281,7 @@ body[data-vue="ensemble"] .defile { cursor: default; }
   .decennies .ensemble { padding: 0.5rem 0.5rem; font-size: 0.75rem; }
   .bandeau strong { font-size: 1.3rem; }
   .couloir.artiste .etiquette .nom { font-size: 0.85rem; }
+  .couloir.artiste .etiquette .complement { display: none; }
   .bande-globale { top: 38px; bottom: 6px; height: auto; }
   .bande-globale .texte, .bande-globale.etroite .texte { position: absolute; left: 0; right: auto; bottom: calc(100% + 4px); color: var(--encre); text-align: left; }
   .bande-globale.a-gauche .texte { left: auto; right: 0; text-align: right; }

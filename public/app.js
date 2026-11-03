@@ -158,6 +158,28 @@ function vueEnsemble(f, largeurPiste) {
 }
 
 /* ---------- Vue mouvement : une ligne par artiste ---------- */
+// Premier mot de la nationalité, en minuscule : « Roumaine (puis française) » donne « roumaine ».
+// construire.py y a mis une majuscule, mais ici le mot suit « Nationalité ». Le texte complet reste dans la fiche.
+function nationaliteCourte(texte) {
+  return String(texte ?? "").trim().split(/[\s,(]/)[0].toLowerCase();
+}
+
+// Étiquette d’un artiste : nom, dates, nombre d’œuvres affichées, nationalité et disciplines,
+// et son mouvement principal s’il vient d’ailleurs (un artiste « invité »).
+// Les éléments « complement » sont cachés sur téléphone (style.css), où l’étiquette est étroite.
+function etiquetteArtiste(a, m, nombre) {
+  const compte = nombre ? `<span class="complement"> · ${compter(nombre, "oeuvres")} ici</span>` : "";
+  const nationalite = nationaliteCourte(a.nationalite);
+  const details = [nationalite ? `Nationalité ${nationalite}` : "", a.role].filter(Boolean).join(" · ");
+  const ailleurs = a.mouvement !== m.id ? MOUV[a.mouvement] : null;
+  return `<div class="etiquette">
+        <button class="nom" data-id="${esc(a.id)}" data-bulle="${esc(a.phrase || "")}">${esc(a.nom)}</button>
+        <small>${a.naissance ?? "?"}–${a.deces ?? "?"}${compte}</small>
+        ${details ? `<small class="complement">${esc(details)}</small>` : ""}
+        ${ailleurs ? `<small class="complement">Surtout : ${esc(ailleurs.nom)}</small>` : ""}
+      </div>`;
+}
+
 function vueMouvement(f, largeurPiste) {
   const m = MOUV[etat.mouvement];
   const oeuvres = oeuvresDuMouvement(m);
@@ -167,10 +189,7 @@ function vueMouvement(f, largeurPiste) {
     const lignes = empiler(siennes, f.carte);
     const vie = [Math.max(a.naissance ?? f.debut, f.debut), Math.min(a.deces ?? f.fin, f.fin + 1)];
     return `<section class="couloir artiste" style="--c:${m.couleur}">
-      <div class="etiquette">
-        <button class="nom" data-id="${esc(a.id)}" data-bulle="${esc(a.phrase || "")}">${esc(a.nom)}</button>
-        <small>${a.naissance ?? "?"}–${a.deces ?? "?"}</small>
-      </div>
+      ${etiquetteArtiste(a, m, siennes.length)}
       <div class="piste" style="width:${largeurPiste}px;min-height:${16 + lignes * REGLAGES.hauteurLigne}px">
         ${bande(m, f)}
         <div class="vie" style="left:${xAn(vie[0], f)}px;width:${xAn(vie[1], f) - xAn(vie[0], f)}px"></div>
