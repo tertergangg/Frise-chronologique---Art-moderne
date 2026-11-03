@@ -15,10 +15,11 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+  <!-- Première ligne : le titre et les outils. Seconde ligne : le sommaire et la case « Œuvres majeures ». -->
   <header class="entete">
     <div class="titre">
-      <h1>L’art moderne<span>1874–1960</span></h1>
-      <p class="aide">Avance dans le temps avec les décennies en bas de page ou en faisant glisser la frise, et prends du recul avec la vue d’ensemble. Clique sur une bande de couleur pour explorer un mouvement en grand, sur un nom ou une œuvre pour ouvrir sa fiche.</p>
+      <h1>L’art moderne</h1>
+      <p class="sous-titre-site">1874–1960 · Une histoire en mouvements</p>
     </div>
     <div class="outils">
       <div class="recherche">
@@ -26,9 +27,11 @@
         <input id="champ-recherche" type="search" placeholder="Chercher un artiste, une œuvre…" autocomplete="off">
         <ul id="resultats" class="resultats" role="listbox" hidden></ul>
       </div>
-      <label class="bascule"><input type="checkbox" id="majeures"> Œuvres majeures seulement</label>
+      <!-- Deux libellés : le long sur ordinateur, le court sur téléphone (style.css n’en affiche qu’un) -->
+      <button type="button" id="hasard" class="hasard"><span class="long">Une œuvre au hasard</span><span class="court">Au hasard</span></button>
     </div>
     <nav id="sommaire" class="filtres" aria-label="Aller à un mouvement"></nav>
+    <label class="bascule"><input type="checkbox" id="majeures"> Œuvres majeures seulement</label>
   </header>
 
   <div id="bandeau" class="bandeau" hidden></div>

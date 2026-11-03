@@ -228,9 +228,12 @@ function explorer(idMouvement) {
 }
 
 /* ---------- Navigation dans le temps ---------- */
-// Fait défiler pour que l’année donnée soit au bord gauche de la frise
-function allerAnnee(annee, doux = true) {
-  defile.scrollTo({ left: xAn(annee, fenetre()) - 24, behavior: doux ? douceur() : "auto" });
+// Fait défiler pour que l’année donnée soit au bord gauche de la frise ;
+// « haut », s’il est donné, règle aussi le défilement vertical dans le même mouvement
+function allerAnnee(annee, doux = true, haut = null) {
+  const options = { left: xAn(annee, fenetre()) - 24, behavior: doux ? douceur() : "auto" };
+  if (haut != null) options.top = haut;
+  defile.scrollTo(options);
 }
 // Année visible au bord gauche
 const anneeGauche = () => { const f = fenetre(); return f.debut + (defile.scrollLeft + 24) / f.ppa; };
@@ -302,6 +305,21 @@ sommaire.addEventListener("click", (ev) => {
 const caseMajeures = $("#majeures");
 caseMajeures.checked = etat.majeures;
 caseMajeures.addEventListener("change", () => { etat.majeures = caseMajeures.checked; dessiner(); });
+
+let dernierHasard = null;
+function oeuvreAuHasard() {
+  const possibles = D.oeuvres.filter((o) => o.annee != null && MOUV[o.mouvement]
+    && (!etat.majeures || o.majeure) && o.id !== dernierHasard);
+  if (!possibles.length) return null;
+  return possibles[Math.floor(Math.random() * possibles.length)];
+}
+$("#hasard").addEventListener("click", () => {
+  const o = oeuvreAuHasard();
+  if (!o) return;
+  dernierHasard = o.id;
+  if (etat.vue !== "detail") changerVue("detail");   // seule la vue détail montre toutes les œuvres
+  ouvrir(o.id, true);
+});
 
 /* ---------- Survol d’un artiste : ses œuvres ressortent ---------- */
 toile.addEventListener("pointerover", (ev) => {
@@ -490,6 +508,15 @@ function ficheEvenement(x) {
     ${m ? `<dl><dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd></dl>` : ""}`;
 }
 
+// Défilement vertical qui place au milieu de la frise la carte d’une œuvre ou le repère d’un événement.
+// Renvoie null si l’élément n’est pas affiché (par exemple une œuvre non majeure quand la case est cochée).
+function hautCentre(id) {
+  const el = toile.querySelector(`.carte[data-id="${CSS.escape(id)}"], .evenement[data-id="${CSS.escape(id)}"]`);
+  if (!el) return null;
+  const haut = el.getBoundingClientRect().top - defile.getBoundingClientRect().top + defile.scrollTop;
+  return haut - (defile.clientHeight - el.offsetHeight) / 2;
+}
+
 // Ouvre la fiche d’un élément, quel que soit son type
 function ouvrir(id, centrer = false) {
   let html = "", c = "#8A8F99", annee = null;
@@ -503,7 +530,7 @@ function ouvrir(id, centrer = false) {
   $("#interieur-panneau").scrollTop = 0;
   toile.querySelectorAll(".choisi").forEach((n) => n.classList.remove("choisi"));
   toile.querySelectorAll(`[data-id="${CSS.escape(id)}"]`).forEach((n) => n.classList.add("choisi"));
-  if (centrer && annee && etat.vue === "detail") allerAnnee(annee - 3);
+  if (centrer && annee && etat.vue === "detail") allerAnnee(annee - 3, true, hautCentre(id));
   try { history.replaceState(null, "", "#" + id); } catch (err) { /* aperçu sans historique */ }
 }
 function fermer() {

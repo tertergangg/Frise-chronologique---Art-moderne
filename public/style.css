@@ -16,18 +16,21 @@ button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .visuellement-cache { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* En-tête */
-.entete { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.4rem 2rem; align-items: end; padding: 0.9rem clamp(1rem, 3vw, 2.25rem) 0.7rem; }
+/* En-tête : une grille de deux colonnes. Ligne 1 : titre | outils. Ligne 2 : sommaire | case « Œuvres majeures » */
+.entete { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.6rem 2rem; align-items: center; padding: 0.8rem clamp(1rem, 3vw, 2.25rem) 0.7rem; }
 .entete h1 { margin: 0; }
-.aide { margin: 0.35rem 0 0; max-width: 70ch; }
-.outils { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.sous-titre-site { margin: 0.2rem 0 0; }
+.outils { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 .recherche { position: relative; }
 .recherche input { width: 16rem; max-width: 70vw; padding: 0.5rem 0.75rem; }
 .resultats { position: absolute; z-index: 30; right: 0; top: calc(100% + 4px); width: 22rem; max-width: 90vw; max-height: 60vh; overflow: auto; margin: 0; padding: 0.25rem; list-style: none; }
 .resultats li { padding: 0.45rem 0.6rem; cursor: pointer; }
 .resultats li small { display: block; }
-.bascule { display: flex; gap: 0.4rem; align-items: center; cursor: pointer; white-space: nowrap; }
-.filtres { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.35rem; }
+.hasard { display: inline-flex; align-items: center; cursor: pointer; white-space: nowrap; }
+.hasard .court { display: none; }
+/* Calée en haut, à la hauteur de la première rangée de mouvements, même quand le sommaire tient sur deux lignes */
+.bascule { display: flex; gap: 0.4rem; align-items: center; cursor: pointer; white-space: nowrap; align-self: start; margin-top: 0.3rem; }
+.filtres { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .filtre { display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; }
 .filtre .pastille { width: 0.7rem; height: 0.7rem; flex: none; }
 
@@ -87,8 +90,13 @@ button { font: inherit; color: inherit; }
 
 @media (max-width: 720px) {
   .entete { grid-template-columns: 1fr; padding-top: 0.8rem; }
-  .outils { justify-content: flex-start; }
-  .aide { font-size: 0.85rem; }
+  .outils { justify-content: flex-start; flex-wrap: nowrap; }
+  .recherche { flex: 1; min-width: 0; }
+  .recherche input { width: 100%; max-width: none; }
+  /* Accrochée à gauche : accrochée à droite, la liste déborderait hors de l’écran */
+  .resultats { left: 0; right: auto; }
+  .hasard .long { display: none; }
+  .hasard .court { display: inline; }
   .filtres { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .filtre { flex: none; }
   .etiquette { padding: 0.5rem; }
@@ -129,9 +137,10 @@ button { font: inherit; color: inherit; }
 }
 body { font-size: 15px; line-height: 1.45; }
 .entete { border-bottom: 3px solid var(--encre); }
-.entete h1 { font-family: var(--police-titre); font-weight: 900; font-stretch: 70%; font-variation-settings: "wdth" 66; font-size: clamp(2.6rem, 6.5vw, 4.6rem); line-height: 0.88; letter-spacing: -0.015em; }
-.entete h1 span { display: inline-block; font-weight: 300; font-variation-settings: "wdth" 110; font-size: 0.42em; letter-spacing: 0; margin-left: 0.35em; vertical-align: 0.6em; }
-.aide { font-size: 0.9rem; font-variation-settings: "wdth" 90; }
+.entete h1 { font-family: var(--police-titre); font-weight: 900; font-stretch: 70%; font-variation-settings: "wdth" 66; font-size: clamp(1.9rem, 3.2vw, 2.4rem); line-height: 0.95; letter-spacing: -0.01em; }
+.sous-titre-site { font-size: 0.8rem; font-weight: 600; font-variation-settings: "wdth" 85; }
+.hasard { font: 700 0.85rem var(--police-texte); font-variation-settings: "wdth" 85; padding: 0.45rem 0.8rem; border: 2px solid var(--encre); background: var(--surface); }
+.hasard:hover { background: var(--encre); color: var(--fond); }
 .recherche input { font: 500 0.9rem var(--police-texte); border: 2px solid var(--encre); border-radius: 0; background: var(--surface); color: var(--encre); }
 .resultats { background: var(--surface); border: 2px solid var(--encre); box-shadow: 5px 5px 0 var(--ombre); }
 .resultats li { font-weight: 600; }
@@ -276,7 +285,6 @@ body[data-vue="ensemble"] .defile { cursor: default; }
 @media (max-width: 720px) {
   .decennies .ensemble { padding: 0.5rem 0.5rem; font-size: 0.75rem; }
   .bandeau strong { font-size: 1.3rem; }
-  .aide { display: none; }
   .couloir.artiste .etiquette .nom { font-size: 0.85rem; }
   .bande-globale { top: 38px; bottom: 6px; height: auto; }
   .bande-globale .texte, .bande-globale.etroite .texte { position: absolute; left: 0; right: auto; bottom: calc(100% + 4px); color: var(--encre); text-align: left; }
