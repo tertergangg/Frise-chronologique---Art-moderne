@@ -158,6 +158,28 @@ function vueEnsemble(f, largeurPiste) {
 }
 
 /* ---------- Vue mouvement : une ligne par artiste ---------- */
+// Premier mot de la nationalité, en minuscule : « Roumaine (puis française) » donne « roumaine ».
+// construire.py y a mis une majuscule, mais ici le mot suit « Nationalité ». Le texte complet reste dans la fiche.
+function nationaliteCourte(texte) {
+  return String(texte ?? "").trim().split(/[\s,(]/)[0].toLowerCase();
+}
+
+// Étiquette d’un artiste : nom, dates, nombre d’œuvres affichées, nationalité et disciplines,
+// et son mouvement principal s’il vient d’ailleurs (un artiste « invité »).
+// Les éléments « complement » sont cachés sur téléphone (style.css), où l’étiquette est étroite.
+function etiquetteArtiste(a, m, nombre) {
+  const compte = nombre ? `<span class="complement"> · ${compter(nombre, "oeuvres")} ici</span>` : "";
+  const nationalite = nationaliteCourte(a.nationalite);
+  const details = [nationalite ? `Nationalité ${nationalite}` : "", a.role].filter(Boolean).join(" · ");
+  const ailleurs = a.mouvement !== m.id ? MOUV[a.mouvement] : null;
+  return `<div class="etiquette">
+        <button class="nom" data-id="${esc(a.id)}" data-bulle="${esc(a.phrase || "")}">${esc(a.nom)}</button>
+        <small>${a.naissance ?? "?"}–${a.deces ?? "?"}${compte}</small>
+        ${details ? `<small class="complement">${esc(details)}</small>` : ""}
+        ${ailleurs ? `<small class="complement">Surtout : ${esc(ailleurs.nom)}</small>` : ""}
+      </div>`;
+}
+
 function vueMouvement(f, largeurPiste) {
   const m = MOUV[etat.mouvement];
   const oeuvres = oeuvresDuMouvement(m);
@@ -167,10 +189,7 @@ function vueMouvement(f, largeurPiste) {
     const lignes = empiler(siennes, f.carte);
     const vie = [Math.max(a.naissance ?? f.debut, f.debut), Math.min(a.deces ?? f.fin, f.fin + 1)];
     return `<section class="couloir artiste" style="--c:${m.couleur}">
-      <div class="etiquette">
-        <button class="nom" data-id="${esc(a.id)}" data-bulle="${esc(a.phrase || "")}">${esc(a.nom)}</button>
-        <small>${a.naissance ?? "?"}–${a.deces ?? "?"}</small>
-      </div>
+      ${etiquetteArtiste(a, m, siennes.length)}
       <div class="piste" style="width:${largeurPiste}px;min-height:${16 + lignes * REGLAGES.hauteurLigne}px">
         ${bande(m, f)}
         <div class="vie" style="left:${xAn(vie[0], f)}px;width:${xAn(vie[1], f) - xAn(vie[0], f)}px"></div>
@@ -228,9 +247,12 @@ function explorer(idMouvement) {
 }
 
 /* ---------- Navigation dans le temps ---------- */
-// Fait défiler pour que l’année donnée soit au bord gauche de la frise
-function allerAnnee(annee, doux = true) {
-  defile.scrollTo({ left: xAn(annee, fenetre()) - 24, behavior: doux ? douceur() : "auto" });
+// Fait défiler pour que l’année donnée soit au bord gauche de la frise ;
+// « haut », s’il est donné, règle aussi le défilement vertical dans le même mouvement
+function allerAnnee(annee, doux = true, haut = null) {
+  const options = { left: xAn(annee, fenetre()) - 24, behavior: doux ? douceur() : "auto" };
+  if (haut != null) options.top = haut;
+  defile.scrollTo(options);
 }
 // Année visible au bord gauche
 const anneeGauche = () => { const f = fenetre(); return f.debut + (defile.scrollLeft + 24) / f.ppa; };
@@ -302,6 +324,21 @@ sommaire.addEventListener("click", (ev) => {
 const caseMajeures = $("#majeures");
 caseMajeures.checked = etat.majeures;
 caseMajeures.addEventListener("change", () => { etat.majeures = caseMajeures.checked; dessiner(); });
+
+let dernierHasard = null;
+function oeuvreAuHasard() {
+  const possibles = D.oeuvres.filter((o) => o.annee != null && MOUV[o.mouvement]
+    && (!etat.majeures || o.majeure) && o.id !== dernierHasard);
+  if (!possibles.length) return null;
+  return possibles[Math.floor(Math.random() * possibles.length)];
+}
+$("#hasard").addEventListener("click", () => {
+  const o = oeuvreAuHasard();
+  if (!o) return;
+  dernierHasard = o.id;
+  if (etat.vue !== "detail") changerVue("detail");   // seule la vue détail montre toutes les œuvres
+  ouvrir(o.id, true);
+});
 
 /* ---------- Survol d’un artiste : ses œuvres ressortent ---------- */
 toile.addEventListener("pointerover", (ev) => {
@@ -490,6 +527,15 @@ function ficheEvenement(x) {
     ${m ? `<dl><dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd></dl>` : ""}`;
 }
 
+// Défilement vertical qui place au milieu de la frise la carte d’une œuvre ou le repère d’un événement.
+// Renvoie null si l’élément n’est pas affiché (par exemple une œuvre non majeure quand la case est cochée).
+function hautCentre(id) {
+  const el = toile.querySelector(`.carte[data-id="${CSS.escape(id)}"], .evenement[data-id="${CSS.escape(id)}"]`);
+  if (!el) return null;
+  const haut = el.getBoundingClientRect().top - defile.getBoundingClientRect().top + defile.scrollTop;
+  return haut - (defile.clientHeight - el.offsetHeight) / 2;
+}
+
 // Ouvre la fiche d’un élément, quel que soit son type
 function ouvrir(id, centrer = false) {
   let html = "", c = "#8A8F99", annee = null;
@@ -498,20 +544,124 @@ function ouvrir(id, centrer = false) {
   else if (MOUV[id]) { html = ficheMouvement(MOUV[id]); c = MOUV[id].couleur; }
   else if (EVT[id]) { html = ficheEvenement(EVT[id]); c = couleur(EVT[id].mouvement); annee = EVT[id].annee; }
   else return;
-  contenu.innerHTML = `<article class="fiche" style="--c:${c}"><div class="filet"></div>${html}</article>`;
+  const retour = etatIndex.actif ? `<button type="button" class="retour-index" data-retour-index>‹ Retour à l’index</button>` : "";
+  contenu.innerHTML = `${retour}<article class="fiche" style="--c:${c}"><div class="filet"></div>${html}</article>`;
   panneau.hidden = false;
+  panneau.setAttribute("aria-live", "polite");   // l’Index coupe l’annonce automatique : une fiche la remet
   $("#interieur-panneau").scrollTop = 0;
   toile.querySelectorAll(".choisi").forEach((n) => n.classList.remove("choisi"));
   toile.querySelectorAll(`[data-id="${CSS.escape(id)}"]`).forEach((n) => n.classList.add("choisi"));
-  if (centrer && annee && etat.vue === "detail") allerAnnee(annee - 3);
+  if (centrer && annee && etat.vue === "detail") allerAnnee(annee - 3, true, hautCentre(id));
   try { history.replaceState(null, "", "#" + id); } catch (err) { /* aperçu sans historique */ }
 }
 function fermer() {
   panneau.hidden = true;
+  etatIndex.actif = false;   // à la prochaine ouverture du panneau, pas de lien de retour
   toile.querySelectorAll(".choisi").forEach((n) => n.classList.remove("choisi"));
   try { history.replaceState(null, "", location.pathname + location.search); } catch (err) { /* idem */ }
 }
 $("#fermer").addEventListener("click", fermer);
+
+/* ---------- Index : les mouvements, les artistes et les œuvres, dans le panneau des fiches ---------- */
+// L’Index prend la place d’une fiche dans le panneau : il en garde la croix, la poignée et la touche Échap.
+// etatIndex retient l’onglet choisi et le texte cherché, pour retrouver l’Index tel qu’on l’a laissé.
+// « actif » : l’Index a été ouvert depuis la dernière ouverture du panneau ; les fiches affichent alors le lien de retour
+const etatIndex = { onglet: "mouvements", recherche: "", actif: false };
+
+const ONGLETS_INDEX = {
+  mouvements: { titre: "Mouvements", singulier: "mouvement", pluriel: "mouvements" },
+  artistes: { titre: "Artistes", singulier: "artiste", pluriel: "artistes" },
+  oeuvres: { titre: "Œuvres", singulier: "œuvre", pluriel: "œuvres" }
+};
+
+// Le texte d’aide retiré du bandeau à l’étape 2a
+const AIDE_FRISE = "Avance dans le temps avec les décennies en bas de page ou en faisant glisser la frise, "
+  + "et prends du recul avec la vue d’ensemble. Clique sur une bande de couleur pour explorer un mouvement en grand, "
+  + "sur un nom ou une œuvre pour ouvrir sa fiche.";
+
+// « 1 œuvre », « 2 œuvres » ; en français, zéro prend le singulier
+function compter(nombre, onglet) {
+  const mots = ONGLETS_INDEX[onglet];
+  return `${nombre} ${nombre > 1 ? mots.pluriel : mots.singulier}`;
+}
+
+// Les lignes d’un onglet, déjà triées : { id, titre, detail }
+function lignesIndex(onglet) {
+  if (onglet === "mouvements") {
+    return mouvementsTries.map((m) => ({
+      id: m.id, titre: m.nom, detail: [`${m.debut}–${m.fin}`, m.lieu].filter(Boolean).join(" · ")
+    }));
+  }
+  if (onglet === "artistes") {
+    // localeCompare trie à la française : « Édouard » se range avec les E, et non après le Z
+    return [...D.artistes]
+      .sort((a, b) => nomCourt(a.nom).localeCompare(nomCourt(b.nom), "fr"))
+      .map((a) => ({
+        id: a.id, titre: a.nom,
+        detail: [`${a.naissance ?? "?"}–${a.deces ?? "?"}`, MOUV[a.mouvement]?.nom].filter(Boolean).join(" · ")
+      }));
+  }
+  // Œuvres par année, puis par titre ; une œuvre sans année (Infinity) passe en fin de liste
+  return [...D.oeuvres]
+    .sort((a, b) => ((a.annee ?? Infinity) - (b.annee ?? Infinity)) || String(a.titre ?? "").localeCompare(String(b.titre ?? ""), "fr"))
+    .map((o) => ({
+      id: o.id, titre: o.titre, detail: [o.annee, ART[o.artiste]?.nom].filter(Boolean).join(" · ")
+    }));
+}
+
+// Le compteur et la liste, filtrés par le texte cherché (sans tenir compte des accents)
+function htmlListeIndex() {
+  const q = sansAccent(etatIndex.recherche.trim());
+  const lignes = lignesIndex(etatIndex.onglet).filter((x) => sansAccent(x.titre).includes(q));
+  const liste = lignes.length
+    ? `<ul class="index-liste">${lignes.map((x) => `<li><a href="#${esc(x.id)}" data-id="${esc(x.id)}">
+        <span class="index-nom">${esc(x.titre)}</span>
+        <span class="index-detail">${esc(x.detail)}</span>
+        <span class="index-fleche" aria-hidden="true">↗</span></a></li>`).join("")}</ul>`
+    : `<p class="index-vide">Aucun résultat. Essaie un autre mot, ou un autre onglet.</p>`;
+  return `<p class="compteur">${compter(lignes.length, etatIndex.onglet)}</p>${liste}`;
+}
+
+// Ne redessine que le compteur et la liste : redessiner tout l’Index ferait sortir le curseur du champ
+function majListeIndex() {
+  $("#liste-index").innerHTML = htmlListeIndex();
+}
+
+function afficherIndex() {
+  etatIndex.actif = true;
+  const onglets = Object.entries(ONGLETS_INDEX).map(([cle, o]) =>
+    `<button type="button" class="onglet" data-onglet="${cle}" aria-pressed="${cle === etatIndex.onglet}">${o.titre}</button>`).join("");
+  contenu.innerHTML = `<section class="index" aria-label="Index">
+    <h2>Index.</h2>
+    <details class="comment-lire"><summary>Comment lire la frise</summary><p>${AIDE_FRISE}</p></details>
+    <div class="onglets">${onglets}</div>
+    <label for="champ-index" class="visuellement-cache">Rechercher dans l’index</label>
+    <input id="champ-index" class="champ-index" type="search" placeholder="Rechercher…" autocomplete="off" value="${esc(etatIndex.recherche)}">
+    <div id="liste-index">${htmlListeIndex()}</div>
+  </section>`;
+  panneau.hidden = false;
+  // Sans cela, un lecteur d’écran lirait tout l’Index à l’ouverture, puis à chaque lettre tapée
+  panneau.setAttribute("aria-live", "off");
+  $("#interieur-panneau").scrollTop = 0;
+  toile.querySelectorAll(".choisi").forEach((n) => n.classList.remove("choisi"));
+  try { history.replaceState(null, "", location.pathname + location.search); } catch (err) { /* aperçu sans historique */ }
+  // Sur téléphone, le clavier s’ouvrirait d’office et cacherait la liste
+  if (!petitEcran()) $("#champ-index").focus();
+}
+
+function choisirOnglet(onglet) {
+  etatIndex.onglet = onglet;
+  contenu.querySelectorAll("[data-onglet]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.onglet === onglet)));
+  majListeIndex();
+}
+
+$("#ouvrir-index").addEventListener("click", afficherIndex);
+// Le champ est recréé à chaque ouverture de l’Index : on écoute donc sur « contenu », qui, lui, ne change pas
+contenu.addEventListener("input", (ev) => {
+  if (ev.target.id !== "champ-index") return;
+  etatIndex.recherche = ev.target.value;
+  majListeIndex();
+});
 
 /* ---------- Image d’une œuvre en grand ---------- */
 // <dialog> est un élément HTML natif : showModal() l’ouvre par-dessus la page, garde le focus dedans,
@@ -557,12 +707,35 @@ contenu.addEventListener("click", (ev) => {
   if (bouton) { explorer(bouton.dataset.explorer); return; }
   const boutonImage = ev.target.closest("[data-agrandir]");
   if (boutonImage) { agrandir(boutonImage.querySelector("img")); return; }
+  const onglet = ev.target.closest("[data-onglet]");                                 // onglets de l’Index
+  if (onglet) { choisirOnglet(onglet.dataset.onglet); return; }
+  if (ev.target.closest("[data-retour-index]")) { afficherIndex(); return; }
   const a = ev.target.closest("a[data-id], a[href^='#']");
   if (!a) return;
   ev.preventDefault();
   ouvrir(a.dataset.id || a.getAttribute("href").slice(1), true);
 });
 
+/* ---------- Thème clair ou sombre ---------- */
+// Le script du <head> (index.astro) a déjà posé data-theme sur <html> avant l’affichage :
+// ici, on l’inverse au clic et on retient le choix pour les prochaines visites
+const racine = document.documentElement, boutonTheme = $("#bouton-theme");
+const LIBELLES_THEME = { light: "Passer en mode sombre", dark: "Passer en mode clair" };
+
+// Le libellé décrit l’action du bouton ; data-bulle l’affiche aussi au survol
+function majBoutonTheme() {
+  const libelle = LIBELLES_THEME[racine.dataset.theme] ?? LIBELLES_THEME.light;
+  boutonTheme.setAttribute("aria-label", libelle);
+  boutonTheme.dataset.bulle = libelle;
+}
+
+boutonTheme.addEventListener("click", () => {
+  const theme = racine.dataset.theme === "dark" ? "light" : "dark";
+  racine.dataset.theme = theme;
+  try { localStorage.setItem("theme", theme); } catch (err) { /* stockage indisponible */ }
+  majBoutonTheme();
+});
+majBoutonTheme();
 
 /* ---------- Démarrage ---------- */
 dessiner();

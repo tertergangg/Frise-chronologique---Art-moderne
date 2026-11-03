@@ -16,18 +16,22 @@ button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .visuellement-cache { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* En-tête */
-.entete { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.4rem 2rem; align-items: end; padding: 0.9rem clamp(1rem, 3vw, 2.25rem) 0.7rem; }
+/* En-tête : une grille de deux colonnes. Ligne 1 : titre | outils. Ligne 2 : sommaire | case « Œuvres majeures » */
+.entete { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.6rem 2rem; align-items: center; padding: 0.8rem clamp(1rem, 3vw, 2.25rem) 0.7rem; }
 .entete h1 { margin: 0; }
-.aide { margin: 0.35rem 0 0; max-width: 70ch; }
-.outils { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.sous-titre-site { margin: 0.2rem 0 0; }
+.outils { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 .recherche { position: relative; }
 .recherche input { width: 16rem; max-width: 70vw; padding: 0.5rem 0.75rem; }
 .resultats { position: absolute; z-index: 30; right: 0; top: calc(100% + 4px); width: 22rem; max-width: 90vw; max-height: 60vh; overflow: auto; margin: 0; padding: 0.25rem; list-style: none; }
 .resultats li { padding: 0.45rem 0.6rem; cursor: pointer; }
 .resultats li small { display: block; }
-.bascule { display: flex; gap: 0.4rem; align-items: center; cursor: pointer; white-space: nowrap; }
-.filtres { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.35rem; }
+/* Les boutons bordés : « Une œuvre au hasard », « Index », les onglets de l’Index et le bouton de thème */
+.hasard, .bouton-index, .onglet, .bouton-theme { display: inline-flex; align-items: center; cursor: pointer; white-space: nowrap; }
+.hasard .court { display: none; }
+/* Calée en haut, à la hauteur de la première rangée de mouvements, même quand le sommaire tient sur deux lignes */
+.bascule { display: flex; gap: 0.4rem; align-items: center; cursor: pointer; white-space: nowrap; align-self: start; margin-top: 0.3rem; }
+.filtres { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .filtre { display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; }
 .filtre .pastille { width: 0.7rem; height: 0.7rem; flex: none; }
 
@@ -87,8 +91,13 @@ button { font: inherit; color: inherit; }
 
 @media (max-width: 720px) {
   .entete { grid-template-columns: 1fr; padding-top: 0.8rem; }
-  .outils { justify-content: flex-start; }
-  .aide { font-size: 0.85rem; }
+  .outils { justify-content: flex-start; flex-wrap: nowrap; }
+  .recherche { flex: 1; min-width: 0; }
+  .recherche input { width: 100%; max-width: none; }
+  /* Accrochée à gauche : accrochée à droite, la liste déborderait hors de l’écran */
+  .resultats { left: 0; right: auto; }
+  .hasard .long { display: none; }
+  .hasard .court { display: inline; }
   .filtres { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .filtre { flex: none; }
   .etiquette { padding: 0.5rem; }
@@ -102,41 +111,39 @@ button { font: inherit; color: inherit; }
 /* =====================================================================
    Apparence : couleurs, polices, détails visuels (thème « Affiche »)
    ===================================================================== */
+/* Fond « papier ambré » ; cartes et panneau en ivoire, un cran plus clair, pour rester lisibles sur les bandes de couleur */
 :root {
-  --fond: #FFFFFF; --fond-etiquette: #FFFFFF; --surface: #FFFFFF; --surface-2: #F0F0F0;
+  --fond: #F5EEDF; --fond-etiquette: #FFFFFF; --surface: #FAF7F0; --surface-2: #EBE1CC;
   --encre: #000000; --doux: #4B4B4B; --trait: #000000; --grille: rgba(0, 0, 0, 0.08); --focus: #C0392B;
-  --carte-fond: #FFFFFF; --ombre: #000000;
+  --carte-fond: #FAF7F0; --ombre: #000000;
   --police-titre: "Archivo", "Arial Narrow", "Helvetica Neue", sans-serif;
   --police-texte: "Archivo", "Helvetica Neue", Arial, sans-serif;
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --fond: #000000; --fond-etiquette: #000000; --surface: #000000; --surface-2: #1E1E1E;
-    --encre: #FFFFFF; --doux: #B5B5B5; --trait: #FFFFFF; --grille: rgba(255, 255, 255, 0.1); --focus: #FF6B5B;
-    --carte-fond: #000000; --ombre: #FFFFFF;
-    color-scheme: dark;
-  }
-}
+/* Mode sombre : brun très foncé, texte blanc cassé, ombres brunes un peu plus claires que le fond.
+   Un seul bloc suffit : le script du <head> (index.astro) pose toujours data-theme, d’après le choix mémorisé
+   ou, à défaut, d’après le réglage de l’appareil. */
 :root[data-theme="dark"] {
-  --fond: #000000; --fond-etiquette: #000000; --surface: #000000; --surface-2: #1E1E1E;
-  --encre: #FFFFFF; --doux: #B5B5B5; --trait: #FFFFFF; --grille: rgba(255, 255, 255, 0.1); --focus: #FF6B5B;
-  --carte-fond: #000000; --ombre: #FFFFFF;
+  --fond: #1E1A16; --fond-etiquette: #000000; --surface: #27221D; --surface-2: #332C25;
+  --encre: #F2EBDD; --doux: #B8AE9F; --trait: #F2EBDD; --grille: rgba(242, 235, 221, 0.1); --focus: #FF6B5B;
+  --carte-fond: #27221D; --ombre: #574B3E;
   color-scheme: dark;
 }
 body { font-size: 15px; line-height: 1.45; }
 .entete { border-bottom: 3px solid var(--encre); }
-.entete h1 { font-family: var(--police-titre); font-weight: 900; font-stretch: 70%; font-variation-settings: "wdth" 66; font-size: clamp(2.6rem, 6.5vw, 4.6rem); line-height: 0.88; letter-spacing: -0.015em; }
-.entete h1 span { display: inline-block; font-weight: 300; font-variation-settings: "wdth" 110; font-size: 0.42em; letter-spacing: 0; margin-left: 0.35em; vertical-align: 0.6em; }
-.aide { font-size: 0.9rem; font-variation-settings: "wdth" 90; }
-.recherche input { font: 500 0.9rem var(--police-texte); border: 2px solid var(--encre); border-radius: 0; background: var(--surface); color: var(--encre); }
+.entete h1 { font-family: var(--police-titre); font-weight: 900; font-stretch: 70%; font-variation-settings: "wdth" 66; font-size: clamp(2.2rem, 3.8vw, 3rem); line-height: 0.95; letter-spacing: -0.01em; }
+.sous-titre-site { font-size: 0.9rem; font-weight: 600; font-variation-settings: "wdth" 85; }
+.hasard, .bouton-index, .onglet, .bouton-theme { font: 700 0.95rem var(--police-texte); font-variation-settings: "wdth" 85; padding: 0.5rem 0.9rem; border: 2px solid var(--encre); background: var(--surface); }
+/* L’onglet choisi de l’Index reste noir, comme un bouton survolé */
+.hasard:hover, .bouton-index:hover, .onglet:hover, .onglet[aria-pressed="true"], .bouton-theme:hover { background: var(--encre); color: var(--fond); }
+.recherche input, .champ-index { font: 500 1rem var(--police-texte); border: 2px solid var(--encre); border-radius: 0; background: var(--surface); color: var(--encre); }
 .resultats { background: var(--surface); border: 2px solid var(--encre); box-shadow: 5px 5px 0 var(--ombre); }
 .resultats li { font-weight: 600; }
 .resultats li[aria-selected="true"], .resultats li:hover { background: var(--encre); color: var(--fond); }
 .resultats li small { font-weight: 400; opacity: 0.75; }
-.bascule { font-size: 0.85rem; font-weight: 600; }
-.filtre { font: 700 0.8rem var(--police-texte); font-variation-settings: "wdth" 85; padding: 0.25rem 0.6rem 0.25rem 0.3rem; border: 2px solid var(--encre); background: var(--surface); }
-.filtre .pastille { background: var(--c); width: 0.85rem; height: 0.85rem; }
+.bascule { font-size: 0.95rem; font-weight: 600; }
+.filtre { font: 700 0.9rem var(--police-texte); font-variation-settings: "wdth" 85; padding: 0.35rem 0.75rem 0.35rem 0.4rem; border: 2px solid var(--encre); background: var(--surface); }
+.filtre .pastille { background: var(--c); width: 0.95rem; height: 0.95rem; }
 
 .axe { background: var(--fond); border-bottom: 2px solid var(--encre); }
 .axe .coin { background: var(--fond); }
@@ -273,8 +280,8 @@ body[data-vue="ensemble"] .defile { cursor: default; }
 @media (max-width: 720px) {
   .decennies .ensemble { padding: 0.5rem 0.5rem; font-size: 0.75rem; }
   .bandeau strong { font-size: 1.3rem; }
-  .aide { display: none; }
   .couloir.artiste .etiquette .nom { font-size: 0.85rem; }
+  .couloir.artiste .etiquette .complement { display: none; }
   .bande-globale { top: 38px; bottom: 6px; height: auto; }
   .bande-globale .texte, .bande-globale.etroite .texte { position: absolute; left: 0; right: auto; bottom: calc(100% + 4px); color: var(--encre); text-align: left; }
   .bande-globale.a-gauche .texte { left: auto; right: 0; text-align: right; }
@@ -364,3 +371,50 @@ body.redimension .panneau { transition: none; }
 .visionneuse img { display: block; max-width: calc(94vw - 6px); max-height: calc(94vh - 6px); object-fit: contain; }
 /* La croix de la fiche, posée dans le coin de l’image */
 .visionneuse .fermer { position: absolute; top: 0.5rem; right: 0.5rem; float: none; margin: 0; }
+
+/* ---------- Index, affiché dans le panneau des fiches (lot 3) ---------- */
+/* Le trait sous le titre passe aussi sous la croix ; le texte, lui, s’écarte de la croix (qui est flottante) */
+.index h2 { margin: 0 0 1.25rem; padding-bottom: 0.9rem; border-bottom: 3px solid var(--encre);
+  font: 900 2.6rem/0.92 var(--police-titre); font-variation-settings: "wdth" 66; }
+
+/* « Comment lire la frise » : <details> se replie et se déplie tout seul, sans JavaScript */
+.comment-lire { margin: 0 0 1.25rem; font-size: 0.92rem; }
+.comment-lire summary { cursor: pointer; font: 800 0.95rem var(--police-titre); font-variation-settings: "wdth" 80; }
+.comment-lire p { margin: 0.5rem 0 0; line-height: 1.5; }
+
+.onglets { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 1rem; }
+.champ-index { display: block; width: 100%; padding: 0.6rem 0.75rem; margin: 0 0 1.25rem; }
+
+.compteur { margin: 0; padding-bottom: 0.35rem; border-bottom: 2px solid var(--encre); font-size: 0.8rem; font-weight: 600; }
+.index-liste { list-style: none; margin: 0; padding: 0; }
+.index-liste li { border-bottom: 2px solid var(--encre); }
+/* Chaque ligne est un lien sur deux rangées : le nom puis le détail à gauche, la flèche à droite */
+.index-liste a { display: grid; grid-template-columns: 1fr auto; gap: 0.15rem 1rem; padding: 0.8rem 0; color: inherit; text-decoration: none; }
+.index-nom { grid-column: 1; font: 900 1.3rem/1.1 var(--police-titre); font-variation-settings: "wdth" 70; }
+.index-detail { grid-column: 1; font-size: 0.8rem; color: var(--doux); }
+.index-fleche { grid-column: 2; grid-row: 1 / span 2; font-size: 1.1rem; line-height: 1; }
+.index-liste a:hover .index-nom { text-decoration: underline; text-decoration-thickness: 2px; }
+.index-vide { margin: 1rem 0; color: var(--doux); }
+
+/* Bouton « Index » : trois traits avant le mot, dessinés en CSS.
+   Ils sont en currentColor : ils passent donc en clair, comme le texte, quand le bouton devient noir au survol */
+.bouton-index { gap: 0.55rem; padding-left: 0.8rem; padding-right: 1.1rem; }
+.trois-traits { flex: none; width: 1.1rem; height: 0.8rem;
+  background:
+    linear-gradient(currentColor, currentColor) top / 100% 2px no-repeat,
+    linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat,
+    linear-gradient(currentColor, currentColor) bottom / 100% 2px no-repeat; }
+
+    /* Lien « Retour à l’index », en haut d’une fiche ouverte depuis l’Index */
+.retour-index { display: inline-block; margin: 0 0 0.9rem; padding: 0; border: none; background: none; cursor: pointer;
+  font: 800 0.9rem var(--police-titre); font-variation-settings: "wdth" 80; color: var(--encre); }
+.retour-index:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+
+/* ---------- Bouton clair/sombre (lot 3, étape 2c) ---------- */
+/* Deuxième ligne, colonne de droite : la case « Œuvres majeures seulement » à gauche, le bouton à droite, sous « Index » */
+.reglages { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; align-self: start; }
+/* Carré de la hauteur des boutons des mouvements, pour s’aligner sur leur première rangée */
+.bouton-theme { justify-content: center; flex: none; width: 2.25rem; height: 2.25rem; padding: 0; }
+/* Icônes en currentColor : elles passent en clair, comme le texte, au survol */
+.bouton-theme .icone { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 2; }
+:root[data-theme="dark"] .icone-lune, :root:not([data-theme="dark"]) .icone-soleil { display: none; }

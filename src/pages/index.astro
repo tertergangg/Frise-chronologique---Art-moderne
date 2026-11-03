@@ -9,16 +9,29 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>L’art moderne, 1874–1960</title>
+  <!-- Thème clair ou sombre, posé avant l’affichage pour éviter un flash du mauvais thème.
+       Sans choix mémorisé, on suit le réglage de l’appareil. Le bouton est géré dans app.js (section « Thème »). -->
+  <script is:inline>
+    (() => {
+      let theme = null;
+      try { theme = localStorage.getItem("theme"); } catch (err) { /* stockage indisponible */ }
+      if (theme !== "light" && theme !== "dark") {
+        theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+  <!-- Première ligne : le titre et les outils. Seconde ligne : le sommaire, puis la case « Œuvres majeures » et le bouton de thème. -->
   <header class="entete">
     <div class="titre">
-      <h1>L’art moderne<span>1874–1960</span></h1>
-      <p class="aide">Avance dans le temps avec les décennies en bas de page ou en faisant glisser la frise, et prends du recul avec la vue d’ensemble. Clique sur une bande de couleur pour explorer un mouvement en grand, sur un nom ou une œuvre pour ouvrir sa fiche.</p>
+      <h1>L’art moderne</h1>
+      <p class="sous-titre-site">1874–1960 · Une histoire en mouvements</p>
     </div>
     <div class="outils">
       <div class="recherche">
@@ -26,9 +39,20 @@
         <input id="champ-recherche" type="search" placeholder="Chercher un artiste, une œuvre…" autocomplete="off">
         <ul id="resultats" class="resultats" role="listbox" hidden></ul>
       </div>
-      <label class="bascule"><input type="checkbox" id="majeures"> Œuvres majeures seulement</label>
+      <!-- Deux libellés : le long sur ordinateur, le court sur téléphone (style.css n’en affiche qu’un) -->
+      <button type="button" id="hasard" class="hasard"><span class="long">Une œuvre au hasard</span><span class="court">Au hasard</span></button>
+      <!-- Ouvre l’Index dans le panneau des fiches (app.js, section « Index ») -->
+      <button type="button" id="ouvrir-index" class="bouton-index"><span class="trois-traits" aria-hidden="true"></span>Index</button>
     </div>
     <nav id="sommaire" class="filtres" aria-label="Aller à un mouvement"></nav>
+    <div class="reglages">
+      <label class="bascule"><input type="checkbox" id="majeures"> Œuvres majeures seulement</label>
+      <!-- La lune s’affiche en mode clair, le soleil en mode sombre (style.css). app.js met à jour le libellé. -->
+      <button type="button" id="bouton-theme" class="bouton-theme" aria-label="Passer en mode sombre">
+        <svg class="icone icone-lune" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7.5 7.5 0 0 0 10.5 10.5z"/></svg>
+        <svg class="icone icone-soleil" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>
+      </button>
+    </div>
   </header>
 
   <div id="bandeau" class="bandeau" hidden></div>
@@ -41,11 +65,12 @@
 
   <div id="bulle" class="bulle" role="tooltip" hidden></div>
 
+  <!-- Le panneau affiche une fiche ou l’Index -->
   <aside id="panneau" class="panneau" aria-live="polite" hidden>
-    <div id="poignee" class="poignee" role="separator" aria-orientation="vertical" aria-label="Redimensionner la fiche" tabindex="0"></div>
+    <div id="poignee" class="poignee" role="separator" aria-orientation="vertical" aria-label="Redimensionner le panneau" tabindex="0"></div>
     <!-- C’est ce bloc qui défile, et non le panneau : la poignée reste ainsi en place -->
     <div id="interieur-panneau" class="interieur-panneau">
-      <button type="button" id="fermer" class="fermer" aria-label="Fermer la fiche">×</button>
+      <button type="button" id="fermer" class="fermer" aria-label="Fermer le panneau">×</button>
       <div id="contenu-panneau"></div>
     </div>
   </aside>
