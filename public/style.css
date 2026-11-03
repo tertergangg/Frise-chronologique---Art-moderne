@@ -137,18 +137,18 @@ button { font: inherit; color: inherit; }
 }
 body { font-size: 15px; line-height: 1.45; }
 .entete { border-bottom: 3px solid var(--encre); }
-.entete h1 { font-family: var(--police-titre); font-weight: 900; font-stretch: 70%; font-variation-settings: "wdth" 66; font-size: clamp(1.9rem, 3.2vw, 2.4rem); line-height: 0.95; letter-spacing: -0.01em; }
-.sous-titre-site { font-size: 0.8rem; font-weight: 600; font-variation-settings: "wdth" 85; }
-.hasard { font: 700 0.85rem var(--police-texte); font-variation-settings: "wdth" 85; padding: 0.45rem 0.8rem; border: 2px solid var(--encre); background: var(--surface); }
+.entete h1 { font-family: var(--police-titre); font-weight: 900; font-stretch: 70%; font-variation-settings: "wdth" 66; font-size: clamp(2.2rem, 3.8vw, 3rem); line-height: 0.95; letter-spacing: -0.01em; }
+.sous-titre-site { font-size: 0.9rem; font-weight: 600; font-variation-settings: "wdth" 85; }
+.hasard { font: 700 0.95rem var(--police-texte); font-variation-settings: "wdth" 85; padding: 0.5rem 0.9rem; border: 2px solid var(--encre); background: var(--surface); }
 .hasard:hover { background: var(--encre); color: var(--fond); }
-.recherche input { font: 500 0.9rem var(--police-texte); border: 2px solid var(--encre); border-radius: 0; background: var(--surface); color: var(--encre); }
+.recherche input { font: 500 1rem var(--police-texte); border: 2px solid var(--encre); border-radius: 0; background: var(--surface); color: var(--encre); }
 .resultats { background: var(--surface); border: 2px solid var(--encre); box-shadow: 5px 5px 0 var(--ombre); }
 .resultats li { font-weight: 600; }
 .resultats li[aria-selected="true"], .resultats li:hover { background: var(--encre); color: var(--fond); }
 .resultats li small { font-weight: 400; opacity: 0.75; }
-.bascule { font-size: 0.85rem; font-weight: 600; }
-.filtre { font: 700 0.8rem var(--police-texte); font-variation-settings: "wdth" 85; padding: 0.25rem 0.6rem 0.25rem 0.3rem; border: 2px solid var(--encre); background: var(--surface); }
-.filtre .pastille { background: var(--c); width: 0.85rem; height: 0.85rem; }
+.bascule { font-size: 0.95rem; font-weight: 600; }
+.filtre { font: 700 0.9rem var(--police-texte); font-variation-settings: "wdth" 85; padding: 0.35rem 0.75rem 0.35rem 0.4rem; border: 2px solid var(--encre); background: var(--surface); }
+.filtre .pastille { background: var(--c); width: 0.95rem; height: 0.95rem; }
 
 .axe { background: var(--fond); border-bottom: 2px solid var(--encre); }
 .axe .coin { background: var(--fond); }
