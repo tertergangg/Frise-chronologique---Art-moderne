@@ -525,7 +525,8 @@ function ouvrir(id, centrer = false) {
   else if (MOUV[id]) { html = ficheMouvement(MOUV[id]); c = MOUV[id].couleur; }
   else if (EVT[id]) { html = ficheEvenement(EVT[id]); c = couleur(EVT[id].mouvement); annee = EVT[id].annee; }
   else return;
-  contenu.innerHTML = `<article class="fiche" style="--c:${c}"><div class="filet"></div>${html}</article>`;
+  const retour = etatIndex.actif ? `<button type="button" class="retour-index" data-retour-index>‹ Retour à l’index</button>` : "";
+  contenu.innerHTML = `${retour}<article class="fiche" style="--c:${c}"><div class="filet"></div>${html}</article>`;
   panneau.hidden = false;
   panneau.setAttribute("aria-live", "polite");   // l’Index coupe l’annonce automatique : une fiche la remet
   $("#interieur-panneau").scrollTop = 0;
@@ -536,6 +537,7 @@ function ouvrir(id, centrer = false) {
 }
 function fermer() {
   panneau.hidden = true;
+  etatIndex.actif = false;   // à la prochaine ouverture du panneau, pas de lien de retour
   toile.querySelectorAll(".choisi").forEach((n) => n.classList.remove("choisi"));
   try { history.replaceState(null, "", location.pathname + location.search); } catch (err) { /* idem */ }
 }
@@ -544,7 +546,8 @@ $("#fermer").addEventListener("click", fermer);
 /* ---------- Index : les mouvements, les artistes et les œuvres, dans le panneau des fiches ---------- */
 // L’Index prend la place d’une fiche dans le panneau : il en garde la croix, la poignée et la touche Échap.
 // etatIndex retient l’onglet choisi et le texte cherché, pour retrouver l’Index tel qu’on l’a laissé.
-const etatIndex = { onglet: "mouvements", recherche: "" };
+// « actif » : l’Index a été ouvert depuis la dernière ouverture du panneau ; les fiches affichent alors le lien de retour
+const etatIndex = { onglet: "mouvements", recherche: "", actif: false };
 
 const ONGLETS_INDEX = {
   mouvements: { titre: "Mouvements", singulier: "mouvement", pluriel: "mouvements" },
@@ -606,6 +609,7 @@ function majListeIndex() {
 }
 
 function afficherIndex() {
+  etatIndex.actif = true;
   const onglets = Object.entries(ONGLETS_INDEX).map(([cle, o]) =>
     `<button type="button" class="onglet" data-onglet="${cle}" aria-pressed="${cle === etatIndex.onglet}">${o.titre}</button>`).join("");
   contenu.innerHTML = `<section class="index" aria-label="Index">
@@ -686,6 +690,7 @@ contenu.addEventListener("click", (ev) => {
   if (boutonImage) { agrandir(boutonImage.querySelector("img")); return; }
   const onglet = ev.target.closest("[data-onglet]");                                 // onglets de l’Index
   if (onglet) { choisirOnglet(onglet.dataset.onglet); return; }
+  if (ev.target.closest("[data-retour-index]")) { afficherIndex(); return; }
   const a = ev.target.closest("a[data-id], a[href^='#']");
   if (!a) return;
   ev.preventDefault();

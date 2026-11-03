@@ -410,3 +410,8 @@ body.redimension .panneau { transition: none; }
     linear-gradient(currentColor, currentColor) top / 100% 2px no-repeat,
     linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat,
     linear-gradient(currentColor, currentColor) bottom / 100% 2px no-repeat; }
+
+    /* Lien « Retour à l’index », en haut d’une fiche ouverte depuis l’Index */
+.retour-index { display: inline-block; margin: 0 0 0.9rem; padding: 0; border: none; background: none; cursor: pointer;
+  font: 800 0.9rem var(--police-titre); font-variation-settings: "wdth" 80; color: var(--encre); }
+.retour-index:hover { text-decoration: underline; text-decoration-thickness: 2px; }
