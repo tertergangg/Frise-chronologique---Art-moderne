@@ -26,8 +26,8 @@ button { font: inherit; color: inherit; }
 .resultats { position: absolute; z-index: 30; right: 0; top: calc(100% + 4px); width: 22rem; max-width: 90vw; max-height: 60vh; overflow: auto; margin: 0; padding: 0.25rem; list-style: none; }
 .resultats li { padding: 0.45rem 0.6rem; cursor: pointer; }
 .resultats li small { display: block; }
-/* Les boutons bordés : « Une œuvre au hasard », « Index » et les onglets de l’Index */
-.hasard, .bouton-index, .onglet { display: inline-flex; align-items: center; cursor: pointer; white-space: nowrap; }
+/* Les boutons bordés : « Une œuvre au hasard », « Index », les onglets de l’Index et le bouton de thème */
+.hasard, .bouton-index, .onglet, .bouton-theme { display: inline-flex; align-items: center; cursor: pointer; white-space: nowrap; }
 .hasard .court { display: none; }
 /* Calée en haut, à la hauteur de la première rangée de mouvements, même quand le sommaire tient sur deux lignes */
 .bascule { display: flex; gap: 0.4rem; align-items: center; cursor: pointer; white-space: nowrap; align-self: start; margin-top: 0.3rem; }
@@ -140,9 +140,9 @@ body { font-size: 15px; line-height: 1.45; }
 .entete { border-bottom: 3px solid var(--encre); }
 .entete h1 { font-family: var(--police-titre); font-weight: 900; font-stretch: 70%; font-variation-settings: "wdth" 66; font-size: clamp(2.2rem, 3.8vw, 3rem); line-height: 0.95; letter-spacing: -0.01em; }
 .sous-titre-site { font-size: 0.9rem; font-weight: 600; font-variation-settings: "wdth" 85; }
-.hasard, .bouton-index, .onglet { font: 700 0.95rem var(--police-texte); font-variation-settings: "wdth" 85; padding: 0.5rem 0.9rem; border: 2px solid var(--encre); background: var(--surface); }
+.hasard, .bouton-index, .onglet, .bouton-theme { font: 700 0.95rem var(--police-texte); font-variation-settings: "wdth" 85; padding: 0.5rem 0.9rem; border: 2px solid var(--encre); background: var(--surface); }
 /* L’onglet choisi de l’Index reste noir, comme un bouton survolé */
-.hasard:hover, .bouton-index:hover, .onglet:hover, .onglet[aria-pressed="true"] { background: var(--encre); color: var(--fond); }
+.hasard:hover, .bouton-index:hover, .onglet:hover, .onglet[aria-pressed="true"], .bouton-theme:hover { background: var(--encre); color: var(--fond); }
 .recherche input, .champ-index { font: 500 1rem var(--police-texte); border: 2px solid var(--encre); border-radius: 0; background: var(--surface); color: var(--encre); }
 .resultats { background: var(--surface); border: 2px solid var(--encre); box-shadow: 5px 5px 0 var(--ombre); }
 .resultats li { font-weight: 600; }
@@ -415,3 +415,12 @@ body.redimension .panneau { transition: none; }
 .retour-index { display: inline-block; margin: 0 0 0.9rem; padding: 0; border: none; background: none; cursor: pointer;
   font: 800 0.9rem var(--police-titre); font-variation-settings: "wdth" 80; color: var(--encre); }
 .retour-index:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+
+/* ---------- Bouton clair/sombre (lot 3, étape 2c) ---------- */
+/* Deuxième ligne, colonne de droite : la case « Œuvres majeures seulement » à gauche, le bouton à droite, sous « Index » */
+.reglages { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; align-self: start; }
+/* Carré de la hauteur des boutons des mouvements, pour s’aligner sur leur première rangée */
+.bouton-theme { justify-content: center; flex: none; width: 2.25rem; height: 2.25rem; padding: 0; }
+/* Icônes en currentColor : elles passent en clair, comme le texte, au survol */
+.bouton-theme .icone { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 2; }
+:root[data-theme="dark"] .icone-lune, :root:not([data-theme="dark"]) .icone-soleil { display: none; }

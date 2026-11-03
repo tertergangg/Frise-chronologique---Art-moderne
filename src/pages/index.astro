@@ -9,13 +9,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>L’art moderne, 1874–1960</title>
+  <!-- Thème clair ou sombre, posé avant l’affichage pour éviter un flash du mauvais thème.
+       Sans choix mémorisé, on suit le réglage de l’appareil. Le bouton est géré dans app.js (section « Thème »). -->
+  <script is:inline>
+    (() => {
+      let theme = null;
+      try { theme = localStorage.getItem("theme"); } catch (err) { /* stockage indisponible */ }
+      if (theme !== "light" && theme !== "dark") {
+        theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <!-- Première ligne : le titre et les outils. Seconde ligne : le sommaire et la case « Œuvres majeures ». -->
+  <!-- Première ligne : le titre et les outils. Seconde ligne : le sommaire, puis la case « Œuvres majeures » et le bouton de thème. -->
   <header class="entete">
     <div class="titre">
       <h1>L’art moderne</h1>
@@ -33,7 +45,14 @@
       <button type="button" id="ouvrir-index" class="bouton-index"><span class="trois-traits" aria-hidden="true"></span>Index</button>
     </div>
     <nav id="sommaire" class="filtres" aria-label="Aller à un mouvement"></nav>
-    <label class="bascule"><input type="checkbox" id="majeures"> Œuvres majeures seulement</label>
+    <div class="reglages">
+      <label class="bascule"><input type="checkbox" id="majeures"> Œuvres majeures seulement</label>
+      <!-- La lune s’affiche en mode clair, le soleil en mode sombre (style.css). app.js met à jour le libellé. -->
+      <button type="button" id="bouton-theme" class="bouton-theme" aria-label="Passer en mode sombre">
+        <svg class="icone icone-lune" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7.5 7.5 0 0 0 10.5 10.5z"/></svg>
+        <svg class="icone icone-soleil" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>
+      </button>
+    </div>
   </header>
 
   <div id="bandeau" class="bandeau" hidden></div>
