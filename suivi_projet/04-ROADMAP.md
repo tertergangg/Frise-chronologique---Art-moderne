@@ -13,7 +13,7 @@ Le détail est dans le JOURNAL et dans l’historique Git.
 - **Phase 0 · Remettre de l’ordre** · 4 novembre 2026. Fiches orphelines rangées et signalées, README, fin de GitHub Pages (D11), style.css rangé par élément de la page.
 
 ## Préparation de la phase 2
-1. Mettre les six documents dans le dépôt, dans `projet/` (D12).
+1. Mettre les six documents dans le dépôt, dans `suivi_projet/` (D12). Terminé le 4 novembre 2026.
 2. Ajouter wrangler aux `devDependencies`, à une version exacte (D16). Vérifier dans le journal de déploiement de Cloudflare que c’est bien cette version qui est utilisée.
 3. Trier les « Idées à trier », dans une conversation dédiée (voir plus bas).
 
