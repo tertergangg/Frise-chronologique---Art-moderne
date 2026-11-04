@@ -28,6 +28,7 @@ construire.py          tableur + fiches -> public/data.js
 package.json           projet Astro : dépendance et commandes npm
 astro.config.mjs       réglages d’Astro
 wrangler.jsonc         réglages de Cloudflare
+projet/                documents de suivi du projet (contexte, architecture, décisions, roadmap, conventions, journal)
 donnees/
   frise_art_moderne_base.xlsx
 fiches/
@@ -105,7 +106,7 @@ Le dépôt est public : le tableur et les fiches sont visibles par tous.
 | un mouvement, un artiste, une œuvre, un événement, une influence | le tableur                                                                                                     |
 | la couleur d’un mouvement                                        | la colonne « Couleur » du tableur                                                                              |
 | le texte d’une fiche                                             | `fiches/<type>/<id>.md`                                                                                        |
-| les couleurs et polices du site                                  | les variables `:root` de la section « Apparence » de `public/style.css`, et `:root[data-theme="dark"]` pour le mode sombre |
+| les couleurs et polices du site                                  | les variables `:root` de la section « Variables » de `public/style.css`, et `:root[data-theme="dark"]` pour le mode sombre |
 | le titre, le sous-titre, les boutons de l’en-tête                | `src/pages/index.astro`                                                                                        |
 | l’aide « Comment lire la frise », les rubriques des fiches, l’Index | `public/app.js`                                                                                             |
 | la période affichée, l’année de départ, l’échelle des zooms, la taille des cartes | l’objet `REGLAGES`, en haut de `public/app.js`                                                |
