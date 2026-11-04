@@ -15,6 +15,3 @@ type: oeuvre
 
 ## Contexte
 <!-- Où, quand, pour qui, comment elle a été reçue. -->
-
-## Sources
-- 
