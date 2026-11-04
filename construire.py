@@ -7,8 +7,11 @@ Utilisation (depuis le dossier du projet) :
 Ce que fait le script :
   1. lit le tableur  donnees/frise_art_moderne_base.xlsx
   2. lit les fiches   fiches/mouvements, fiches/artistes, fiches/oeuvres
-  3. vérifie la cohérence (identifiants inconnus, fiches manquantes…)
-  4. écrit            docs/data.js, que la page docs/index.html affiche
+  3. vérifie la cohérence (identifiants inconnus, fiches manquantes ou sans ligne dans le tableur…)
+  4. écrit            public/data.js, que lit la frise (src/pages/index.astro)
+
+public/data.js est commité (décision D8) : relancer le script avant chaque commit
+qui touche le tableur ou les fiches.
 
 Prérequis : pip install openpyxl
 """
@@ -68,6 +71,12 @@ def lire_fiche(dossier, ident):
     vide = len(re.sub(r"\W", "", reste)) < 20
     return ("" if vide else texte.strip()), vide
 
+def verifier_orphelines(dossier, ids):
+    """Signale les fiches d'un dossier qui ne correspondent à aucune ligne du tableur.
+    Le site ne les affiche pas : sans cet avertissement, elles passeraient inaperçues."""
+    for chemin in sorted((FICHES / dossier).glob("*.md")):
+        if chemin.stem not in ids:
+            avertir(f"Fiche sans ligne dans le tableur : {chemin.relative_to(ICI)}")
 
 def annee(v):
     try:
@@ -160,6 +169,11 @@ def main():
                 avertir(f"Influence {i['ID']} : artiste inconnu « {i.get(cle)} »")
         influences.append({"de": i.get("De (ID)"), "vers": i.get("Vers (ID)"), "type": i.get("Type"),
                            "explication": typo(i.get("Explication (1-2 phrases)"))})
+
+    # Le contrôle inverse de « Fiche manquante » : une fiche présente, mais sans ligne dans le tableur
+    verifier_orphelines("mouvements", ids_mouv)
+    verifier_orphelines("artistes", ids_art)
+    verifier_orphelines("oeuvres", {o["id"] for o in oeuvres})
 
     tous = [x["id"] for x in mouvements + artistes + oeuvres + evenements]
     for doublon in sorted({x for x in tous if tous.count(x) > 1}):
