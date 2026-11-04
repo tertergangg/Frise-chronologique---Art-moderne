@@ -15,6 +15,8 @@ const REGLAGES = {
   depart: 1870,          // année affichée à gauche au chargement
   pxParAn: 66,           // largeur d’une année en vue détaillée, en pixels
   largeurCarte: 196,     // largeur d’une carte d’œuvre, en pixels
+  pxParAnMoyen: 28,      // largeur d’une année au zoom « Moyen », en pixels
+  largeurCarteMoyenne: 140, // largeur d’une carte au zoom « Moyen », en pixels
   hauteurLigne: 48,      // hauteur d’une ligne de cartes dans un couloir
   largeurEtiquettes: 220, // largeur de la colonne des noms à gauche
   margeAvant: 10,        // vue mouvement : on montre aussi les œuvres jusqu’à 10 ans avant le début (les œuvres fondatrices)
@@ -38,7 +40,12 @@ const douceur = () => (reduireMouvement() ? "auto" : "smooth");
 const NOMS_COURTS = { "Vincent van Gogh": "Van Gogh", "Willem de Kooning": "De Kooning" };
 const nomCourt = (nom) => NOMS_COURTS[nom] || nom.split(" ").pop();
 
-const etat = { vue: "detail", mouvement: null, majeures: true };
+// « moyen » : la vue détail au zoom « Moyen » (barre du bas). Il est gardé quand on passe dans une autre vue,
+// pour retrouver le même zoom en revenant à la frise.
+const etat = { vue: "detail", mouvement: null, majeures: true, moyen: false };
+const zoomMoyen = () => etat.vue === "detail" && etat.moyen;
+// Le niveau affiché, tel que le nomment les boutons de la barre du bas ("mouvement" n’a pas de bouton)
+const niveauAffiche = () => (etat.vue === "detail" ? (etat.moyen ? "moyen" : "detail") : etat.vue);
 const defile = $("#defile"), toile = $("#toile");
 
 // Les œuvres d’un mouvement, y compris celles un peu avant ou après ses dates (voir les marges)
@@ -51,7 +58,8 @@ function oeuvresDuMouvement(m) {
 function fenetre() {
   const mobile = petitEcran();
   const lab = mobile ? 112 : REGLAGES.largeurEtiquettes;
-  const carte = mobile ? REGLAGES.largeurCarte * 0.82 : REGLAGES.largeurCarte;
+  const largeurCarte = zoomMoyen() ? REGLAGES.largeurCarteMoyenne : REGLAGES.largeurCarte;
+  const carte = mobile ? largeurCarte * 0.82 : largeurCarte;
   const place = defile.clientWidth - lab - 16;   // largeur disponible pour la frise
   if (etat.vue === "ensemble") {
     const debut = REGLAGES.debut, fin = REGLAGES.fin;
@@ -64,7 +72,9 @@ function fenetre() {
     const fin = Math.max(m.fin + 1, ...annees, debut + 9) + 1;
     return { debut, fin, lab, carte, ppa: Math.max(mobile ? 60 : 70, place / (fin - debut)) };
   }
-  return { debut: REGLAGES.debut, fin: REGLAGES.fin, lab, carte, ppa: mobile ? REGLAGES.pxParAn * 0.75 : REGLAGES.pxParAn };
+  // Vue détail, à l’un de ses deux niveaux de zoom : « Détail » ou « Moyen »
+  const pxParAn = zoomMoyen() ? REGLAGES.pxParAnMoyen : REGLAGES.pxParAn;
+  return { debut: REGLAGES.debut, fin: REGLAGES.fin, lab, carte, ppa: mobile ? pxParAn * 0.75 : pxParAn };
 }
 const xAn = (annee, f) => (annee - f.debut) * f.ppa;
 
@@ -110,8 +120,14 @@ function horsPeriode(o) {
   if (!m || o.annee == null) return "";
   return o.annee < m.debut ? "avant" : o.annee > m.fin ? "apres" : "";
 }
+// Au zoom « Moyen », la carte est plus étroite : le nom court de l’artiste suffit (l’aperçu au survol garde le nom complet)
+function artisteCarte(o) {
+  const a = ART[o.artiste];
+  if (!a) return "";
+  return zoomMoyen() ? nomCourt(a.nom) : a.nom;
+}
 const carteOeuvre = (o, haut) =>
-  `<button class="carte${o.majeure && !etat.majeures ? " majeure" : ""}${horsPeriode(o) ? " hors-periode" : ""}" data-id="${esc(o.id)}" data-artiste="${esc(o.artiste)}" data-apercu="${esc(o.id)}" style="left:${o.x}px;top:${haut}px"><span class="vignette"></span><span class="texte"><span class="t">${esc(o.titre)}</span><span class="a">${esc(ART[o.artiste]?.nom ?? "")}, ${o.annee}</span></span></button>`;
+  `<button class="carte${o.majeure && !etat.majeures ? " majeure" : ""}${horsPeriode(o) ? " hors-periode" : ""}" data-id="${esc(o.id)}" data-artiste="${esc(o.artiste)}" data-apercu="${esc(o.id)}" style="left:${o.x}px;top:${haut}px"><span class="vignette"></span><span class="texte"><span class="t">${esc(o.titre)}</span><span class="a">${esc(artisteCarte(o))}, ${o.annee}</span></span></button>`;
 
 const bande = (m, f) =>
   `<div class="bande" data-mouvement="${esc(m.id)}" style="left:${xAn(m.debut, f)}px;width:${xAn(m.fin + 1, f) - xAn(m.debut, f)}px"></div>`;
@@ -187,12 +203,10 @@ function vueMouvement(f, largeurPiste) {
   return artistes.map((a) => {
     const siennes = oeuvres.filter((o) => o.artiste === a.id).map((o) => ({ ...o, x: xAn(o.annee, f) }));
     const lignes = empiler(siennes, f.carte);
-    const vie = [Math.max(a.naissance ?? f.debut, f.debut), Math.min(a.deces ?? f.fin, f.fin + 1)];
     return `<section class="couloir artiste" style="--c:${m.couleur}">
       ${etiquetteArtiste(a, m, siennes.length)}
       <div class="piste" style="width:${largeurPiste}px;min-height:${16 + lignes * REGLAGES.hauteurLigne}px">
         ${bande(m, f)}
-        <div class="vie" style="left:${xAn(vie[0], f)}px;width:${xAn(vie[1], f) - xAn(vie[0], f)}px"></div>
         ${siennes.map((o) => carteOeuvre(o, 12 + o.ligne * REGLAGES.hauteurLigne)).join("")}
       </div></section>`;
   }).join("");
@@ -227,8 +241,9 @@ function dessiner() {
       <button type="button" class="retour lire" data-id="${esc(m.id)}">Lire la fiche</button>`;
   } else bandeau.hidden = true;
 
-  // Bouton « Vue d’ensemble »
-  $("[data-vue-bascule]").setAttribute("aria-pressed", String(etat.vue === "ensemble"));
+  // Boutons de zoom : seul celui du niveau affiché est enfoncé (aucun en vue mouvement)
+  barre.querySelectorAll("[data-niveau]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.niveau === niveauAffiche())));
+  remplirReperes(f);
   majDecennies();
 }
 
@@ -257,31 +272,113 @@ function allerAnnee(annee, doux = true, haut = null) {
 // Année visible au bord gauche
 const anneeGauche = () => { const f = fenetre(); return f.debut + (defile.scrollLeft + 24) / f.ppa; };
 
-// Barre des décennies, en bas
-const decennies = [];
-for (let a = Math.floor(REGLAGES.debut / 10) * 10; a < REGLAGES.fin; a += 10) decennies.push(a);
+// Barre du bas : les niveaux de zoom, les flèches et la liste des repères.
+// La liste est remplie par remplirReperes() à chaque dessin, car ses repères dépendent de la vue.
 const barre = $("#decennies");
-barre.innerHTML = `<button type="button" class="ensemble" data-vue-bascule aria-pressed="false">Vue d’ensemble</button>
+barre.innerHTML = `<div class="niveaux" role="group" aria-label="Niveau de zoom">
+    <button type="button" class="niveau" data-niveau="ensemble" aria-pressed="false">Ensemble</button>
+    <button type="button" class="niveau" data-niveau="moyen" aria-pressed="false">Moyen</button>
+    <button type="button" class="niveau" data-niveau="detail" aria-pressed="true">Détail</button>
+  </div>
   <button type="button" class="fleche" data-pas="-1" aria-label="Reculer">‹</button>
-  <div class="liste">${decennies.map((a) => `<button type="button" class="decennie" data-annee="${a}">${a}</button>`).join("")}</div>
+  <div class="liste"></div>
   <button type="button" class="fleche" data-pas="1" aria-label="Avancer">›</button>`;
+const listeReperes = barre.querySelector(".liste");
+
+// Vue mouvement : pas possibles des repères, du plus fin au plus large, et nombre maximal de repères
+const PAS_REPERES = [1, 2, 5, 10];
+const REPERES_MAX = 11;
+// Les années déjà affichées dans la liste : on ne la refait que si elles changent
+let clefReperes = "";
+
+// Les multiples du pas, du début de la fenêtre jusqu’à sa fin (exclue)
+function anneesReperes(debut, fin, pas) {
+  const annees = [];
+  for (let a = Math.ceil(debut / pas) * pas; a < fin; a += pas) annees.push(a);
+  return annees;
+}
+
+// Les décennies hors de la vue mouvement ; dans cette vue, qui ne couvre qu’une ou deux décennies,
+// le pas le plus fin qui donne au plus REPERES_MAX repères
+function pasReperes(f) {
+  if (etat.vue !== "mouvement") return 10;
+  return PAS_REPERES.find((pas) => anneesReperes(f.debut, f.fin, pas).length <= REPERES_MAX) ?? 10;
+}
+
+// Refaire la liste ferait perdre le focus clavier à un repère, par exemple au redimensionnement :
+// on ne la refait donc que si ses années changent
+function remplirReperes(f) {
+  const pas = pasReperes(f);
+  const annees = anneesReperes(f.debut, f.fin, pas);
+  const clef = annees.join(",");
+  if (clef === clefReperes) return;
+  clefReperes = clef;
+  listeReperes.innerHTML = annees.map((a) => `<button type="button" class="decennie" data-annee="${a}">${a}</button>`).join("");
+  barre.setAttribute("aria-label", pas === 10 ? "Aller à une décennie" : "Aller à une année");
+}
+
+// Repère du défilement vertical : quel couloir est en haut de la frise (juste sous l’axe des années),
+// et à quelle hauteur dans ce couloir, en proportion (0 = son bord haut, 0.5 = son milieu)
+function repereVertical() {
+  const haut = defile.scrollTop + toile.querySelector(".axe").offsetHeight;
+  const couloirs = [...toile.querySelectorAll(".couloir")];
+  const index = couloirs.findIndex((c) => c.offsetTop + c.offsetHeight > haut);
+  if (index === -1) return null;
+  const c = couloirs[index];
+  return { index, part: (haut - c.offsetTop) / c.offsetHeight };
+}
+
+// Le défilement vertical qui remet ce repère en haut de la frise, une fois la frise redessinée
+function hautRepere(repere) {
+  if (!repere) return null;
+  const c = toile.querySelectorAll(".couloir")[repere.index];
+  if (!c) return null;
+  return c.offsetTop + repere.part * c.offsetHeight - toile.querySelector(".axe").offsetHeight;
+}
+
+// Entre « Détail » et « Moyen », on garde sa place : la même année à gauche, le même couloir en haut.
+// Les deux repères se lisent avant de redessiner, car ils dépendent de l’échelle actuelle.
+function changerZoom(moyen) {
+  const annee = anneeGauche();
+  const repere = repereVertical();
+  etat.moyen = moyen;
+  dessiner();
+  allerAnnee(annee, false, hautRepere(repere));
+}
+
+// Passe à un niveau de zoom. Depuis la vue d’ensemble ou la vue mouvement, on arrive en haut de la frise ;
+// depuis la vue mouvement, à l’année qui était au bord gauche, comme avec « ‹ Toute la frise ».
+// anneeGauche() se lit avant de changer de vue, car elle dépend de l’échelle de la vue affichée.
+function choisirNiveau(niveau) {
+  if (niveau === niveauAffiche()) return;          // déjà affiché : on ne perd pas sa place
+  if (niveau === "ensemble") { changerVue("ensemble"); return; }
+  if (etat.vue === "detail") { changerZoom(niveau === "moyen"); return; }
+  const annee = etat.vue === "mouvement" ? anneeGauche() : undefined;
+  etat.moyen = niveau === "moyen";
+  changerVue("detail", { annee });
+}
+
 barre.addEventListener("click", (ev) => {
   const b = ev.target.closest("button");
   if (!b) return;
-  if ("vueBascule" in b.dataset) {
-    const annee = etat.vue === "mouvement" ? MOUV[etat.mouvement].debut - 2 : undefined;
-    changerVue(etat.vue === "ensemble" ? "detail" : "ensemble", { annee });
+  if (b.dataset.niveau) {
+    choisirNiveau(b.dataset.niveau);
   } else if (b.dataset.annee) {
-    if (etat.vue !== "detail") changerVue("detail", { annee: Number(b.dataset.annee) });
+    // La vue d’ensemble ne défile pas : on passe à la frise. Les vues détail et mouvement, elles, défilent.
+    if (etat.vue === "ensemble") changerVue("detail", { annee: Number(b.dataset.annee) });
     else allerAnnee(Number(b.dataset.annee));
   } else {
     defile.scrollBy({ left: Number(b.dataset.pas) * (defile.clientWidth - fenetre().lab) * 0.8, behavior: douceur() });
   }
 });
-// Une seule décennie en noir : celle qui est au bord gauche de la frise
+// Un seul repère en noir, en vue détail : le dernier déjà passé au bord gauche de la frise, ou le premier si aucun ne l’est.
+// En vue mouvement et en vue d’ensemble, aucun : ces vues défilent peu ou pas du tout.
 function majDecennies() {
-  const courante = etat.vue === "detail" ? Math.floor((anneeGauche() + 0.5) / 10) * 10 : null;
-  barre.querySelectorAll(".decennie").forEach((b) => b.classList.toggle("visible", Number(b.dataset.annee) === courante));
+  const boutons = [...listeReperes.querySelectorAll(".decennie")];
+  const gauche = anneeGauche() + 0.5;
+  const passes = boutons.filter((b) => Number(b.dataset.annee) <= gauche);
+  const courant = etat.vue === "detail" ? passes.at(-1) ?? boutons[0] : null;
+  boutons.forEach((b) => b.classList.toggle("visible", b === courant));
 }
 defile.addEventListener("scroll", majDecennies, { passive: true });
 
@@ -308,7 +405,8 @@ defile.addEventListener("keydown", (ev) => {
 
 /* ---------- Retour depuis la vue mouvement, et sommaire des mouvements ---------- */
 $("#bandeau").addEventListener("click", (ev) => {
-  if (ev.target.closest("[data-action='detail']")) changerVue("detail", { annee: MOUV[etat.mouvement].debut - 2 });
+  // Comme les boutons Détail et Moyen : on retrouve la frise à l’année qui était au bord gauche
+  if (ev.target.closest("[data-action='detail']")) changerVue("detail", { annee: anneeGauche() });
   const lire = ev.target.closest("[data-id]");
   if (lire) ouvrir(lire.dataset.id);
 });
