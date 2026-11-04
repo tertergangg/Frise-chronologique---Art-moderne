@@ -201,7 +201,8 @@ body { font-size: 15px; line-height: 1.45; }
 
 /* Barre des décennies, en bas */
 .decennies { flex: none; display: flex; align-items: stretch; border-top: 3px solid var(--encre); background: var(--fond); }
-.decennies .liste { flex: 1; display: grid; grid-template-columns: repeat(11, 1fr); }
+/* Une colonne par repère, autant qu’il y en a : 11 décennies, ou moins en vue mouvement */
+.decennies .liste { flex: 1; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; }
 .decennies button { border: none; border-left: 2px solid var(--encre); background: var(--fond); color: var(--encre); cursor: pointer;
   font: 900 1.05rem var(--police-titre); font-variation-settings: "wdth" 70; padding: 0.55rem 0; }
 .decennies .liste button:first-child { border-left: none; }
@@ -218,7 +219,7 @@ body { font-size: 15px; line-height: 1.45; }
 
 @media (max-width: 720px) {
   .decennies button { font-size: 0.78rem; padding: 0.5rem 0; }
-  .decennies .liste { grid-template-columns: repeat(11, minmax(2.2rem, 1fr)); overflow-x: auto; }
+  .decennies .liste { grid-auto-columns: minmax(2.2rem, 1fr); overflow-x: auto; }
   .decennies .fleche { width: 2.2rem; }
 }
 
@@ -268,8 +269,7 @@ body[data-vue="ensemble"] .defile { cursor: default; }
 .bande-globale.a-gauche .texte { left: auto; right: calc(100% + 0.8rem); text-align: right; }
 .bande-globale:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ombre); }
 
-/* Vue mouvement : la ligne de vie de chaque artiste */
-.vie { position: absolute; bottom: 4px; height: 4px; z-index: 2; background: var(--encre); opacity: 0.55; }
+/* Vue mouvement : l’étiquette de chaque artiste */
 .couloir.artiste .etiquette { background: var(--c); }
 .couloir.artiste .etiquette .nom { font-size: 1.2rem; }
 
