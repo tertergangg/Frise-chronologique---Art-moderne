@@ -23,6 +23,7 @@ ICI = Path(__file__).parent
 TABLEUR = ICI / "donnees" / "frise_art_moderne_base.xlsx"
 FICHES = ICI / "fiches"
 SORTIE = ICI / "public" / "data.js"
+PUBLIC = ICI / "public"
 
 avertissements = []
 
@@ -77,6 +78,30 @@ def verifier_orphelines(dossier, ids):
     for chemin in sorted((FICHES / dossier).glob("*.md")):
         if chemin.stem not in ids:
             avertir(f"Fiche sans ligne dans le tableur : {chemin.relative_to(ICI)}")
+
+def verifier_liens(elements, ids):
+    """Signale les liens [[id]] ou [[id|texte]] des fiches qui ne mèneraient nulle part.
+    La forme attendue est celle de la fonction markdown() d'app.js : les deux règles doivent rester identiques."""
+    for x in elements:
+        texte = re.sub(r"<!--.*?-->", "", x["fiche"], flags=re.S)   # les commentaires ne s'affichent pas
+        for contenu in re.findall(r"\[\[([^\]]*)\]\]", texte):
+            forme = re.fullmatch(r"([a-z0-9-]+)(?:\|[^\]]+)?", contenu)
+            if not forme:
+                avertir(f"Fiche {x['id']} : lien mal formé « [[{contenu}]] » "
+                        "(identifiant en minuscules, sans accents ni espaces)")
+            elif forme.group(1) not in ids:
+                avertir(f"Fiche {x['id']} : lien vers un identifiant inconnu « {forme.group(1)} »")
+
+def verifier_image(oeuvre):
+    """Signale un chemin d'image qui casserait sur les pages de la phase 2, ou un fichier absent de public/."""
+    image = oeuvre["image"]
+    if not isinstance(image, str) or image.startswith(("http://", "https://")):
+        return   # pas d'image, ou image sur un autre site : rien à vérifier ici
+    if not image.startswith("/"):
+        avertir(f"Œuvre {oeuvre['id']} : chemin d'image relatif « {image} » "
+                f"(il doit commencer par /, par exemple « /{image} »)")
+    elif not (PUBLIC / image.lstrip("/")).exists():
+        avertir(f"Œuvre {oeuvre['id']} : image introuvable dans public/ « {image} »")
 
 def annee(v):
     try:
@@ -174,6 +199,12 @@ def main():
     verifier_orphelines("mouvements", ids_mouv)
     verifier_orphelines("artistes", ids_art)
     verifier_orphelines("oeuvres", {o["id"] for o in oeuvres})
+
+    # Les liens [[id]] peuvent viser un mouvement, un artiste, une œuvre ou un événement (comme dans app.js)
+    ids_connus = ids_mouv | ids_art | {o["id"] for o in oeuvres} | {e["id"] for e in evenements}
+    verifier_liens(mouvements + artistes + oeuvres, ids_connus)
+    for o in oeuvres:
+        verifier_image(o)
 
     tous = [x["id"] for x in mouvements + artistes + oeuvres + evenements]
     for doublon in sorted({x for x in tous if tous.count(x) > 1}):
