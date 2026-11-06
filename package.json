@@ -12,7 +12,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^7.4.4"
+    "astro": "^7.4.4",
+    "marked": "18.0.14"
   },
   "devDependencies": {
     "wrangler": "4.157.0"

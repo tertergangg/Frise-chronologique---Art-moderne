@@ -10,6 +10,9 @@
 
 // Les données de la frise. Astro (via Vite) intègre ce fichier JSON au script publié.
 import D from "../data/frise.json";
+// marked convertit le Markdown des fiches en HTML. Installé par npm (version exacte dans package.json),
+// il est intégré au script publié, comme les données : plus de chargement depuis le CDN.
+import { marked } from "marked";
 
 /* ---------- Réglages : tu peux modifier ces valeurs ---------- */
 const REGLAGES = {
@@ -543,7 +546,7 @@ function markdown(md) {
     const cible = MOUV[id] || ART[id] || OEU[id] || EVT[id];
     return `[${texte || (cible ? cible.nom || cible.titre : id)}](#${id})`;
   });
-  return `<div class="corps">${window.marked ? marked.parse(avecLiens) : esc(avecLiens)}</div>`;
+  return `<div class="corps">${marked.parse(avecLiens)}</div>`;
 }
 const aVenir = (quoi) => `<p class="a-venir">La fiche ${quoi} est à venir.</p>`;
 
