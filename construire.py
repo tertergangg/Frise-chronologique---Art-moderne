@@ -5,7 +5,7 @@ Utilisation (depuis le dossier du projet) :
     python construire.py
 
 Ce que fait le script :
-  1. lit le tableur  donnees/frise_art_moderne_base.xlsx (mouvements, groupes, artistes, œuvres, événements, influences)
+  1. lit le tableur  donnees/frise_art_moderne_base.xlsx (mouvements, groupes, artistes, œuvres, événements, influences, glossaire)
   2. lit les fiches   fiches/mouvements, fiches/artistes, fiches/oeuvres
   3. vérifie la cohérence (identifiants inconnus, fiches manquantes ou sans ligne dans le tableur…)
   4. écrit            src/data/frise.json, que lit la frise (par src/lib/donnees.js)
@@ -96,7 +96,7 @@ def verifier_liens(elements, ids, ids_pas_encore_affiches=frozenset()):
                 avertir(f"Fiche {x['id']} : lien vers un identifiant inconnu « {forme.group(1)} »")
             elif forme.group(1) in ids_pas_encore_affiches:
                 avertir(f"Fiche {x['id']} : lien vers « {forme.group(1)} », que la frise ne sait pas encore afficher "
-                        "(elle montrerait l'identifiant, sans lien utile, jusqu'à l'étape 2e)")
+                        "(elle montrerait l'identifiant, sans lien utile)")
 
 def verifier_image(oeuvre):
     """Signale un chemin d'image qui casserait sur les pages de la phase 2, ou un fichier absent de public/."""
@@ -284,10 +284,26 @@ def lire_influences(wb, ids_art, ids_mouv):
                            "explication": typo(i.get("Explication (1-2 phrases)"))})
     return influences
 
+def lire_glossaire(wb):
+    """Onglet Glossaire (pas de fiche, D24). Vérifie que chaque terme a un nom et une définition.
+    Une définition manquante est permise, mais signalée : on peut lister les termes avant de les définir.
+    « Voir aussi » est vérifié dans verifier_ensemble(), car il peut viser n'importe quel élément du site."""
+    glossaire = []
+    for t in lire_onglet(wb, "Glossaire"):
+        if not t.get("Terme"):
+            avertir(f"Terme {t['ID']} : nom du terme manquant")
+        if not t.get("Définition"):
+            avertir(f"Terme {t['ID']} : définition manquante")
+        glossaire.append({
+            "id": t["ID"], "terme": typo(t.get("Terme")), "definition": typo(t.get("Définition")),
+            "voirAussi": decouper(t.get("Voir aussi")),
+        })
+    return glossaire
+
 def verifier_ensemble(donnees):
     """Les vérifications qui demandent d'avoir lu tous les onglets : fiches orphelines, liens, images, doublons."""
     mouvements, groupes, artistes = donnees["mouvements"], donnees["groupes"], donnees["artistes"]
-    oeuvres, evenements = donnees["oeuvres"], donnees["evenements"]
+    oeuvres, evenements, glossaire = donnees["oeuvres"], donnees["evenements"], donnees["glossaire"]
     ids_mouv = {m["id"] for m in mouvements}
     ids_art = {a["id"] for a in artistes}
     ids_oeu = {o["id"] for o in oeuvres}
@@ -297,17 +313,27 @@ def verifier_ensemble(donnees):
     verifier_orphelines("artistes", ids_art)
     verifier_orphelines("oeuvres", ids_oeu)
 
-    # Les liens [[id]] peuvent viser un mouvement, un groupe, un artiste, une œuvre ou un événement.
-    # Un lien vers un groupe est permis (D24), mais il est signalé : la frise ne sait pas l'afficher avant l'étape 2e.
+    # Les liens [[id]] peuvent viser un mouvement, un groupe, un artiste, une œuvre, un événement ou un terme.
+    # Un lien vers un groupe ou un terme est permis (D24), mais il est signalé : la frise ne sait pas les afficher
+    # (les groupes jusqu'à l'étape 2e, les termes jusqu'à la page du glossaire, en phase 4).
     ids_groupes = {g["id"] for g in groupes}
-    ids_connus = ids_mouv | ids_groupes | ids_art | ids_oeu | {e["id"] for e in evenements}
-    verifier_liens(mouvements + artistes + oeuvres, ids_connus, ids_groupes)
+    ids_termes = {t["id"] for t in glossaire}
+    ids_connus = ids_mouv | ids_groupes | ids_art | ids_oeu | {e["id"] for e in evenements} | ids_termes
+    verifier_liens(mouvements + artistes + oeuvres, ids_connus, ids_groupes | ids_termes)
+
+    # « Voir aussi » d'un terme peut viser n'importe quel élément : un autre terme, un artiste, une œuvre…
+    for t in glossaire:
+        for ident in t["voirAussi"]:
+            if ident not in ids_connus:
+                avertir(f"Terme {t['id']} : « Voir aussi » vers un identifiant inconnu « {ident} »")
+            elif ident == t["id"]:
+                avertir(f"Terme {t['id']} : « Voir aussi » renvoie au terme lui-même")
     for o in oeuvres:
         verifier_image(o)
         verifier_date(o)
 
     # Un identifiant est unique sur tout le site, tous types confondus (D9)
-    tous = [x["id"] for x in mouvements + groupes + artistes + oeuvres + evenements]
+    tous = [x["id"] for x in mouvements + groupes + artistes + oeuvres + evenements + glossaire]
     for doublon in sorted({x for x in tous if tous.count(x) > 1}):
         avertir(f"Identifiant utilisé deux fois : {doublon}")
 
@@ -322,7 +348,8 @@ def afficher_bilan(donnees):
     fiches = mouvements + artistes + oeuvres
     redigees = sum(not x["ficheVide"] for x in fiches)
     print(f"{len(mouvements)} mouvements, {len(donnees['groupes'])} groupe(s), {len(artistes)} artistes, {len(oeuvres)} œuvres, "
-          f"{len(donnees['evenements'])} événements, {len(donnees['influences'])} influences")
+          f"{len(donnees['evenements'])} événements, {len(donnees['influences'])} influences, "
+          f"{len(donnees['glossaire'])} terme(s) du glossaire")
     print(f"{redigees} fiche(s) rédigée(s) sur {len(fiches)}")
     print(f"Données écrites dans {SORTIE.relative_to(ICI)}")
     if avertissements:
@@ -347,9 +374,10 @@ def main():
     oeuvres = lire_oeuvres(wb, ids_mouv, ids_art)
     evenements = lire_evenements(wb, ids_mouv)
     influences = lire_influences(wb, ids_art, ids_mouv)
+    glossaire = lire_glossaire(wb)   # « Voir aussi » est vérifié plus bas, une fois tous les identifiants connus
 
     donnees = {"mouvements": mouvements, "groupes": groupes, "artistes": artistes, "oeuvres": oeuvres,
-               "evenements": evenements, "influences": influences}
+               "evenements": evenements, "influences": influences, "glossaire": glossaire}
     verifier_ensemble(donnees)
     ecrire(donnees)
     afficher_bilan(donnees)
