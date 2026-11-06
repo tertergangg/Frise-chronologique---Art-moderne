@@ -15,7 +15,7 @@ fiches/<type>/<id>.md ───────────────┘
 ```
 
 - `construire.py` lit le tableur et les fiches, vérifie leur cohérence et écrit `src/data/frise.json`.
-- Astro fabrique le site dans `dist/`, à partir de `src/` (la page, le script de la frise et ses données) et du dossier `public/`.
+- Astro fabrique le site dans `dist/`, à partir de `src/` (la page, le script de la frise, ses données et le code partagé de `src/lib/`) et du dossier `public/`.
 - Cloudflare publie `dist/` à chaque `git push`.
 
 Cloudflare n’a pas Python : `src/data/frise.json` doit donc être enregistré dans Git, à jour.
@@ -25,7 +25,7 @@ Cloudflare n’a pas Python : `src/data/frise.json` doit donc être enregistré 
 ```
 README.md              ce fichier
 construire.py          tableur + fiches -> src/data/frise.json
-package.json           projet Astro : dépendance et commandes npm
+package.json           projet Astro : dépendances et commandes npm
 astro.config.mjs       réglages d’Astro
 wrangler.jsonc         réglages de Cloudflare
 suivi_projet/          documents de suivi du projet (contexte, architecture, décisions, roadmap, conventions, journal)
@@ -38,6 +38,7 @@ fiches/
 src/
   pages/index.astro                structure de la page de la frise
   scripts/app.js                   fonctionnement de la frise
+  lib/                             partagé par la frise et les futures pages : données, outils, contenu des fiches
   data/frise.json                  FABRIQUÉ par construire.py : ne jamais le modifier à la main
 public/                            copié tel quel sur le site
   style.css                        apparence
@@ -108,6 +109,7 @@ Le dépôt est public : le tableur et les fiches sont visibles par tous.
 | le texte d’une fiche                                             | `fiches/<type>/<id>.md`                                                                                        |
 | les couleurs et polices du site                                  | les variables `:root` de la section « Variables » de `public/style.css`, et `:root[data-theme="dark"]` pour le mode sombre |
 | le titre, le sous-titre, les boutons de l’en-tête                | `src/pages/index.astro`                                                                                        |
-| l’aide « Comment lire la frise », les rubriques des fiches, l’Index | `src/scripts/app.js`                                                                                        |
+| l’aide « Comment lire la frise », l’Index                        | `src/scripts/app.js`                                                                                           |
+| les rubriques des fiches                                         | `src/lib/fiches.js`                                                                                            |
 | la période affichée, l’année de départ, l’échelle des zooms, la taille des cartes | l’objet `REGLAGES`, en haut de `src/scripts/app.js`                                           |
-| le nom court d’un artiste (« Van Gogh »)                         | `NOMS_COURTS`, dans `src/scripts/app.js`                                                                       |
+| le nom court d’un artiste (« Van Gogh »)                         | `NOMS_COURTS`, dans `src/lib/outils.js`                                                                        |
