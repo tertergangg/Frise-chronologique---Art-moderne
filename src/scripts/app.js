@@ -313,10 +313,13 @@ function remplirReperes(f) {
   barre.setAttribute("aria-label", pas === 10 ? "Aller à une décennie" : "Aller à une année");
 }
 
+// Hauteur de l’axe des années, collé en haut de la frise : les couloirs visibles commencent juste en dessous
+const hauteurAxe = () => toile.querySelector(".axe").offsetHeight;
+
 // Repère du défilement vertical : quel couloir est en haut de la frise (juste sous l’axe des années),
 // et à quelle hauteur dans ce couloir, en proportion (0 = son bord haut, 0.5 = son milieu)
 function repereVertical() {
-  const haut = defile.scrollTop + toile.querySelector(".axe").offsetHeight;
+  const haut = defile.scrollTop + hauteurAxe();
   const couloirs = [...toile.querySelectorAll(".couloir")];
   const index = couloirs.findIndex((c) => c.offsetTop + c.offsetHeight > haut);
   if (index === -1) return null;
@@ -329,7 +332,7 @@ function hautRepere(repere) {
   if (!repere) return null;
   const c = toile.querySelectorAll(".couloir")[repere.index];
   if (!c) return null;
-  return c.offsetTop + repere.part * c.offsetHeight - toile.querySelector(".axe").offsetHeight;
+  return c.offsetTop + repere.part * c.offsetHeight - hauteurAxe();
 }
 
 // Entre « Détail » et « Moyen », on garde sa place : la même année à gauche, le même couloir en haut.
