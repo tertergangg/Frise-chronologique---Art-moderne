@@ -81,8 +81,9 @@ def verifier_orphelines(dossier, ids):
         if chemin.stem not in ids:
             avertir(f"Fiche sans ligne dans le tableur : {chemin.relative_to(ICI)}")
 
-def verifier_liens(elements, ids):
+def verifier_liens(elements, ids, ids_pas_encore_affiches=frozenset()):
     """Signale les liens [[id]] ou [[id|texte]] des fiches qui ne mèneraient nulle part.
+    « ids_pas_encore_affiches » : des identifiants valides, mais que la frise ne sait pas encore afficher.
     La forme attendue est celle de la fonction markdown() de src/lib/fiches.js : les deux règles doivent rester identiques."""
     for x in elements:
         texte = re.sub(r"<!--.*?-->", "", x["fiche"], flags=re.S)   # les commentaires ne s'affichent pas
@@ -93,6 +94,9 @@ def verifier_liens(elements, ids):
                         "(identifiant en minuscules, sans accents ni espaces)")
             elif forme.group(1) not in ids:
                 avertir(f"Fiche {x['id']} : lien vers un identifiant inconnu « {forme.group(1)} »")
+            elif forme.group(1) in ids_pas_encore_affiches:
+                avertir(f"Fiche {x['id']} : lien vers « {forme.group(1)} », que la frise ne sait pas encore afficher "
+                        "(elle montrerait l'identifiant, sans lien utile, jusqu'à l'étape 2e)")
 
 def verifier_image(oeuvre):
     """Signale un chemin d'image qui casserait sur les pages de la phase 2, ou un fichier absent de public/."""
@@ -104,6 +108,26 @@ def verifier_image(oeuvre):
                 f"(il doit commencer par /, par exemple « /{image} »)")
     elif not (PUBLIC / image.lstrip("/")).exists():
         avertir(f"Œuvre {oeuvre['id']} : image introuvable dans public/ « {image} »")
+
+def annees_ecrites(texte):
+    """Les années que couvre une date affichée : « 1884-1886 » -> (1884, 1886), « vers 1893 » -> (1893, 1893),
+    « années 1920 » -> (1920, 1929). Renvoie None si le texte ne contient aucune année."""
+    if not isinstance(texte, str):
+        return None
+    annees = [int(a) for a in re.findall(r"\b\d{4}\b", texte)]
+    if not annees:
+        return None
+    fin = max(annees)
+    if re.search(rf"années {fin}\b", texte):   # une décennie entière
+        fin += 9
+    return min(annees), fin
+
+def verifier_date(oeuvre):
+    """Signale une œuvre dont l'année (qui place la carte sur la frise) sort de sa date affichée (celle de la fiche)."""
+    bornes = annees_ecrites(oeuvre["dateAffichee"])
+    if bornes and oeuvre["annee"] is not None and not bornes[0] <= oeuvre["annee"] <= bornes[1]:
+        avertir(f"Œuvre {oeuvre['id']} : l'année {oeuvre['annee']} ne correspond pas à la date affichée "
+                f"« {oeuvre['dateAffichee']} »")
 
 def annee(v):
     try:
@@ -224,14 +248,39 @@ def lire_evenements(wb, ids_mouv):
         })
     return evenements
 
-def lire_influences(wb, ids_art):
-    """Onglet Influences. Vérifie que les deux bouts sont des artistes connus."""
+# Les types de relations (D23) et, pour chacun, ce qu'il relie : (genres possibles au départ, genres possibles à l'arrivée)
+TYPES_RELATIONS = {
+    "influence": ({"artiste"}, {"artiste", "mouvement"}),
+    "collaboration": ({"artiste"}, {"artiste"}),
+    "rivalité": ({"artiste"}, {"artiste"}),
+    "filiation": ({"mouvement"}, {"mouvement"}),
+    "réaction": ({"mouvement"}, {"mouvement"}),
+}
+GENRES = {"artiste": "un artiste", "mouvement": "un mouvement"}   # pour écrire les avertissements
+
+def lire_influences(wb, ids_art, ids_mouv):
+    """Onglet Influences, qui réunit toutes les relations (D23).
+    Vérifie que chaque bout est un artiste ou un mouvement connu, et que le type relie les bons genres d'éléments."""
+    def genre(ident):
+        """« artiste », « mouvement », ou None pour un identifiant inconnu."""
+        return "artiste" if ident in ids_art else "mouvement" if ident in ids_mouv else None
+
     influences = []
     for i in lire_onglet(wb, "Influences"):
-        for cle in ("De (ID)", "Vers (ID)"):
-            if i.get(cle) not in ids_art:
-                avertir(f"Influence {i['ID']} : artiste inconnu « {i.get(cle)} »")
-        influences.append({"de": i.get("De (ID)"), "vers": i.get("Vers (ID)"), "type": i.get("Type"),
+        de, vers, sorte = i.get("De (ID)"), i.get("Vers (ID)"), i.get("Type")
+        for ident in (de, vers):
+            if genre(ident) is None:
+                avertir(f"Relation {i['ID']} : identifiant inconnu « {ident} » (ni un artiste ni un mouvement)")
+        if not sorte:
+            avertir(f"Relation {i['ID']} : type manquant")
+        elif sorte not in TYPES_RELATIONS:
+            avertir(f"Relation {i['ID']} : type inconnu « {sorte} » (types possibles : {', '.join(TYPES_RELATIONS)})")
+        elif genre(de) and genre(vers):
+            depart, arrivee = TYPES_RELATIONS[sorte]
+            if genre(de) not in depart or genre(vers) not in arrivee:
+                avertir(f"Relation {i['ID']} : une relation « {sorte} » ne peut pas relier "
+                        f"{GENRES[genre(de)]} à {GENRES[genre(vers)]}")
+        influences.append({"de": de, "vers": vers, "type": sorte,
                            "explication": typo(i.get("Explication (1-2 phrases)"))})
     return influences
 
@@ -249,11 +298,13 @@ def verifier_ensemble(donnees):
     verifier_orphelines("oeuvres", ids_oeu)
 
     # Les liens [[id]] peuvent viser un mouvement, un groupe, un artiste, une œuvre ou un événement.
-    # Un lien vers un groupe est permis (D24), mais il ne mène à rien dans la frise avant l'étape 2e.
-    ids_connus = ids_mouv | {g["id"] for g in groupes} | ids_art | ids_oeu | {e["id"] for e in evenements}
-    verifier_liens(mouvements + artistes + oeuvres, ids_connus)
+    # Un lien vers un groupe est permis (D24), mais il est signalé : la frise ne sait pas l'afficher avant l'étape 2e.
+    ids_groupes = {g["id"] for g in groupes}
+    ids_connus = ids_mouv | ids_groupes | ids_art | ids_oeu | {e["id"] for e in evenements}
+    verifier_liens(mouvements + artistes + oeuvres, ids_connus, ids_groupes)
     for o in oeuvres:
         verifier_image(o)
+        verifier_date(o)
 
     # Un identifiant est unique sur tout le site, tous types confondus (D9)
     tous = [x["id"] for x in mouvements + groupes + artistes + oeuvres + evenements]
@@ -295,7 +346,7 @@ def main():
     ids_art = {a["id"] for a in artistes}
     oeuvres = lire_oeuvres(wb, ids_mouv, ids_art)
     evenements = lire_evenements(wb, ids_mouv)
-    influences = lire_influences(wb, ids_art)
+    influences = lire_influences(wb, ids_art, ids_mouv)
 
     donnees = {"mouvements": mouvements, "groupes": groupes, "artistes": artistes, "oeuvres": oeuvres,
                "evenements": evenements, "influences": influences}
