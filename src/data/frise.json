@@ -622,7 +622,8 @@
    "image": "/images/impression-soleil-levant.jpg",
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-gare-saint-lazare",
@@ -638,7 +639,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "falaises-a-etretat",
@@ -654,7 +656,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "cathedrales-de-rouen",
@@ -670,7 +673,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "les-nympheas",
@@ -686,7 +690,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "le-bal-du-moulin-de-la-galette",
@@ -702,7 +707,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "le-dejeuner-des-canotiers",
@@ -718,7 +724,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-danse-a-bougival",
@@ -734,7 +741,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-classe-de-danse",
@@ -750,7 +758,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "l-absinthe",
@@ -766,7 +775,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "danseuses-bleues",
@@ -782,7 +792,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "les-bords-de-l-oise-a-pontoise",
@@ -798,7 +809,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "printemps-pruniers-en-fleurs",
@@ -814,7 +826,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "soleil-levant-a-eragny",
@@ -830,7 +843,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "le-berceau",
@@ -846,7 +860,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "les-mangeurs-de-pommes-de-terre",
@@ -862,7 +877,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "tournesols",
@@ -878,7 +894,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-chambre-a-arles",
@@ -894,7 +911,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-nuit-etoilee",
@@ -910,7 +928,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "les-joueurs-de-cartes",
@@ -926,7 +945,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-corbeille-de-pommes",
@@ -942,7 +962,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-montagne-sainte-victoire",
@@ -958,7 +979,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "les-grandes-baigneuses",
@@ -974,7 +996,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "joyeusetes-arearea",
@@ -990,7 +1013,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "jour-de-dieu-mahana-no-atua",
@@ -1006,7 +1030,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "d-ou-venons-nous-que-sommes-nous-ou-allons-nous",
@@ -1022,7 +1047,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "une-baignade-a-asnieres",
@@ -1038,7 +1064,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "un-dimanche-apres-midi-a-l-ile-de-la-grande-jatte",
@@ -1054,7 +1081,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "le-cirque",
@@ -1070,7 +1098,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-femme-au-chapeau",
@@ -1086,7 +1115,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-danse-matisse",
@@ -1102,7 +1132,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "l-atelier-rouge",
@@ -1118,7 +1149,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "les-odalisques",
@@ -1134,7 +1166,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "jazz",
@@ -1150,7 +1183,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "nus-bleus",
@@ -1166,7 +1200,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "bateaux-dans-le-port-de-collioure",
@@ -1182,7 +1217,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "big-ben",
@@ -1198,7 +1234,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-danse-derain",
@@ -1214,7 +1251,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "restaurant-de-la-machine-a-bougival",
@@ -1230,7 +1268,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-seine-a-chatou",
@@ -1246,7 +1285,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "bords-de-seine",
@@ -1262,7 +1302,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "les-demoiselles-d-avignon",
@@ -1278,7 +1319,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "guernica",
@@ -1294,7 +1336,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-femme-qui-pleure",
@@ -1310,7 +1353,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "dora-maar-au-chat",
@@ -1326,7 +1370,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "maisons-a-l-estaque",
@@ -1342,7 +1387,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "le-portugais",
@@ -1358,7 +1404,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "l-homme-a-la-guitare",
@@ -1374,7 +1421,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "les-oiseaux",
@@ -1390,7 +1438,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "portrait-de-pablo-picasso",
@@ -1406,7 +1455,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "l-homme-au-cafe",
@@ -1422,7 +1472,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "nature-morte-a-la-nappe-a-carreaux",
@@ -1438,7 +1489,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "scene-de-rue-a-berlin",
@@ -1454,7 +1506,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "autoportrait-en-soldat",
@@ -1470,7 +1523,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "vallee-de-sertig-en-automne",
@@ -1486,7 +1540,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-vie-du-christ",
@@ -1502,7 +1557,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "mer-agitee-stormy-sea",
@@ -1518,7 +1574,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "cheval-bleu-i",
@@ -1534,7 +1591,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "les-grands-chevaux-bleus",
@@ -1550,7 +1608,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "destins-d-animaux",
@@ -1566,7 +1625,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "sans-titre-premiere-aquarelle",
@@ -1582,7 +1642,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "fugue",
@@ -1598,7 +1659,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "composition-viii",
@@ -1614,7 +1676,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "jaune-rouge-bleu",
@@ -1630,7 +1693,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "carre-noir-sur-fond-blanc",
@@ -1646,7 +1710,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "croix-noire",
@@ -1662,7 +1727,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "composition-suprematiste",
@@ -1678,7 +1744,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "carre-blanc-sur-fond-blanc",
@@ -1694,7 +1761,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "l-arbre-rouge",
@@ -1710,7 +1778,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "composition-en-rouge-bleu-et-jaune",
@@ -1726,7 +1795,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "new-york-city",
@@ -1742,7 +1812,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "l-eau-la-baigneuse",
@@ -1758,7 +1829,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "amorpha-fugue-a-deux-couleurs",
@@ -1774,7 +1846,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "disques-de-newton",
@@ -1790,7 +1863,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-premiere-aventure-celeste-de-m-antipyrine",
@@ -1806,7 +1880,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "manifeste-dada-1918",
@@ -1822,7 +1897,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "vingt-cinq-poemes",
@@ -1838,7 +1914,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "collages-selon-les-lois-du-hasard",
@@ -1854,7 +1931,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "concretion-humaine",
@@ -1870,7 +1948,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "ptolemee-i",
@@ -1886,7 +1965,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "danses-a-la-source",
@@ -1902,7 +1982,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "parade-amoureuse",
@@ -1918,7 +1999,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "machine-tournez-vite",
@@ -1934,7 +2016,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "l-oeil-cacodylate",
@@ -1950,7 +2033,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "fontaine",
@@ -1966,7 +2050,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "l-h-o-o-q",
@@ -1982,7 +2067,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "les-champs-magnetiques",
@@ -1998,7 +2084,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "manifeste-du-surrealisme",
@@ -2014,7 +2101,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "nadja",
@@ -2030,7 +2118,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "le-grand-masturbateur",
@@ -2046,7 +2135,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-persistance-de-la-memoire",
@@ -2062,7 +2152,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "metamorphose-de-narcisse",
@@ -2078,7 +2169,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "galatee-aux-spheres",
@@ -2094,7 +2186,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-vierge-corrigeant-l-enfant-jesus-devant-trois-temoins",
@@ -2110,7 +2203,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "l-ange-du-foyer-ou-le-triomphe-du-surrealisme",
@@ -2126,7 +2220,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "la-trahison-des-images",
@@ -2142,7 +2237,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "mural",
@@ -2158,7 +2254,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "one-number-31-1950",
@@ -2174,7 +2271,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "convergence",
@@ -2190,7 +2288,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "entree-de-metro",
@@ -2206,7 +2305,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "orange-and-yellow",
@@ -2222,7 +2322,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "no-14",
@@ -2238,7 +2339,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "vir-heroicus-sublimis",
@@ -2254,7 +2356,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   },
   {
    "id": "woman-i",
@@ -2270,7 +2373,8 @@
    "image": null,
    "resume": null,
    "fiche": "",
-   "ficheVide": true
+   "ficheVide": true,
+   "niveau": "referencee"
   }
  ],
  "evenements": [

@@ -6,7 +6,7 @@ Utilisation (depuis le dossier du projet) :
 
 Ce que fait le script :
   1. lit le tableur  donnees/frise_art_moderne_base.xlsx (mouvements, groupes, artistes, œuvres, événements, influences, glossaire)
-  2. lit les fiches   fiches/mouvements, fiches/artistes, fiches/oeuvres
+  2. lit les fiches   fiches/mouvements, fiches/artistes, fiches/oeuvres (et en déduit le niveau des œuvres)
   3. vérifie la cohérence (identifiants inconnus, fiches manquantes ou sans ligne dans le tableur…)
   4. écrit            src/data/frise.json, que lit la frise (par src/lib/donnees.js)
 
@@ -60,6 +60,13 @@ def lire_onglet(wb, nom):
     return resultat
 
 
+def sans_texte(texte):
+    """Vrai si le texte ne contient encore aucun vrai texte : seulement des titres, les commentaires du gabarit,
+    des puces vides… La limite est d'une vingtaine de lettres ou de chiffres."""
+    reste = re.sub(r"<!--.*?-->", "", texte, flags=re.S)                 # commentaires du gabarit
+    reste = re.sub(r"^#+ .*$|^[-*>]\s*$|\*\*\.+\*\*\s*:", "", reste, flags=re.M)
+    return len(re.sub(r"\W", "", reste)) < 20
+
 def lire_fiche(dossier, ident):
     """Renvoie (markdown, vide). « vide » = la fiche ne contient encore aucun vrai texte."""
     chemin = FICHES / dossier / f"{ident}.md"
@@ -69,10 +76,27 @@ def lire_fiche(dossier, ident):
     texte = chemin.read_text(encoding="utf-8")
     texte = re.sub(r"^---\n.*?\n---\n", "", texte, flags=re.S)       # en-tête YAML
     texte = re.sub(r"^# .*\n", "", texte, count=1, flags=re.M)         # titre (déjà affiché)
-    reste = re.sub(r"<!--.*?-->", "", texte, flags=re.S)                 # commentaires du gabarit
-    reste = re.sub(r"^#+ .*$|^[-*>]\s*$|\*\*\.+\*\*\s*:", "", reste, flags=re.M)
-    vide = len(re.sub(r"\W", "", reste)) < 20
+    vide = sans_texte(texte)
     return ("" if vide else texte.strip()), vide
+
+# Le titre qui ouvre l'analyse d'une fiche œuvre (D21) : il doit être écrit exactement ainsi, seul sur sa ligne
+TITRE_ANALYSE = re.compile(r"^## Analyse[ \t]*$", flags=re.M)
+
+def niveau_oeuvre(ident, md, vide):
+    """Le niveau d'une œuvre, déduit de sa fiche (D21) : renvoie (niveau, markdown à afficher).
+    « referencee » : fiche vide. « analysee » : la partie qui suit « ## Analyse » contient du vrai texte.
+    « documentee » : tout le reste. Une analyse vide est retirée du Markdown, pour que son titre ne s'affiche pas seul."""
+    if vide:
+        return "referencee", md
+    morceaux = TITRE_ANALYSE.split(md)
+    if len(morceaux) > 2:
+        avertir(f"Fiche {ident} : le titre « ## Analyse » est écrit plusieurs fois")
+    presentation, analyse = morceaux[0], "".join(morceaux[1:])
+    if sans_texte(analyse):
+        return "documentee", presentation.strip()
+    if sans_texte(presentation):
+        avertir(f"Fiche {ident} : analyse rédigée, mais présentation vide")
+    return "analysee", md
 
 def verifier_orphelines(dossier, ids):
     """Signale les fiches d'un dossier qui ne correspondent à aucune ligne du tableur.
@@ -218,6 +242,7 @@ def lire_oeuvres(wb, ids_mouv, ids_art):
     oeuvres = []
     for o in lire_onglet(wb, "Œuvres"):
         md, vide = lire_fiche("oeuvres", o["ID"])
+        niveau, md = niveau_oeuvre(o["ID"], md, vide)
         if o.get("Artiste (ID)") not in ids_art:
             avertir(f"Œuvre {o['ID']} : artiste inconnu « {o.get('Artiste (ID)')} »")
         if o.get("Mouvement") not in ids_mouv:
@@ -231,7 +256,7 @@ def lire_oeuvres(wb, ids_mouv, ids_art):
             "musee": typo(o.get("Musée")), "ville": typo(o.get("Ville")),
             "majeure": str(o.get("Majeure (Bible)") or "").lower() == "oui",
             "image": o.get("Lien image"), "resume": typo(o.get("Résumé court (1 phrase)")),
-            "fiche": md, "ficheVide": vide,
+            "fiche": md, "ficheVide": vide, "niveau": niveau,
         })
     return oeuvres
 
@@ -351,6 +376,10 @@ def afficher_bilan(donnees):
           f"{len(donnees['evenements'])} événements, {len(donnees['influences'])} influences, "
           f"{len(donnees['glossaire'])} terme(s) du glossaire")
     print(f"{redigees} fiche(s) rédigée(s) sur {len(fiches)}")
+    # Une œuvre a sa page dès qu'elle est documentée (D21) : les œuvres analysées en font partie
+    avec_page = sum(o["niveau"] != "referencee" for o in oeuvres)
+    analysees = sum(o["niveau"] == "analysee" for o in oeuvres)
+    print(f"Œuvres documentées : {avec_page} sur {len(oeuvres)}, dont {analysees} analysée(s)")
     print(f"Données écrites dans {SORTIE.relative_to(ICI)}")
     if avertissements:
         print(f"\n{len(avertissements)} point(s) à vérifier :")
