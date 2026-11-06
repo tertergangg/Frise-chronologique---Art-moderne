@@ -5,10 +5,10 @@ Utilisation (depuis le dossier du projet) :
     python construire.py
 
 Ce que fait le script :
-  1. lit le tableur  donnees/frise_art_moderne_base.xlsx
+  1. lit le tableur  donnees/frise_art_moderne_base.xlsx (mouvements, groupes, artistes, œuvres, événements, influences)
   2. lit les fiches   fiches/mouvements, fiches/artistes, fiches/oeuvres
   3. vérifie la cohérence (identifiants inconnus, fiches manquantes ou sans ligne dans le tableur…)
-  4. écrit            src/data/frise.json, que lit la frise (src/scripts/app.js)
+  4. écrit            src/data/frise.json, que lit la frise (par src/lib/donnees.js)
 
 src/data/frise.json est commité (décision D8) : relancer le script avant chaque commit
 qui touche le tableur ou les fiches.
@@ -47,6 +47,8 @@ def majuscule(texte):
 
 def lire_onglet(wb, nom):
     """Renvoie une liste de dictionnaires {en-tête: valeur}, une par ligne remplie."""
+    if nom not in wb.sheetnames:
+        sys.exit(f"Onglet introuvable dans le tableur : « {nom} »")
     ws = wb[nom]
     lignes = list(ws.iter_rows(values_only=True))
     entetes = [str(h).strip() if h else "" for h in lignes[0]]
@@ -81,7 +83,7 @@ def verifier_orphelines(dossier, ids):
 
 def verifier_liens(elements, ids):
     """Signale les liens [[id]] ou [[id|texte]] des fiches qui ne mèneraient nulle part.
-    La forme attendue est celle de la fonction markdown() d'app.js : les deux règles doivent rester identiques."""
+    La forme attendue est celle de la fonction markdown() de src/lib/fiches.js : les deux règles doivent rester identiques."""
     for x in elements:
         texte = re.sub(r"<!--.*?-->", "", x["fiche"], flags=re.S)   # les commentaires ne s'affichent pas
         for contenu in re.findall(r"\[\[([^\]]*)\]\]", texte):
@@ -109,16 +111,17 @@ def annee(v):
     except (TypeError, ValueError):
         return None
 
+def decouper(valeur):
+    """Découpe une cellule « a, b, c » en liste ["a", "b", "c"], sans les morceaux vides."""
+    if not isinstance(valeur, str):
+        return []
+    return [morceau.strip() for morceau in valeur.split(",") if morceau.strip()]
+
 def lire_autres(valeur, ident, ids_mouv, noms_mouv):
     """Découpe la colonne « Autres mouvements » en liste d'identifiants.
     Une valeur inconnue est signalée et gardée en texte simple, pour être affichée sans lien."""
-    if not isinstance(valeur, str):
-        return []
     liste = []
-    for morceau in valeur.split(","):
-        morceau = morceau.strip()
-        if not morceau:
-            continue
+    for morceau in decouper(valeur):
         if morceau not in ids_mouv:
             suggestion = noms_mouv.get(typo(morceau).lower())
             conseil = f" (identifiant : « {suggestion} » ?)" if suggestion else ""
@@ -139,8 +142,37 @@ def lire_mouvements(wb):
         })
     return mouvements
 
-def lire_artistes(wb, ids_mouv, noms_mouv):
-    """Onglet Artistes, avec les fiches de fiches/artistes. Vérifie le mouvement principal."""
+def lire_groupes_artiste(valeur, ident, ids_groupes, noms_groupes):
+    """Découpe la colonne « Groupes » d'un artiste en liste d'identifiants.
+    Une valeur inconnue est signalée et écartée : un groupe n'existe que par sa ligne dans l'onglet Groupes."""
+    liste = []
+    for morceau in decouper(valeur):
+        if morceau in ids_groupes:
+            liste.append(morceau)
+            continue
+        suggestion = noms_groupes.get(typo(morceau).lower())
+        conseil = f" (identifiant : « {suggestion} » ?)" if suggestion else ""
+        avertir(f"Artiste {ident} : groupe inconnu « {morceau} »{conseil}")
+    return liste
+
+def lire_groupes(wb, ids_mouv):
+    """Onglet Groupes (pas de fiche, D22). Vérifie le mouvement de rattachement et l'ordre des dates."""
+    groupes = []
+    for g in lire_onglet(wb, "Groupes"):
+        if g.get("Mouvement") not in ids_mouv:
+            avertir(f"Groupe {g['ID']} : mouvement inconnu « {g.get('Mouvement')} »")
+        debut, fin = annee(g.get("Début")), annee(g.get("Fin"))
+        if debut is not None and fin is not None and debut > fin:
+            avertir(f"Groupe {g['ID']} : début ({debut}) après la fin ({fin})")
+        groupes.append({
+            "id": g["ID"], "nom": typo(g.get("Nom")), "mouvement": g.get("Mouvement"),
+            "debut": debut, "fin": fin, "lieu": typo(g.get("Lieu")),
+            "resume": typo(g.get("Résumé court (1 phrase)")),
+        })
+    return groupes
+
+def lire_artistes(wb, ids_mouv, noms_mouv, ids_groupes, noms_groupes):
+    """Onglet Artistes, avec les fiches de fiches/artistes. Vérifie le mouvement principal et les groupes."""
     artistes = []
     for a in lire_onglet(wb, "Artistes"):
         md, vide = lire_fiche("artistes", a["ID"])
@@ -152,6 +184,7 @@ def lire_artistes(wb, ids_mouv, noms_mouv):
             "role": majuscule(typo(a.get("Rôle"))),
             "mouvement": a.get("Mouvement principal"),
             "autres": lire_autres(a.get("Autres mouvements"), a["ID"], ids_mouv, noms_mouv),
+            "groupes": lire_groupes_artiste(a.get("Groupes"), a["ID"], ids_groupes, noms_groupes),
             "phrase": typo(a.get("Phrase-clé (1 phrase)")), "fiche": md, "ficheVide": vide,
         })
     return artistes
@@ -204,7 +237,7 @@ def lire_influences(wb, ids_art):
 
 def verifier_ensemble(donnees):
     """Les vérifications qui demandent d'avoir lu tous les onglets : fiches orphelines, liens, images, doublons."""
-    mouvements, artistes = donnees["mouvements"], donnees["artistes"]
+    mouvements, groupes, artistes = donnees["mouvements"], donnees["groupes"], donnees["artistes"]
     oeuvres, evenements = donnees["oeuvres"], donnees["evenements"]
     ids_mouv = {m["id"] for m in mouvements}
     ids_art = {a["id"] for a in artistes}
@@ -215,13 +248,15 @@ def verifier_ensemble(donnees):
     verifier_orphelines("artistes", ids_art)
     verifier_orphelines("oeuvres", ids_oeu)
 
-    # Les liens [[id]] peuvent viser un mouvement, un artiste, une œuvre ou un événement (comme dans app.js)
-    ids_connus = ids_mouv | ids_art | ids_oeu | {e["id"] for e in evenements}
+    # Les liens [[id]] peuvent viser un mouvement, un groupe, un artiste, une œuvre ou un événement.
+    # Un lien vers un groupe est permis (D24), mais il ne mène à rien dans la frise avant l'étape 2e.
+    ids_connus = ids_mouv | {g["id"] for g in groupes} | ids_art | ids_oeu | {e["id"] for e in evenements}
     verifier_liens(mouvements + artistes + oeuvres, ids_connus)
     for o in oeuvres:
         verifier_image(o)
 
-    tous = [x["id"] for x in mouvements + artistes + oeuvres + evenements]
+    # Un identifiant est unique sur tout le site, tous types confondus (D9)
+    tous = [x["id"] for x in mouvements + groupes + artistes + oeuvres + evenements]
     for doublon in sorted({x for x in tous if tous.count(x) > 1}):
         avertir(f"Identifiant utilisé deux fois : {doublon}")
 
@@ -235,7 +270,7 @@ def afficher_bilan(donnees):
     mouvements, artistes, oeuvres = donnees["mouvements"], donnees["artistes"], donnees["oeuvres"]
     fiches = mouvements + artistes + oeuvres
     redigees = sum(not x["ficheVide"] for x in fiches)
-    print(f"{len(mouvements)} mouvements, {len(artistes)} artistes, {len(oeuvres)} œuvres, "
+    print(f"{len(mouvements)} mouvements, {len(donnees['groupes'])} groupe(s), {len(artistes)} artistes, {len(oeuvres)} œuvres, "
           f"{len(donnees['evenements'])} événements, {len(donnees['influences'])} influences")
     print(f"{redigees} fiche(s) rédigée(s) sur {len(fiches)}")
     print(f"Données écrites dans {SORTIE.relative_to(ICI)}")
@@ -253,13 +288,16 @@ def main():
     mouvements = lire_mouvements(wb)
     ids_mouv = {m["id"] for m in mouvements}
     noms_mouv = {m["nom"].lower(): m["id"] for m in mouvements if m["nom"]}   # pour suggérer l'identifiant
-    artistes = lire_artistes(wb, ids_mouv, noms_mouv)
+    groupes = lire_groupes(wb, ids_mouv)
+    ids_groupes = {g["id"] for g in groupes}
+    noms_groupes = {g["nom"].lower(): g["id"] for g in groupes if g["nom"]}
+    artistes = lire_artistes(wb, ids_mouv, noms_mouv, ids_groupes, noms_groupes)
     ids_art = {a["id"] for a in artistes}
     oeuvres = lire_oeuvres(wb, ids_mouv, ids_art)
     evenements = lire_evenements(wb, ids_mouv)
     influences = lire_influences(wb, ids_art)
 
-    donnees = {"mouvements": mouvements, "artistes": artistes, "oeuvres": oeuvres,
+    donnees = {"mouvements": mouvements, "groupes": groupes, "artistes": artistes, "oeuvres": oeuvres,
                "evenements": evenements, "influences": influences}
     verifier_ensemble(donnees)
     ecrire(donnees)
