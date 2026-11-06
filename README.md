@@ -58,7 +58,7 @@ public/                            copié tel quel sur le site
 
 1. **Tableur** : modifie `donnees/frise_art_moderne_base.xlsx` dans Excel. Garde son nom et son format .xlsx.
 2. **Fiches** : rédige-les dans VS Code. Pour lier une autre fiche : `[[derain]]`, ou `[[derain|Derain]]` pour choisir le texte du lien.
-3. **Construire** : `python construire.py`. Le script affiche le nombre de fiches rédigées et les points à vérifier : identifiant inconnu ou en double, fiche manquante, fiche sans ligne dans le tableur, année absente. L’avertissement `Data Validation extension is not supported` d’openpyxl est sans danger.
+3. **Construire** : `python construire.py`. Le script affiche le nombre de fiches rédigées et les points à vérifier : identifiant inconnu ou en double, fiche manquante, fiche sans ligne dans le tableur, année absente, lien `[[id]]` cassé, chemin d’image relatif ou image introuvable. L’avertissement `Data Validation extension is not supported` d’openpyxl est sans danger.
 4. **Voir le résultat** : `npm run dev`, puis ouvre l’adresse affichée dans le terminal. Recharge la page après chaque modification ; `Ctrl + C` arrête l’aperçu. Pour tester la version qui sera publiée : `npm run build`, puis `npm run preview`.
 
 Une fiche s’affiche dès qu’elle contient du vrai texte. Sinon, le site indique « fiche à venir ».
