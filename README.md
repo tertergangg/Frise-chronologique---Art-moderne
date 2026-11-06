@@ -10,25 +10,25 @@ Le site a deux sources : le tableur et les fiches. Tout le reste est fabriqué �
 
 ```
 donnees/frise_art_moderne_base.xlsx ─┐
-                                     ├─> python construire.py ─> public/data.js ─> npm run build ─> dist/ ─> Cloudflare
+                                     ├─> python construire.py ─> src/data/frise.json ─> npm run build ─> dist/ ─> Cloudflare
 fiches/<type>/<id>.md ───────────────┘
 ```
 
-- `construire.py` lit le tableur et les fiches, vérifie leur cohérence et écrit `public/data.js`.
-- Astro fabrique le site dans `dist/`, à partir de `src/pages/index.astro` et du dossier `public/`.
+- `construire.py` lit le tableur et les fiches, vérifie leur cohérence et écrit `src/data/frise.json`.
+- Astro fabrique le site dans `dist/`, à partir de `src/` (la page, le script de la frise et ses données) et du dossier `public/`.
 - Cloudflare publie `dist/` à chaque `git push`.
 
-Cloudflare n’a pas Python : `public/data.js` doit donc être enregistré dans Git, à jour.
+Cloudflare n’a pas Python : `src/data/frise.json` doit donc être enregistré dans Git, à jour.
 
 ## Organisation des fichiers
 
 ```
 README.md              ce fichier
-construire.py          tableur + fiches -> public/data.js
+construire.py          tableur + fiches -> src/data/frise.json
 package.json           projet Astro : dépendance et commandes npm
 astro.config.mjs       réglages d’Astro
 wrangler.jsonc         réglages de Cloudflare
-projet/                documents de suivi du projet (contexte, architecture, décisions, roadmap, conventions, journal)
+suivi_projet/          documents de suivi du projet (contexte, architecture, décisions, roadmap, conventions, journal)
 donnees/
   frise_art_moderne_base.xlsx
 fiches/
@@ -37,10 +37,10 @@ fiches/
   _en-attente/                     fiches sans ligne dans le tableur, ignorées par le site
 src/
   pages/index.astro                structure de la page de la frise
+  scripts/app.js                   fonctionnement de la frise
+  data/frise.json                  FABRIQUÉ par construire.py : ne jamais le modifier à la main
 public/                            copié tel quel sur le site
   style.css                        apparence
-  app.js                           fonctionnement de la frise
-  data.js                          FABRIQUÉ par construire.py : ne jamais le modifier à la main
   images/                          images des œuvres
 ```
 
@@ -81,7 +81,7 @@ Une branche par tâche, testée sur sa version de test avant d’aller dans `mai
 git switch -c nom-de-la-tache
 python construire.py                 si le tableur ou les fiches ont changé
 git status                           puis relire le diff dans VS Code
-git add <fichier>                    un par un, sans oublier public/data.js s’il a changé
+git add <fichier>                    un par un, sans oublier src/data/frise.json s’il a changé
 git commit -m "Court résumé du changement"
 git push -u origin nom-de-la-tache
 ```
@@ -108,6 +108,6 @@ Le dépôt est public : le tableur et les fiches sont visibles par tous.
 | le texte d’une fiche                                             | `fiches/<type>/<id>.md`                                                                                        |
 | les couleurs et polices du site                                  | les variables `:root` de la section « Variables » de `public/style.css`, et `:root[data-theme="dark"]` pour le mode sombre |
 | le titre, le sous-titre, les boutons de l’en-tête                | `src/pages/index.astro`                                                                                        |
-| l’aide « Comment lire la frise », les rubriques des fiches, l’Index | `public/app.js`                                                                                             |
-| la période affichée, l’année de départ, l’échelle des zooms, la taille des cartes | l’objet `REGLAGES`, en haut de `public/app.js`                                                |
-| le nom court d’un artiste (« Van Gogh »)                         | `NOMS_COURTS`, dans `public/app.js`                                                                            |
+| l’aide « Comment lire la frise », les rubriques des fiches, l’Index | `src/scripts/app.js`                                                                                        |
+| la période affichée, l’année de départ, l’échelle des zooms, la taille des cartes | l’objet `REGLAGES`, en haut de `src/scripts/app.js`                                           |
+| le nom court d’un artiste (« Van Gogh »)                         | `NOMS_COURTS`, dans `src/scripts/app.js`                                                                       |
