@@ -6,7 +6,8 @@ Utilisation (depuis le dossier du projet) :
 
 Ce que fait le script :
   1. lit le tableur  donnees/frise_art_moderne_base.xlsx (mouvements, groupes, artistes, œuvres, événements, influences, glossaire)
-  2. lit les fiches   fiches/mouvements, fiches/artistes, fiches/oeuvres (et en déduit le niveau des œuvres)
+  2. lit les fiches   fiches/mouvements, fiches/artistes, fiches/oeuvres (et en déduit le niveau des œuvres),
+                      puis fiches/parcours et fiches/comparaisons
   3. vérifie la cohérence (identifiants inconnus, fiches manquantes ou sans ligne dans le tableur…)
   4. écrit            src/data/frise.json, que lit la frise (par src/lib/donnees.js)
 
@@ -281,7 +282,7 @@ TYPES_RELATIONS = {
     "filiation": ({"mouvement"}, {"mouvement"}),
     "réaction": ({"mouvement"}, {"mouvement"}),
 }
-GENRES = {"artiste": "un artiste", "mouvement": "un mouvement"}   # pour écrire les avertissements
+GENRES = {"artiste": "un artiste", "mouvement": "un mouvement", "oeuvre": "une œuvre"}   # pour écrire les avertissements
 
 def lire_influences(wb, ids_art, ids_mouv):
     """Onglet Influences, qui réunit toutes les relations (D23).
@@ -325,10 +326,70 @@ def lire_glossaire(wb):
         })
     return glossaire
 
+def lire_entete(texte):
+    """Les champs de l'en-tête YAML d'une fiche, en dictionnaire {clé: texte}.
+    Ne lit que des lignes simples « clé: valeur », ce qui suffit aux fiches du site sans librairie YAML."""
+    entete = re.match(r"^---\n(.*?)\n---\n", texte, flags=re.S)
+    champs = {}
+    for ligne in (entete.group(1).splitlines() if entete else []):
+        cle, separateur, valeur = ligne.partition(":")
+        if separateur:
+            champs[cle.strip()] = valeur.strip()
+    return champs
+
+def lire_articles(dossier, sorte, champ):
+    """Les fiches d'un dossier qui n'a pas d'onglet dans le tableur : parcours et comparaisons (D24).
+    L'identifiant est le nom du fichier, le titre est la ligne « # », et le champ « champ » de l'en-tête
+    liste les identifiants reliés, séparés par des virgules. Ceux-ci sont vérifiés dans verifier_articles()."""
+    articles = []
+    for chemin in sorted((FICHES / dossier).glob("*.md")):   # un dossier absent ne contient aucune fiche
+        ident, nom = chemin.stem, chemin.relative_to(ICI)
+        texte = chemin.read_text(encoding="utf-8")
+        entete = lire_entete(texte)
+        if entete.get("id") != ident:
+            avertir(f"Fiche {nom} : l'id de l'en-tête « {entete.get('id', '')} » n'est pas le nom du fichier")
+        if entete.get("type") != sorte:
+            avertir(f"Fiche {nom} : type « {entete.get('type', '')} » au lieu de « {sorte} »")
+        titre = re.search(r"^# (.+)$", re.sub(r"^---\n.*?\n---\n", "", texte, flags=re.S), flags=re.M)
+        if not titre:
+            avertir(f"Fiche {nom} : titre « # » manquant")
+        md, vide = lire_fiche(dossier, ident)
+        articles.append({
+            "id": ident, "titre": typo(titre.group(1).strip()) if titre else None,
+            champ: decouper(entete.get(champ)), "fiche": md, "ficheVide": vide,
+        })
+    return articles
+
+def verifier_articles(parcours, comparaisons, ids_connus, genres):
+    """Ce que relient les parcours et les comparaisons doit exister.
+    Un parcours a au moins deux étapes ; une comparaison relie deux éléments distincts du même genre
+    (deux mouvements, deux artistes ou deux œuvres)."""
+    for p in parcours:
+        if len(p["etapes"]) < 2:
+            avertir(f"Parcours {p['id']} : il faut au moins deux étapes (champ « etapes » de l'en-tête)")
+        for ident in p["etapes"]:
+            if ident not in ids_connus:
+                avertir(f"Parcours {p['id']} : étape inconnue « {ident} »")
+    for c in comparaisons:
+        elements = c["elements"]
+        for ident in elements:
+            if ident not in ids_connus:
+                avertir(f"Comparaison {c['id']} : élément inconnu « {ident} »")
+        if len(elements) != 2:
+            avertir(f"Comparaison {c['id']} : il faut exactement deux éléments (champ « elements » de l'en-tête)")
+        elif elements[0] == elements[1]:
+            avertir(f"Comparaison {c['id']} : les deux éléments sont identiques")
+        elif all(ident in ids_connus for ident in elements):
+            premier, second = genres.get(elements[0]), genres.get(elements[1])
+            if premier is None or premier != second:
+                quoi = " et ".join(GENRES.get(genres.get(i), f"« {i} »") for i in elements)
+                avertir(f"Comparaison {c['id']} : elle relie {quoi} (deux mouvements, deux artistes ou deux œuvres)")
+
 def verifier_ensemble(donnees):
     """Les vérifications qui demandent d'avoir lu tous les onglets : fiches orphelines, liens, images, doublons."""
     mouvements, groupes, artistes = donnees["mouvements"], donnees["groupes"], donnees["artistes"]
     oeuvres, evenements, glossaire = donnees["oeuvres"], donnees["evenements"], donnees["glossaire"]
+    parcours, comparaisons = donnees["parcours"], donnees["comparaisons"]
     ids_mouv = {m["id"] for m in mouvements}
     ids_art = {a["id"] for a in artistes}
     ids_oeu = {o["id"] for o in oeuvres}
@@ -338,13 +399,20 @@ def verifier_ensemble(donnees):
     verifier_orphelines("artistes", ids_art)
     verifier_orphelines("oeuvres", ids_oeu)
 
-    # Les liens [[id]] peuvent viser un mouvement, un groupe, un artiste, une œuvre, un événement ou un terme.
-    # Un lien vers un groupe ou un terme est permis (D24), mais il est signalé : la frise ne sait pas les afficher
-    # (les groupes jusqu'à l'étape 2e, les termes jusqu'à la page du glossaire, en phase 4).
+    # Les liens [[id]] peuvent viser un mouvement, un groupe, un artiste, une œuvre, un événement, un terme,
+    # un parcours ou une comparaison. Un lien vers un groupe, un terme, un parcours ou une comparaison est permis (D24),
+    # mais il est signalé : la frise ne sait pas les afficher (les groupes jusqu'à l'étape 2e, le reste jusqu'à la phase 4).
     ids_groupes = {g["id"] for g in groupes}
     ids_termes = {t["id"] for t in glossaire}
-    ids_connus = ids_mouv | ids_groupes | ids_art | ids_oeu | {e["id"] for e in evenements} | ids_termes
-    verifier_liens(mouvements + artistes + oeuvres, ids_connus, ids_groupes | ids_termes)
+    ids_articles = {x["id"] for x in parcours + comparaisons}
+    ids_connus = (ids_mouv | ids_groupes | ids_art | ids_oeu | {e["id"] for e in evenements}
+                  | ids_termes | ids_articles)
+    verifier_liens(mouvements + artistes + oeuvres + parcours + comparaisons, ids_connus,
+                   ids_groupes | ids_termes | ids_articles)
+
+    # Le genre de chaque élément qu'une comparaison peut relier
+    genres = {**{i: "mouvement" for i in ids_mouv}, **{i: "artiste" for i in ids_art}, **{i: "oeuvre" for i in ids_oeu}}
+    verifier_articles(parcours, comparaisons, ids_connus, genres)
 
     # « Voir aussi » d'un terme peut viser n'importe quel élément : un autre terme, un artiste, une œuvre…
     for t in glossaire:
@@ -358,7 +426,8 @@ def verifier_ensemble(donnees):
         verifier_date(o)
 
     # Un identifiant est unique sur tout le site, tous types confondus (D9)
-    tous = [x["id"] for x in mouvements + groupes + artistes + oeuvres + evenements + glossaire]
+    tous = [x["id"] for x in mouvements + groupes + artistes + oeuvres + evenements + glossaire
+            + parcours + comparaisons]
     for doublon in sorted({x for x in tous if tous.count(x) > 1}):
         avertir(f"Identifiant utilisé deux fois : {doublon}")
 
@@ -374,7 +443,8 @@ def afficher_bilan(donnees):
     redigees = sum(not x["ficheVide"] for x in fiches)
     print(f"{len(mouvements)} mouvements, {len(donnees['groupes'])} groupe(s), {len(artistes)} artistes, {len(oeuvres)} œuvres, "
           f"{len(donnees['evenements'])} événements, {len(donnees['influences'])} influences, "
-          f"{len(donnees['glossaire'])} terme(s) du glossaire")
+          f"{len(donnees['glossaire'])} terme(s) du glossaire, "
+          f"{len(donnees['parcours'])} parcours, {len(donnees['comparaisons'])} comparaison(s)")
     print(f"{redigees} fiche(s) rédigée(s) sur {len(fiches)}")
     # Une œuvre a sa page dès qu'elle est documentée (D21) : les œuvres analysées en font partie
     avec_page = sum(o["niveau"] != "referencee" for o in oeuvres)
@@ -404,9 +474,12 @@ def main():
     evenements = lire_evenements(wb, ids_mouv)
     influences = lire_influences(wb, ids_art, ids_mouv)
     glossaire = lire_glossaire(wb)   # « Voir aussi » est vérifié plus bas, une fois tous les identifiants connus
+    parcours = lire_articles("parcours", "parcours", "etapes")
+    comparaisons = lire_articles("comparaisons", "comparaison", "elements")
 
     donnees = {"mouvements": mouvements, "groupes": groupes, "artistes": artistes, "oeuvres": oeuvres,
-               "evenements": evenements, "influences": influences, "glossaire": glossaire}
+               "evenements": evenements, "influences": influences, "glossaire": glossaire,
+               "parcours": parcours, "comparaisons": comparaisons}
     verifier_ensemble(donnees)
     ecrire(donnees)
     afficher_bilan(donnees)
