@@ -1,26 +1,53 @@
 /* =====================================================================
    Contenu des fiches
-   Fabrique le HTML d’une fiche d’œuvre, d’artiste, de mouvement ou d’événement.
-   Affiché aujourd’hui dans le panneau de la frise ; à partir de l’étape 2e, aussi sur les pages.
+   Fabrique le HTML d’une fiche d’œuvre, d’artiste, de mouvement ou d’événement, pour le panneau de la frise.
+   Fournit aussi aux pages ce qu’elles partagent avec le panneau : le texte des fiches (markdown),
+   les liens (lien) et l’adresse de chaque élément (aUnePage, adresse).
    Rien ici ne touche à la page : ces fonctions renvoient du texte HTML, et c’est l’appelant qui l’affiche.
    ===================================================================== */
 
 // marked convertit le Markdown des fiches en HTML. Installé par npm (version exacte dans package.json),
 // il est intégré au script publié, comme les données.
 import { marked } from "marked";
-import { D, MOUV, ART, OEU, EVT } from "./donnees.js";
+import { D, MOUV, ART, OEU, EVT, GRP } from "./donnees.js";
 import { esc, nomCourt, estImage } from "./outils.js";
 
-// Lien vers la fiche d’un élément. Dans la frise, « #id » ouvre la fiche dans le panneau.
-const lien = (id, texte) => `<a href="#${esc(id)}" data-id="${esc(id)}">${esc(texte)}</a>`;
+// Un élément a-t-il sa propre page ? C’est la seule fonction qui en décide (D13, D21).
+// Un mouvement ou un artiste en a une dès que sa fiche est rédigée. Les œuvres documentées en auront une à l’étape 2f ;
+// les groupes, les événements, les termes, les parcours et les comparaisons n’en ont pas.
+function aUnePage(id) {
+  const element = MOUV[id] || ART[id];
+  return Boolean(element && !element.ficheVide);
+}
+
+// Adresse d’un élément, vue depuis une page du site (ARCHITECTURE, partie B, « Liens »).
+// Sans page, l’élément s’ouvre dans la frise (/#id), comme le prévoit D13.
+function adresse(id) {
+  if (MOUV[id] && aUnePage(id)) return `/mouvements/${id}/`;
+  if (ART[id] && aUnePage(id)) return `/artistes/${id}/`;
+  // Un groupe est une section de la page de son mouvement (D22).
+  // Si ce mouvement n’a pas encore de page, on ouvre sa fiche dans la frise.
+  const groupe = GRP[id];
+  if (groupe) return aUnePage(groupe.mouvement) ? `/mouvements/${groupe.mouvement}/#${id}` : `/#${groupe.mouvement}`;
+  return `/#${id}`;
+}
+
+// Lien vers un élément. Dans le panneau de la frise (par défaut), « #id » ouvre la fiche sur place, grâce à data-id ;
+// sur une page (surPage), le lien mène à l’adresse de l’élément.
+function lien(id, texte, surPage = false) {
+  if (surPage) return `<a href="${esc(adresse(id))}">${esc(texte)}</a>`;
+  return `<a href="#${esc(id)}" data-id="${esc(id)}">${esc(texte)}</a>`;
+}
 
 // Texte d’une fiche : les liens [[id]] et [[id|texte]] deviennent des liens Markdown, puis marked convertit le tout.
+// Comme pour lien(), « surPage » fait viser l’adresse de l’élément au lieu de « #id ».
 // La même forme de lien est vérifiée par verifier_liens(), dans construire.py : les deux règles doivent rester identiques.
-function markdown(md) {
+function markdown(md, surPage = false) {
   if (!md) return "";
   const avecLiens = md.replace(/\[\[([a-z0-9-]+)(?:\|([^\]]+))?\]\]/g, (_, id, texte) => {
     const cible = MOUV[id] || ART[id] || OEU[id] || EVT[id];
-    return `[${texte || (cible ? cible.nom || cible.titre : id)}](#${id})`;
+    const destination = surPage ? adresse(id) : `#${id}`;
+    return `[${texte || (cible ? cible.nom || cible.titre : id)}](${destination})`;
   });
   return `<div class="corps">${marked.parse(avecLiens)}</div>`;
 }
@@ -108,4 +135,4 @@ function ficheEvenement(x) {
     ${m ? `<dl><dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd></dl>` : ""}`;
 }
 
-export { ficheOeuvre, ficheArtiste, ficheMouvement, ficheEvenement };
+export { ficheOeuvre, ficheArtiste, ficheMouvement, ficheEvenement, aUnePage, adresse, lien, markdown };

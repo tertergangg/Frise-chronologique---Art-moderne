@@ -10,6 +10,8 @@ import D from "../data/frise.json";
 // Transforme une liste en objet { identifiant: élément }, pour retrouver un élément sans parcourir la liste
 const indexer = (liste) => Object.fromEntries(liste.map((x) => [x.id, x]));
 const MOUV = indexer(D.mouvements), ART = indexer(D.artistes), OEU = indexer(D.oeuvres), EVT = indexer(D.evenements);
+// Les groupes (D22) : ils n’ont pas de fiche, mais les liens des pages doivent trouver leur mouvement
+const GRP = indexer(D.groupes);
 
 // Couleur d’un mouvement, ou un gris neutre si l’identifiant est inconnu
 const couleur = (id) => (MOUV[id] ? MOUV[id].couleur : "#8A8F99");
@@ -17,4 +19,4 @@ const couleur = (id) => (MOUV[id] ? MOUV[id].couleur : "#8A8F99");
 // Les mouvements dans l’ordre chronologique de leur début
 const mouvementsTries = [...D.mouvements].sort((a, b) => a.debut - b.debut);
 
-export { D, MOUV, ART, OEU, EVT, couleur, mouvementsTries };
+export { D, MOUV, ART, OEU, EVT, GRP, couleur, mouvementsTries };
