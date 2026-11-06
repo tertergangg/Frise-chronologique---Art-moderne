@@ -10,6 +10,8 @@
 
 // Les données du site et l’accès par identifiant : src/lib/donnees.js, partagé avec les pages
 import { D, MOUV, ART, OEU, EVT, couleur, mouvementsTries } from "../lib/donnees.js";
+// Petits outils partagés avec les pages : src/lib/outils.js
+import { esc, sansAccent, nomCourt, ONGLETS_INDEX, compter, estImage } from "../lib/outils.js";
 // marked convertit le Markdown des fiches en HTML. Installé par npm (version exacte dans package.json),
 // il est intégré au script publié, comme les données : plus de chargement depuis le CDN.
 import { marked } from "marked";
@@ -31,15 +33,10 @@ const REGLAGES = {
 
 /* ---------- Outils ---------- */
 const $ = (sel) => document.querySelector(sel);
-const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const lien = (id, texte) => `<a href="#${esc(id)}" data-id="${esc(id)}">${esc(texte)}</a>`;
 const petitEcran = () => window.matchMedia("(max-width: 720px)").matches;
 const reduireMouvement = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const douceur = () => (reduireMouvement() ? "auto" : "smooth");
-
-// Nom court des artistes : le dernier mot du nom, sauf exceptions
-const NOMS_COURTS = { "Vincent van Gogh": "Van Gogh", "Willem de Kooning": "De Kooning" };
-const nomCourt = (nom) => NOMS_COURTS[nom] || nom.split(" ").pop();
 
 // « moyen » : la vue détail au zoom « Moyen » (barre du bas). Il est gardé quand on passe dans une autre vue,
 // pour retrouver le même zoom en revenant à la frise.
@@ -458,7 +455,6 @@ function placerBulle(ev) {
   bulle.style.left = x + "px";
   bulle.style.top = y + "px";
 }
-const estImage = (lien) => lien && /\.(jpe?g|png|webp|gif)(\?|$)/i.test(lien);
 
 // Aperçu d’une œuvre au survol de sa carte : image, titre, artiste, date, résumé
 function apercu(o) {
@@ -503,7 +499,6 @@ toile.addEventListener("click", (ev) => {
 });
 
 /* ---------- Recherche ---------- */
-const sansAccent = (s) => String(s ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const index = [
   ...D.mouvements.map((m) => ({ id: m.id, texte: m.nom, detail: `Mouvement, ${m.debut}–${m.fin}` })),
   ...D.artistes.map((a) => ({ id: a.id, texte: a.nom, detail: `Artiste, ${a.naissance ?? "?"}–${a.deces ?? "?"}` })),
@@ -667,22 +662,10 @@ $("#fermer").addEventListener("click", fermer);
 // « actif » : l’Index a été ouvert depuis la dernière ouverture du panneau ; les fiches affichent alors le lien de retour
 const etatIndex = { onglet: "mouvements", recherche: "", actif: false };
 
-const ONGLETS_INDEX = {
-  mouvements: { titre: "Mouvements", singulier: "mouvement", pluriel: "mouvements" },
-  artistes: { titre: "Artistes", singulier: "artiste", pluriel: "artistes" },
-  oeuvres: { titre: "Œuvres", singulier: "œuvre", pluriel: "œuvres" }
-};
-
 // Le texte d’aide retiré du bandeau à l’étape 2a
 const AIDE_FRISE = "Avance dans le temps avec les décennies en bas de page ou en faisant glisser la frise, "
   + "et prends du recul avec la vue d’ensemble. Clique sur une bande de couleur pour explorer un mouvement en grand, "
   + "sur un nom ou une œuvre pour ouvrir sa fiche.";
-
-// « 1 œuvre », « 2 œuvres » ; en français, zéro prend le singulier
-function compter(nombre, onglet) {
-  const mots = ONGLETS_INDEX[onglet];
-  return `${nombre} ${nombre > 1 ? mots.pluriel : mots.singulier}`;
-}
 
 // Les lignes d’un onglet, déjà triées : { id, titre, detail }
 function lignesIndex(onglet) {
