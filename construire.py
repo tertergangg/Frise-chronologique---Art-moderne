@@ -127,11 +127,8 @@ def lire_autres(valeur, ident, ids_mouv, noms_mouv):
         liste.append(morceau)
     return liste
 
-def main():
-    if not TABLEUR.exists():
-        sys.exit(f"Tableur introuvable : {TABLEUR}")
-    wb = load_workbook(TABLEUR, data_only=True)
-
+def lire_mouvements(wb):
+    """Onglet Mouvements, avec les fiches de fiches/mouvements."""
     mouvements = []
     for m in lire_onglet(wb, "Mouvements"):
         md, vide = lire_fiche("mouvements", m["ID"])
@@ -140,9 +137,10 @@ def main():
             "lieu": typo(m.get("Lieu")), "couleur": m.get("Couleur") or "#777777",
             "resume": typo(m.get("Résumé court (1 phrase)")), "fiche": md, "ficheVide": vide,
         })
-    ids_mouv = {m["id"] for m in mouvements}
-    noms_mouv = {m["nom"].lower(): m["id"] for m in mouvements if m["nom"]}   # pour suggérer l'identifiant
+    return mouvements
 
+def lire_artistes(wb, ids_mouv, noms_mouv):
+    """Onglet Artistes, avec les fiches de fiches/artistes. Vérifie le mouvement principal."""
     artistes = []
     for a in lire_onglet(wb, "Artistes"):
         md, vide = lire_fiche("artistes", a["ID"])
@@ -156,8 +154,10 @@ def main():
             "autres": lire_autres(a.get("Autres mouvements"), a["ID"], ids_mouv, noms_mouv),
             "phrase": typo(a.get("Phrase-clé (1 phrase)")), "fiche": md, "ficheVide": vide,
         })
-    ids_art = {a["id"] for a in artistes}
+    return artistes
 
+def lire_oeuvres(wb, ids_mouv, ids_art):
+    """Onglet Œuvres, avec les fiches de fiches/oeuvres. Vérifie l'artiste, le mouvement et l'année."""
     oeuvres = []
     for o in lire_onglet(wb, "Œuvres"):
         md, vide = lire_fiche("oeuvres", o["ID"])
@@ -176,7 +176,10 @@ def main():
             "image": o.get("Lien image"), "resume": typo(o.get("Résumé court (1 phrase)")),
             "fiche": md, "ficheVide": vide,
         })
+    return oeuvres
 
+def lire_evenements(wb, ids_mouv):
+    """Onglet Événements (pas de fiche). Vérifie le mouvement, qui peut rester vide."""
     evenements = []
     for e in lire_onglet(wb, "Événements"):
         if e.get("Mouvement") and e.get("Mouvement") not in ids_mouv:
@@ -186,7 +189,10 @@ def main():
             "titre": typo(e.get("Titre")), "lieu": typo(e.get("Lieu")), "mouvement": e.get("Mouvement"),
             "description": typo(e.get("Description (1-2 phrases)")),
         })
+    return evenements
 
+def lire_influences(wb, ids_art):
+    """Onglet Influences. Vérifie que les deux bouts sont des artistes connus."""
     influences = []
     for i in lire_onglet(wb, "Influences"):
         for cle in ("De (ID)", "Vers (ID)"):
@@ -194,14 +200,23 @@ def main():
                 avertir(f"Influence {i['ID']} : artiste inconnu « {i.get(cle)} »")
         influences.append({"de": i.get("De (ID)"), "vers": i.get("Vers (ID)"), "type": i.get("Type"),
                            "explication": typo(i.get("Explication (1-2 phrases)"))})
+    return influences
+
+def verifier_ensemble(donnees):
+    """Les vérifications qui demandent d'avoir lu tous les onglets : fiches orphelines, liens, images, doublons."""
+    mouvements, artistes = donnees["mouvements"], donnees["artistes"]
+    oeuvres, evenements = donnees["oeuvres"], donnees["evenements"]
+    ids_mouv = {m["id"] for m in mouvements}
+    ids_art = {a["id"] for a in artistes}
+    ids_oeu = {o["id"] for o in oeuvres}
 
     # Le contrôle inverse de « Fiche manquante » : une fiche présente, mais sans ligne dans le tableur
     verifier_orphelines("mouvements", ids_mouv)
     verifier_orphelines("artistes", ids_art)
-    verifier_orphelines("oeuvres", {o["id"] for o in oeuvres})
+    verifier_orphelines("oeuvres", ids_oeu)
 
     # Les liens [[id]] peuvent viser un mouvement, un artiste, une œuvre ou un événement (comme dans app.js)
-    ids_connus = ids_mouv | ids_art | {o["id"] for o in oeuvres} | {e["id"] for e in evenements}
+    ids_connus = ids_mouv | ids_art | ids_oeu | {e["id"] for e in evenements}
     verifier_liens(mouvements + artistes + oeuvres, ids_connus)
     for o in oeuvres:
         verifier_image(o)
@@ -210,22 +225,46 @@ def main():
     for doublon in sorted({x for x in tous if tous.count(x) > 1}):
         avertir(f"Identifiant utilisé deux fois : {doublon}")
 
-    donnees = {"mouvements": mouvements, "artistes": artistes, "oeuvres": oeuvres,
-               "evenements": evenements, "influences": influences}
+def ecrire(donnees):
+    """Écrit les données dans SORTIE, au format que lit la frise."""
     SORTIE.parent.mkdir(exist_ok=True)
     SORTIE.write_text("window.FRISE = " + json.dumps(donnees, ensure_ascii=False, indent=1) + ";\n",
                       encoding="utf-8")
 
+def afficher_bilan(donnees):
+    """Affiche les chiffres du site, puis les avertissements."""
+    mouvements, artistes, oeuvres = donnees["mouvements"], donnees["artistes"], donnees["oeuvres"]
     fiches = mouvements + artistes + oeuvres
     redigees = sum(not x["ficheVide"] for x in fiches)
     print(f"{len(mouvements)} mouvements, {len(artistes)} artistes, {len(oeuvres)} œuvres, "
-          f"{len(evenements)} événements, {len(influences)} influences")
+          f"{len(donnees['evenements'])} événements, {len(donnees['influences'])} influences")
     print(f"{redigees} fiche(s) rédigée(s) sur {len(fiches)}")
     print(f"Données écrites dans {SORTIE.relative_to(ICI)}")
     if avertissements:
         print(f"\n{len(avertissements)} point(s) à vérifier :")
         for a in avertissements:
             print("  - " + a)
+
+def main():
+    if not TABLEUR.exists():
+        sys.exit(f"Tableur introuvable : {TABLEUR}")
+    wb = load_workbook(TABLEUR, data_only=True)
+
+    # L'ordre compte : chaque onglet est vérifié avec les identifiants des onglets lus avant lui
+    mouvements = lire_mouvements(wb)
+    ids_mouv = {m["id"] for m in mouvements}
+    noms_mouv = {m["nom"].lower(): m["id"] for m in mouvements if m["nom"]}   # pour suggérer l'identifiant
+    artistes = lire_artistes(wb, ids_mouv, noms_mouv)
+    ids_art = {a["id"] for a in artistes}
+    oeuvres = lire_oeuvres(wb, ids_mouv, ids_art)
+    evenements = lire_evenements(wb, ids_mouv)
+    influences = lire_influences(wb, ids_art)
+
+    donnees = {"mouvements": mouvements, "artistes": artistes, "oeuvres": oeuvres,
+               "evenements": evenements, "influences": influences}
+    verifier_ensemble(donnees)
+    ecrire(donnees)
+    afficher_bilan(donnees)
 
 
 if __name__ == "__main__":
