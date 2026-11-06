@@ -12,9 +12,8 @@
 import { D, MOUV, ART, OEU, EVT, couleur, mouvementsTries } from "../lib/donnees.js";
 // Petits outils partagés avec les pages : src/lib/outils.js
 import { esc, sansAccent, nomCourt, ONGLETS_INDEX, compter, estImage } from "../lib/outils.js";
-// marked convertit le Markdown des fiches en HTML. Installé par npm (version exacte dans package.json),
-// il est intégré au script publié, comme les données : plus de chargement depuis le CDN.
-import { marked } from "marked";
+// Le contenu des fiches, partagé avec les pages : src/lib/fiches.js
+import { ficheOeuvre, ficheArtiste, ficheMouvement, ficheEvenement } from "../lib/fiches.js";
 
 /* ---------- Réglages : tu peux modifier ces valeurs ---------- */
 const REGLAGES = {
@@ -33,7 +32,6 @@ const REGLAGES = {
 
 /* ---------- Outils ---------- */
 const $ = (sel) => document.querySelector(sel);
-const lien = (id, texte) => `<a href="#${esc(id)}" data-id="${esc(id)}">${esc(texte)}</a>`;
 const petitEcran = () => window.matchMedia("(max-width: 720px)").matches;
 const reduireMouvement = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const douceur = () => (reduireMouvement() ? "auto" : "smooth");
@@ -529,97 +527,8 @@ function choisir(id) { champ.value = ""; trouves = []; resultats.hidden = true; 
 document.addEventListener("click", (ev) => { if (!ev.target.closest(".recherche")) resultats.hidden = true; });
 
 /* ---------- Fiches ---------- */
+// Le contenu des fiches est fabriqué par src/lib/fiches.js ; ici, le panneau qui les affiche
 const panneau = $("#panneau"), contenu = $("#contenu-panneau");
-
-function markdown(md) {
-  if (!md) return "";
-  const avecLiens = md.replace(/\[\[([a-z0-9-]+)(?:\|([^\]]+))?\]\]/g, (_, id, texte) => {
-    const cible = MOUV[id] || ART[id] || OEU[id] || EVT[id];
-    return `[${texte || (cible ? cible.nom || cible.titre : id)}](#${id})`;
-  });
-  return `<div class="corps">${marked.parse(avecLiens)}</div>`;
-}
-const aVenir = (quoi) => `<p class="a-venir">La fiche ${quoi} est à venir.</p>`;
-
-// Liste d’œuvres triée par année ; avec « avecArtiste », le nom court de l’artiste s’affiche à droite de la ligne
-function listeOeuvres(liste, avecArtiste = false) {
-  if (!liste.length) return "";
-  const lignes = [...liste]
-    .sort((a, b) => (a.annee ?? 0) - (b.annee ?? 0))
-    .map((o) => {
-      const artiste = avecArtiste && ART[o.artiste]
-        ? `<small class="artiste">${esc(nomCourt(ART[o.artiste].nom))}</small>` : "";
-      return `<li><span class="an">${o.annee ?? ""}</span><span>${lien(o.id, o.titre)}</span>${artiste}</li>`;
-    }).join("");
-  return `<ul class="liens-liste${avecArtiste ? " avec-artiste" : ""}">${lignes}</ul>`;
-}
-
-function ficheOeuvre(o) {
-  const a = ART[o.artiste], m = MOUV[o.mouvement];
-  const lieu = [o.musee, o.ville].filter(Boolean).join(", ");
-  const image = estImage(o.image)
-    ? `<button type="button" class="agrandir" data-agrandir aria-label="Agrandir l’image : ${esc(o.titre)}"><img class="image" src="${esc(o.image)}" alt="${esc(o.titre)}"></button>` : "";
-  return `${image}<h2>${esc(o.titre)}</h2>
-    <p class="sous-titre">${a ? lien(a.id, a.nom) + ", " : ""}${esc(o.dateAffichee || o.annee)}</p>
-    ${o.resume ? `<p class="resume">${esc(o.resume)}</p>` : ""}
-    <dl>
-      ${m ? `<dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd>` : ""}
-      ${o.type ? `<dt>Technique</dt><dd>${esc(o.type)}</dd>` : ""}
-      ${lieu ? `<dt>Où la voir</dt><dd>${esc(lieu)}</dd>` : ""}
-      ${o.image && !image ? `<dt>Image</dt><dd><a href="${esc(o.image)}" target="_blank" rel="noopener">Voir l’œuvre</a></dd>` : ""}
-    </dl>
-    ${o.ficheVide ? aVenir("de cette œuvre") : markdown(o.fiche)}`;
-}
-
-function ficheArtiste(a) {
-  const m = MOUV[a.mouvement];
-  const oeuvres = D.oeuvres.filter((o) => o.artiste === a.id);
-  const relations = D.influences.filter((i) => i.de === a.id || i.vers === a.id).map((i) => {
-    const autre = ART[i.de === a.id ? i.vers : i.de];
-    if (!autre) return "";
-    const verbe = i.type === "influence" ? (i.de === a.id ? "A influencé" : "Influencé par")
-      : i.type === "collaboration" ? "Collaboration avec" : i.type === "rivalité" ? "Rivalité avec" : "Lien avec";
-    return `<li><span>${verbe} ${lien(autre.id, autre.nom)}${i.explication ? `<small>${esc(i.explication)}</small>` : ""}</span></li>`;
-  }).join("");
-  // Un mouvement connu devient un lien ; une valeur inconnue (signalée par construire.py) reste du texte
-  const aussi = a.autres.map((x) => (MOUV[x] ? lien(x, MOUV[x].nom) : esc(x))).join(", ");
-  return `<h2>${esc(a.nom)}</h2>
-    <p class="sous-titre">${a.naissance ?? "?"}–${a.deces ?? "?"}</p>
-    <dl>
-      ${a.nationalite ? `<dt>Nationalité</dt><dd>${esc(a.nationalite)}</dd>` : ""}
-      ${a.role ? `<dt>Disciplines</dt><dd>${esc(a.role)}</dd>` : ""}
-      ${m ? `<dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd>` : ""}
-      ${aussi ? `<dt>Aussi</dt><dd>${aussi}</dd>` : ""}
-    </dl>
-    ${a.ficheVide ? aVenir("de cet artiste") : markdown(a.fiche)}
-    ${oeuvres.length ? `<h3>Œuvres</h3>${listeOeuvres(oeuvres)}` : ""}
-    ${relations ? `<h3>Liens</h3><ul class="liens-liste">${relations}</ul>` : ""}`;
-}
-
-function ficheMouvement(m) {
-  const artistes = D.artistes.filter((a) => a.mouvement === m.id);
-  const oeuvres = D.oeuvres.filter((o) => o.mouvement === m.id);
-  // Les œuvres majeures (colonne « Majeure (Bible) ») sont les seules à recevoir une analyse : elles passent en premier
-  const majeures = oeuvres.filter((o) => o.majeure);
-  const autresOeuvres = oeuvres.filter((o) => !o.majeure);
-  const evts = D.evenements.filter((x) => x.mouvement === m.id);
-  return `<h2>${esc(m.nom)}</h2>
-    <p class="sous-titre">${m.debut}–${m.fin}${m.lieu ? ", " + esc(m.lieu) : ""}</p>
-    ${etat.vue !== "mouvement" ? `<button type="button" class="explorer" data-explorer="${esc(m.id)}">Explorer ce mouvement en grand</button>` : ""}
-    ${m.ficheVide ? aVenir("de ce mouvement") : markdown(m.fiche)}
-    ${artistes.length ? `<h3>Artistes majeurs</h3><ul class="liens-liste">${artistes.map((a) => `<li><span class="an">${a.naissance ?? ""}</span><span>${lien(a.id, a.nom)}</span></li>`).join("")}</ul>` : ""}
-    ${evts.length ? `<h3>Moments clés</h3><ul class="liens-liste">${evts.map((x) => `<li><span class="an">${x.annee}</span><span>${lien(x.id, x.titre)}</span></li>`).join("")}</ul>` : ""}
-    ${majeures.length ? `<h3>Œuvres majeures</h3>${listeOeuvres(majeures, true)}` : ""}
-    ${autresOeuvres.length ? `<h3>Autres œuvres</h3>${listeOeuvres(autresOeuvres, true)}` : ""}`;
-}
-
-function ficheEvenement(x) {
-  const m = MOUV[x.mouvement];
-  return `<h2>${esc(x.titre)}</h2>
-    <p class="sous-titre">${esc(x.date || x.annee)}${x.lieu ? ", " + esc(x.lieu) : ""}</p>
-    ${x.description ? `<p class="resume">${esc(x.description)}</p>` : `<p class="a-venir">La description de cet événement est à venir.</p>`}
-    ${m ? `<dl><dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd></dl>` : ""}`;
-}
 
 // Défilement vertical qui place au milieu de la frise la carte d’une œuvre ou le repère d’un événement.
 // Renvoie null si l’élément n’est pas affiché (par exemple une œuvre non majeure quand la case est cochée).
@@ -635,7 +544,7 @@ function ouvrir(id, centrer = false) {
   let html = "", c = "#8A8F99", annee = null;
   if (OEU[id]) { html = ficheOeuvre(OEU[id]); c = couleur(OEU[id].mouvement); annee = OEU[id].annee; }
   else if (ART[id]) { html = ficheArtiste(ART[id]); c = couleur(ART[id].mouvement); }
-  else if (MOUV[id]) { html = ficheMouvement(MOUV[id]); c = MOUV[id].couleur; }
+  else if (MOUV[id]) { html = ficheMouvement(MOUV[id], etat.vue !== "mouvement"); c = MOUV[id].couleur; }
   else if (EVT[id]) { html = ficheEvenement(EVT[id]); c = couleur(EVT[id].mouvement); annee = EVT[id].annee; }
   else return;
   const retour = etatIndex.actif ? `<button type="button" class="retour-index" data-retour-index>‹ Retour à l’index</button>` : "";
