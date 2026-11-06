@@ -1,7 +1,7 @@
 ---
 // Page de la frise.
-// Les fichiers style.css, app.js, data.js et le dossier images se trouvent dans le dossier public :
-// Astro les publie tels quels. « is:inline » lui demande de ne pas transformer les scripts.
+// style.css et le dossier images se trouvent dans le dossier public : Astro les publie tels quels.
+// Le script de la frise, src/scripts/app.js, est traité par Astro : il importe les données de src/data/frise.json.
 ---
 <!DOCTYPE html>
 <html lang="fr">
@@ -81,8 +81,10 @@
     <img id="image-grande" alt="">
   </dialog>
 
+  <!-- marked vient du CDN, tel quel (« is:inline ») : il s’exécute tout de suite, donc avant app.js,
+       qui est un module et attend la fin de la lecture de la page. -->
   <script is:inline src="https://cdn.jsdelivr.net/npm/marked@18.0.14/lib/marked.umd.js"></script>
-  <script is:inline src="/data.js"></script>
-  <script is:inline src="/app.js"></script>
+  <!-- Sans « is:inline » : Astro traite le script, résout son import des données et le publie dans dist/_astro/ -->
+  <script src="../scripts/app.js"></script>
 </body>
 </html>

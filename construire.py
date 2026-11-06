@@ -8,9 +8,9 @@ Ce que fait le script :
   1. lit le tableur  donnees/frise_art_moderne_base.xlsx
   2. lit les fiches   fiches/mouvements, fiches/artistes, fiches/oeuvres
   3. vérifie la cohérence (identifiants inconnus, fiches manquantes ou sans ligne dans le tableur…)
-  4. écrit            public/data.js, que lit la frise (src/pages/index.astro)
+  4. écrit            src/data/frise.json, que lit la frise (src/scripts/app.js)
 
-public/data.js est commité (décision D8) : relancer le script avant chaque commit
+src/data/frise.json est commité (décision D8) : relancer le script avant chaque commit
 qui touche le tableur ou les fiches.
 
 Prérequis : pip install openpyxl
@@ -22,7 +22,7 @@ from openpyxl import load_workbook
 ICI = Path(__file__).parent
 TABLEUR = ICI / "donnees" / "frise_art_moderne_base.xlsx"
 FICHES = ICI / "fiches"
-SORTIE = ICI / "public" / "data.js"
+SORTIE = ICI / "src" / "data" / "frise.json"
 PUBLIC = ICI / "public"
 
 avertissements = []
@@ -226,10 +226,9 @@ def verifier_ensemble(donnees):
         avertir(f"Identifiant utilisé deux fois : {doublon}")
 
 def ecrire(donnees):
-    """Écrit les données dans SORTIE, au format que lit la frise."""
-    SORTIE.parent.mkdir(exist_ok=True)
-    SORTIE.write_text("window.FRISE = " + json.dumps(donnees, ensure_ascii=False, indent=1) + ";\n",
-                      encoding="utf-8")
+    """Écrit les données dans SORTIE, en JSON : app.js les importe, les pages les liront au build."""
+    SORTIE.parent.mkdir(parents=True, exist_ok=True)   # crée src/data/ s'il n'existe pas encore
+    SORTIE.write_text(json.dumps(donnees, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
 def afficher_bilan(donnees):
     """Affiche les chiffres du site, puis les avertissements."""

@@ -1,12 +1,15 @@
 /* =====================================================================
    Frise de l’art moderne — affichage
-   Les données viennent de data.js (window.FRISE), produit par construire.py.
+   Les données viennent de src/data/frise.json, produit par construire.py.
 
    Trois vues :
    - « détail »     : la frise complète, une carte par œuvre (vue par défaut)
    - « ensemble »   : toute la période d’un coup d’œil, sans défilement
    - « mouvement »  : un mouvement en grand, avec une ligne par artiste
    ===================================================================== */
+
+// Les données de la frise. Astro (via Vite) intègre ce fichier JSON au script publié.
+import D from "../data/frise.json";
 
 /* ---------- Réglages : tu peux modifier ces valeurs ---------- */
 const REGLAGES = {
@@ -24,7 +27,6 @@ const REGLAGES = {
 };
 
 /* ---------- Outils ---------- */
-const D = window.FRISE;
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const indexer = (liste) => Object.fromEntries(liste.map((x) => [x.id, x]));
