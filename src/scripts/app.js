@@ -8,8 +8,8 @@
    - « mouvement »  : un mouvement en grand, avec une ligne par artiste
    ===================================================================== */
 
-// Les données de la frise. Astro (via Vite) intègre ce fichier JSON au script publié.
-import D from "../data/frise.json";
+// Les données du site et l’accès par identifiant : src/lib/donnees.js, partagé avec les pages
+import { D, MOUV, ART, OEU, EVT, couleur, mouvementsTries } from "../lib/donnees.js";
 // marked convertit le Markdown des fiches en HTML. Installé par npm (version exacte dans package.json),
 // il est intégré au script publié, comme les données : plus de chargement depuis le CDN.
 import { marked } from "marked";
@@ -32,11 +32,7 @@ const REGLAGES = {
 /* ---------- Outils ---------- */
 const $ = (sel) => document.querySelector(sel);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const indexer = (liste) => Object.fromEntries(liste.map((x) => [x.id, x]));
-const MOUV = indexer(D.mouvements), ART = indexer(D.artistes), OEU = indexer(D.oeuvres), EVT = indexer(D.evenements);
-const couleur = (id) => (MOUV[id] ? MOUV[id].couleur : "#8A8F99");
 const lien = (id, texte) => `<a href="#${esc(id)}" data-id="${esc(id)}">${esc(texte)}</a>`;
-const mouvementsTries = [...D.mouvements].sort((a, b) => a.debut - b.debut);
 const petitEcran = () => window.matchMedia("(max-width: 720px)").matches;
 const reduireMouvement = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const douceur = () => (reduireMouvement() ? "auto" : "smooth");
