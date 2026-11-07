@@ -1,5 +1,5 @@
 /* =====================================================================
-   Apparence des pages (mouvements, artistes)
+   Apparence des pages (mouvements, artistes, œuvres)
 
    Chargé après style.css, dont il reprend les variables : couleurs, polices et mode sombre.
    La frise est l’affiche, les pages sont le livre (D25) : l’en-tête garde le style de la frise ;
@@ -102,6 +102,47 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
 
 
 /* =====================================================================
+   Page œuvre : le cartel
+   Sous l’en-tête, une seule colonne, sans sommaire : l’image et sa légende (ou l’encart des droits),
+   les rubriques, le texte, les autres œuvres de l’artiste.
+   ===================================================================== */
+/* Plus large que la colonne de texte des autres pages, pour l’image et les cartes ; les lignes de texte, elles, restent courtes */
+.cartel { max-width: 56rem; }
+.cartel .corps :is(p, ul, ol, blockquote) { max-width: 44rem; }
+/* L’image, bordée et limitée en hauteur pour rester entière à l’écran, puis sa légende de cartel et son crédit (D10) */
+.cartel-image { margin: 0 0 1.6rem; }
+.cartel-image a { display: inline-block; max-width: 100%; cursor: zoom-in; }
+.cartel-image img { display: block; max-width: 100%; max-height: 75vh; border: 2px solid var(--encre); }
+.cartel-image figcaption { margin-top: 0.5rem; }
+.cartel-image .legende { display: block; font-size: 0.9rem; line-height: 1.4; color: var(--doux); }
+.cartel-image .credit-image { display: block; margin-top: 0.15rem; font-size: 0.76rem; color: var(--doux); }
+/* Les rubriques, entre deux filets ; les liens portent une flèche plutôt qu’un soulignement */
+.meta-cartel { margin-bottom: 2rem; border-top: 2px solid var(--encre); }
+.meta-cartel a { text-decoration: none; }
+.meta-cartel a:hover { text-decoration: underline; }
+/* L’encart d’une œuvre protégée (D10). Son HTML vient de src/lib/fiches.js, comme dans le panneau :
+   il garde les classes du panneau, que style.css range sous .fiche et pages.css sous .texte.
+   Sur les pages, des filets et non un cadre (D25), avec la couleur du mouvement à gauche. */
+.texte .encart-droits { margin: 0 0 1.6rem; padding: 1.1rem 1.25rem; background: var(--surface-2);
+  border-top: 2px solid var(--encre); border-bottom: 2px solid var(--encre); border-left: 8px solid var(--c); }
+.texte .encart-droits p { margin: 0 0 0.5rem; }
+.texte .encart-droits > :last-child { margin-bottom: 0; }
+.texte .titre-encart { font: 900 1.5rem/1.1 var(--police-titre); font-variation-settings: "wdth" 70; }
+.texte .entree-domaine { font-size: 0.92rem; font-weight: 600; color: var(--doux); }
+/* « 1er » : l’exposant ne doit pas agrandir l’interligne */
+.texte .entree-domaine sup { line-height: 0; }
+/* Le lien vers la page de l’œuvre a l’apparence de .bouton : la navigation garde le style de l’affiche (D25) */
+.texte .voir-oeuvre { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; padding: 0.5rem 0.9rem;
+  white-space: nowrap; text-decoration: none; border: 2px solid var(--encre); background: var(--surface);
+  box-shadow: 4px 4px 0 var(--ombre); font-weight: 700; font-size: 0.93rem; font-variation-settings: "wdth" 85; }
+.texte .voir-oeuvre:hover { background: var(--encre); color: var(--fond); }
+
+@media (max-width: 720px) {
+  .cartel-image img { max-height: 60vh; }
+}
+
+
+/* =====================================================================
    Lecture : le sommaire à gauche, le texte à droite
    ===================================================================== */
 .lecture { display: grid; grid-template-columns: 12rem minmax(0, 44rem); gap: 3rem; }
@@ -194,6 +235,13 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
 .carte-page .lien-carte { margin-top: auto; padding-top: 0.4rem; font-size: 0.84rem; font-weight: 800; }
 /* Grandes cartes : le répertoire des mouvements */
 .grille-cartes.grande .carte-page strong { font-size: 1.6rem; font-variation-settings: "wdth" 70; }
+/* Vignette d’une œuvre, en haut de sa carte (page œuvre) : elle déborde sur la marge intérieure pour toucher les bords.
+   Sans image, un aplat qui garde la même hauteur, pour que les cartes d’une rangée restent alignées. */
+.carte-page .vignette-carte { display: block; margin: -0.8rem -1rem 0.5rem -1.1rem; aspect-ratio: 3 / 2; overflow: hidden;
+  background: var(--surface-2); border-bottom: 2px solid var(--encre); }
+.carte-page .vignette-carte img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.carte-page .sans-image { display: flex; align-items: center; justify-content: center; height: 100%;
+  font-size: 0.78rem; font-weight: 700; color: var(--doux); }
 
 
 /* =====================================================================

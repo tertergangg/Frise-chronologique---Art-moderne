@@ -8,12 +8,21 @@
 //   majeure   vrai pour une œuvre majeure : la carte affiche « ★ Œuvre majeure »
 //   pied      une ligne en bas de la carte (nombre d’artistes…), facultative
 //   c         la couleur de la bande de gauche, celle du mouvement
+//   vignette  { image, protegee } : affiche une vignette en haut de la carte, facultative (D10).
+//             L’image si elle est donnée ; sinon un aplat « Œuvre protégée » ou « Image à venir ».
 import { aUnePage, adresse } from "../lib/fiches.js";
 
-const { id, nom, surtitre = "", extrait = "", majeure = false, pied = "", c } = Astro.props;
+const { id, nom, surtitre = "", extrait = "", majeure = false, pied = "", c, vignette } = Astro.props;
 const lien = aUnePage(id) ? "Lire la page" : "Voir dans la frise";
 ---
 <a class="carte-page" href={adresse(id)} style={c ? `--c:${c}` : undefined}>
+  {vignette && (
+    <span class="vignette-carte">
+      {vignette.image
+        ? <img src={vignette.image} alt="" loading="lazy" />
+        : <span class="sans-image">{vignette.protegee ? "Œuvre protégée" : "Image à venir"}</span>}
+    </span>
+  )}
   {surtitre && <span class="meta-carte">{surtitre}</span>}
   <strong>{nom}</strong>
   {extrait && <span class="extrait">{extrait}</span>}

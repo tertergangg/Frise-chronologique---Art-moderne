@@ -14,9 +14,11 @@ import { D, MOUV, ART, OEU, EVT, GRP } from "./donnees.js";
 import { esc, nomCourt, estImage, sansAccent } from "./outils.js";
 
 // Un élément a-t-il sa propre page ? C’est la seule fonction qui en décide (D13, D21).
-// Un mouvement ou un artiste en a une dès que sa fiche est rédigée. Les œuvres documentées en auront une à l’étape 2f ;
-// les groupes, les événements, les termes, les parcours et les comparaisons n’en ont pas.
+// Un mouvement ou un artiste en a une dès que sa fiche est rédigée ; une œuvre, dès qu’elle est documentée
+// (son niveau, calculé par construire.py, n’est plus « referencee »).
+// Les groupes, les événements, les termes, les parcours et les comparaisons n’en ont pas.
 function aUnePage(id) {
+  if (OEU[id]) return OEU[id].niveau !== "referencee";
   const element = MOUV[id] || ART[id];
   return Boolean(element && !element.ficheVide);
 }
@@ -26,6 +28,7 @@ function aUnePage(id) {
 function adresse(id) {
   if (MOUV[id] && aUnePage(id)) return `/mouvements/${id}/`;
   if (ART[id] && aUnePage(id)) return `/artistes/${id}/`;
+  if (OEU[id] && aUnePage(id)) return `/oeuvres/${id}/`;
   // Un groupe est une section de la page de son mouvement (D22).
   // Si ce mouvement n’a pas encore de page, on ouvre sa fiche dans la frise.
   const groupe = GRP[id];

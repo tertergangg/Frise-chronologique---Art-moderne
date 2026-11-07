@@ -328,7 +328,7 @@ def lire_oeuvres(wb, ids_mouv, droits_artistes):
         oeuvres.append({
             "id": o["ID"], "titre": typo(o.get("Titre")), "artiste": o.get("Artiste (ID)"),
             "annee": annee(o.get("Année")), "mouvement": o.get("Mouvement"),
-            "dateAffichee": typo(o.get("Date affichée")), "type": typo(o.get("Type")),
+            "dateAffichee": typo(o.get("Date affichée")), "type": majuscule(typo(o.get("Type"))),
             "musee": typo(o.get("Musée")), "ville": typo(o.get("Ville")),
             "majeure": str(o.get("Majeure (Bible)") or "").lower() == "oui",
             "image": lire_image(o["ID"], o.get("Lien image"), credit, droits["protege"]), "credit": credit,

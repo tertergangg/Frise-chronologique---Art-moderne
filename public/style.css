@@ -449,6 +449,8 @@ body.redimension .panneau { transition: none; }
 .fiche .corps h2 { font-size: 1.15rem; font-weight: 800; font-variation-settings: "wdth" 80; line-height: 1.2;
   margin: 1.6rem 0 0.4rem; padding-top: 0.5rem; border-top: 2px solid var(--encre); }
 .fiche .corps h2:first-child { margin-top: 0.4rem; }
+.fiche .corps h3 { margin: 1.1rem 0 0.3rem; padding-top: 0; border-top: none;
+  font-size: 1rem; font-weight: 800; font-variation-settings: "wdth" 80; line-height: 1.2; }
 .fiche .corps p { margin: 0 0 0.8rem; }
 .fiche .corps ul { padding-left: 1.1rem; margin: 0 0 0.8rem; }
 .fiche .corps li { margin-bottom: 0.35rem; }

@@ -1,0 +1,95 @@
+---
+// Page d’une œuvre, pensée comme un cartel (D21, D25) : l’en-tête (technique, date, titre),
+// puis l’image ou l’encart des droits (D10) avec sa légende, les rubriques du cartel, la présentation,
+// l’analyse si elle existe, et les autres œuvres du même artiste. La page reste complète sans image.
+// Pas de sommaire « Dans cette page » : le texte d’une œuvre est court, il se lit d’un trait.
+import Base from "../../layouts/Base.astro";
+import EnteteFiche from "../../components/EnteteFiche.astro";
+import Carte from "../../components/Carte.astro";
+import { D, MOUV, ART, couleur } from "../../lib/donnees.js";
+import { aUnePage, adresse, encartDroits, markdown } from "../../lib/fiches.js";
+import { estImage } from "../../lib/outils.js";
+
+// Une page par œuvre documentée (D21), à l’adresse /oeuvres/<id>/
+export function getStaticPaths() {
+  return D.oeuvres.filter((o) => aUnePage(o.id)).map((o) => ({ params: { id: o.id }, props: { o } }));
+}
+
+const { o } = Astro.props;
+const a = ART[o.artiste];
+const m = MOUV[o.mouvement];
+const c = couleur(o.mouvement);
+const date = o.dateAffichee || o.annee;
+const lieu = [o.musee, o.ville].filter(Boolean).join(", ");
+const surtitre = [o.type, date, o.majeure && "Œuvre majeure"].filter(Boolean).join(" · ");
+
+// L’image n’est montrée que pour une œuvre du domaine public ; construire.py a déjà retiré les autres (D10)
+const imageVisible = (x) => (x.domainePublic && estImage(x.image) ? x.image : null);
+const image = imageVisible(o);
+
+// Les autres œuvres du même artiste, de la plus ancienne à la plus récente ; une œuvre sans année passe en fin de liste
+const autres = D.oeuvres.filter((x) => x.artiste === o.artiste && x.id !== o.id)
+  .sort((x, y) => (x.annee ?? Infinity) - (y.annee ?? Infinity));
+---
+<Base titre={o.titre} rubrique="oeuvres"
+  ariane={[{ texte: "Frise", href: "/" }, { texte: "Œuvres", href: "/oeuvres/" }, { texte: o.titre }]}>
+  <!-- Le résumé du tableur sert de chapeau ; « Voir dans la frise » ouvre la frise sur l’œuvre (D27) -->
+  <EnteteFiche surtitre={surtitre} titre={o.titre} chapeau={o.resume} c={c} frise={`/#${o.id}`} />
+
+  <article class="texte cartel" style={`--c:${c}`}>
+    <!-- L’image est un lien vers son fichier : sans JavaScript, il l’ouvre seul ; avec, le script plus bas l’agrandit sur place -->
+    {image && (
+      <figure class="cartel-image">
+        <a href={image} aria-label={`Voir l’image en grand : ${o.titre}`}><img src={image} alt={o.titre} /></a>
+        <figcaption>
+          <span class="legende">{a && `${a.nom}, `}<em>{o.titre}</em>{date && `, ${date}`}{lieu && ` · ${lieu}`}.</span>
+          {o.credit && <span class="credit-image">{o.credit}</span>}
+        </figcaption>
+      </figure>
+    )}
+    {!o.domainePublic && <Fragment set:html={encartDroits(o)} />}
+
+    <dl class="meta meta-cartel">
+      {a && <div><dt>Artiste</dt><dd><a href={adresse(a.id)}>{a.nom} <span aria-hidden="true">↗</span></a></dd></div>}
+      {m && <div><dt>Mouvement</dt><dd><a href={adresse(m.id)}>{m.nom} <span aria-hidden="true">↗</span></a></dd></div>}
+      {lieu && <div><dt>Où la voir</dt><dd>{lieu}</dd></div>}
+    </dl>
+
+    <Fragment set:html={markdown(o.fiche, true)} />
+
+    {autres.length > 0 && (
+      <section>
+        <h2>Du même artiste</h2>
+        <div class="grille-cartes">
+          {autres.map((x) => (
+            <Carte id={x.id} nom={x.titre} surtitre={[x.dateAffichee || x.annee, x.type].filter(Boolean).join(" · ")}
+              majeure={x.majeure} c={couleur(x.mouvement)}
+              vignette={{ image: imageVisible(x), protegee: !x.domainePublic }} />
+          ))}
+        </div>
+      </section>
+    )}
+  </article>
+
+  <!-- Image en grand : la même fenêtre que dans le panneau de la frise (classe .visionneuse de style.css) -->
+  {image && (
+    <dialog id="visionneuse" class="visionneuse" aria-label="Image en grand">
+      <button type="button" class="fermer" aria-label="Fermer l’image">×</button>
+      <img src={image} alt={o.titre} />
+    </dialog>
+  )}
+</Base>
+
+<script>
+  // Image en grand, en amélioration progressive : sans JavaScript, le lien ouvre simplement le fichier de l’image.
+  // Avec, il ouvre la fenêtre <dialog> par-dessus la page ; un clic n’importe où, ou la touche Échap, la referme.
+  const lien = document.querySelector(".cartel-image a");
+  const visionneuse = document.querySelector("#visionneuse");
+  if (lien && visionneuse) {
+    lien.addEventListener("click", (ev) => {
+      ev.preventDefault();   // le lien n’ouvre plus le fichier : la fenêtre le remplace
+      visionneuse.showModal();
+    });
+    visionneuse.addEventListener("click", () => visionneuse.close());
+  }
+</script>
