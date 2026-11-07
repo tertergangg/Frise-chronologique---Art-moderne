@@ -1,6 +1,7 @@
 /* =====================================================================
    Contenu des fiches
-   Fabrique le HTML d’une fiche d’œuvre, d’artiste, de mouvement ou d’événement, pour le panneau de la frise.
+   Fabrique le HTML d’une fiche d’œuvre, d’artiste, de mouvement ou d’événement, pour le panneau de la frise,
+   et l’encart d’une œuvre encore protégée par le droit d’auteur (D10).
    Fournit aussi aux pages ce qu’elles partagent avec le panneau : le texte des fiches (markdown),
    les liens (lien) et l’adresse de chaque élément (aUnePage, adresse).
    Rien ici ne touche à la page : ces fonctions renvoient du texte HTML, et c’est l’appelant qui l’affiche.
@@ -105,20 +106,45 @@ function listeOeuvres(liste, avecArtiste = false) {
   return `<ul class="liens-liste${avecArtiste ? " avec-artiste" : ""}">${lignes}</ul>`;
 }
 
+// Encart d’une œuvre encore protégée par le droit d’auteur, à la place de son image (D10).
+// La date d’entrée dans le domaine public n’est donnée que si construire.py l’a calculée : une protection forcée
+// dans le tableur (une exception) n’en a pas. Le lien vers la page de l’œuvre n’apparaît que s’il est rempli.
+function encartDroits(o) {
+  const entree = o.entreeDomainePublic
+    ? `<p class="entree-domaine">Elle entrera dans le domaine public le 1<sup>er</sup> janvier ${o.entreeDomainePublic}.</p>` : "";
+  const voir = o.lienOeuvre
+    ? `<a class="voir-oeuvre" href="${esc(o.lienOeuvre)}" target="_blank" rel="noopener">Voir l’œuvre sur le site du musée <span aria-hidden="true">↗</span></a>` : "";
+  return `<div class="encart-droits">
+      <p class="titre-encart">Œuvre protégée</p>
+      <p>Cette œuvre est encore protégée par le droit d’auteur : nous ne pouvons pas la reproduire ici.</p>
+      ${entree}${voir}
+    </div>`;
+}
+
+// Le haut d’une fiche d’œuvre : son image et son crédit si elle est dans le domaine public, l’encart sinon.
+// L’image est dans un bouton, pour s’ouvrir en grand aussi au clavier.
+function visuelOeuvre(o) {
+  if (!o.domainePublic) return encartDroits(o);
+  if (!estImage(o.image)) return "";
+  const credit = o.credit ? `<figcaption class="credit">${esc(o.credit)}</figcaption>` : "";
+  return `<figure class="visuel">
+      <button type="button" class="agrandir" data-agrandir aria-label="Agrandir l’image : ${esc(o.titre)}"><img class="image" src="${esc(o.image)}" alt="${esc(o.titre)}"></button>
+      ${credit}
+    </figure>`;
+}
+
+// Fiche d’une œuvre : l’image ou l’encart, le titre, l’artiste et la date, « Lire la page », le résumé, les rubriques, le texte
 function ficheOeuvre(o) {
   const a = ART[o.artiste], m = MOUV[o.mouvement];
   const lieu = [o.musee, o.ville].filter(Boolean).join(", ");
-  const image = estImage(o.image)
-    ? `<button type="button" class="agrandir" data-agrandir aria-label="Agrandir l’image : ${esc(o.titre)}"><img class="image" src="${esc(o.image)}" alt="${esc(o.titre)}"></button>` : "";
-  return `${image}<h2>${esc(o.titre)}</h2>
-    <p class="sous-titre">${a ? lien(a.id, a.nom) + ", " : ""}${esc(o.dateAffichee || o.annee)}</p>
-        ${lirePage(o.id)}
+  return `${visuelOeuvre(o)}<h2>${esc(o.titre)}</h2>
+    <p class="sous-titre sous-titre-oeuvre">${a ? lien(a.id, a.nom) + ", " : ""}${esc(o.dateAffichee || o.annee)}</p>
+    ${lirePage(o.id)}
     ${o.resume ? `<p class="resume">${esc(o.resume)}</p>` : ""}
     <dl>
       ${m ? `<dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd>` : ""}
       ${o.type ? `<dt>Technique</dt><dd>${esc(o.type)}</dd>` : ""}
       ${lieu ? `<dt>Où la voir</dt><dd>${esc(lieu)}</dd>` : ""}
-      ${o.image && !image ? `<dt>Image</dt><dd><a href="${esc(o.image)}" target="_blank" rel="noopener">Voir l’œuvre</a></dd>` : ""}
     </dl>
     ${o.ficheVide ? aVenir("de cette œuvre") : markdown(o.fiche)}`;
 }
@@ -179,4 +205,4 @@ function ficheEvenement(x) {
     ${m ? `<dl><dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd></dl>` : ""}`;
 }
 
-export { ficheOeuvre, ficheArtiste, ficheMouvement, ficheEvenement, aUnePage, adresse, lien, markdown, textePage };
+export { ficheOeuvre, ficheArtiste, ficheMouvement, ficheEvenement, encartDroits, aUnePage, adresse, lien, markdown, textePage };

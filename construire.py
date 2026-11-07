@@ -9,6 +9,7 @@ Ce que fait le script :
   2. lit les fiches   fiches/mouvements, fiches/artistes, fiches/oeuvres (et en déduit le niveau des œuvres),
                       puis fiches/parcours et fiches/comparaisons
   3. vérifie la cohérence (identifiants inconnus, fiches manquantes ou sans ligne dans le tableur…)
+     et les droits des images : seule une œuvre du domaine public garde la sienne (D10)
   4. écrit            src/data/frise.json, que lit la frise (par src/lib/donnees.js)
 
 src/data/frise.json est commité (décision D8) : relancer le script avant chaque commit
@@ -17,6 +18,7 @@ qui touche le tableur ou les fiches.
 Prérequis : pip install openpyxl
 """
 import json, re, sys
+from datetime import date
 from pathlib import Path
 from openpyxl import load_workbook
 
@@ -27,6 +29,11 @@ SORTIE = ICI / "src" / "data" / "frise.json"
 PUBLIC = ICI / "public"
 
 avertissements = []
+
+# Droit d'auteur en France (D10) : l'œuvre d'un artiste entre dans le domaine public le 1er janvier
+# qui suit les 70 ans de sa mort. L'année du build sert de référence : le site suit le calendrier sans qu'on y touche.
+DUREE_PROTECTION = 70
+ANNEE = date.today().year
 
 
 def avertir(msg):
@@ -179,6 +186,69 @@ def lire_autres(valeur, ident, ids_mouv, noms_mouv):
         liste.append(morceau)
     return liste
 
+def est_image(lien):
+    """Vrai si le lien mène à un fichier image. La même règle que estImage(), dans src/lib/outils.js."""
+    return isinstance(lien, str) and re.search(r"\.(jpe?g|png|webp|gif)(\?|$)", lien, flags=re.I) is not None
+
+def dit_oui(valeur):
+    """Vrai si une cellule « Domaine public ? » commence par « oui » (« Oui », « Oui (à vérifier) »…)."""
+    return str(valeur or "").strip().lower().startswith("oui")
+
+def dit_non(valeur):
+    """Vrai si une cellule « Domaine public ? » commence par « non »."""
+    return str(valeur or "").strip().lower().startswith("non")
+
+def droits_artiste(ident, deces, colonne):
+    """Les droits sur l'œuvre d'un artiste (D10) : {"protege": vrai ou faux, "entree": année ou None}.
+    « entree » est l'année où l'œuvre entrera dans le domaine public ; elle n'est connue que par le calcul.
+    La colonne « Domaine public ? » ne peut que forcer la protection, pour une exception (« Non ») : la date est alors inconnue.
+    Un désaccord entre la colonne et le calcul est signalé dans les deux sens, pour que la colonne reste à jour."""
+    entree = deces + DUREE_PROTECTION + 1 if deces is not None else None
+    libre = entree is not None and entree <= ANNEE
+    if libre and dit_non(colonne):
+        avertir(f"Artiste {ident} : « Domaine public ? » dit « Non », mais il est mort en {deces} : son œuvre est libre "
+                f"depuis le 1er janvier {entree}. Si ce n'est pas une exception, corrige la colonne")
+        return {"protege": True, "entree": None}
+    if not libre and dit_oui(colonne):
+        quand = f"jusqu'au 1er janvier {entree}" if entree else "(date de décès inconnue)"
+        avertir(f"Artiste {ident} : « Domaine public ? » dit « Oui », mais son œuvre reste protégée {quand}")
+    return {"protege": not libre, "entree": None if libre else entree}
+
+def droits_oeuvre(droits, colonne):
+    """Les droits sur une œuvre : ceux de son artiste, sauf si sa colonne « Domaine public ? » force la protection.
+    Cette colonne recopie celle de l'artiste par une formule : un « Non » écrit à la main vaut exception pour cette œuvre.
+    Un artiste inconnu (déjà signalé) laisse l'œuvre protégée, par prudence."""
+    if droits is None:
+        return {"protege": True, "entree": None}
+    if dit_non(colonne) and not droits["protege"]:
+        return {"protege": True, "entree": None}
+    return droits
+
+def lire_image(ident, image, credit, protege):
+    """Le chemin de l'image d'une œuvre, ou None si elle ne doit pas s'afficher.
+    Signale un lien qui n'est pas un fichier image, une image d'œuvre protégée (retirée, D10) et une image sans crédit."""
+    if not image:
+        return None
+    if not est_image(image):
+        avertir(f"Œuvre {ident} : « Lien image » n'est pas un fichier image « {image} » "
+                "(la page de l'œuvre sur le site du musée va dans « Lien de l'œuvre »)")
+        return None
+    if protege:
+        avertir(f"Œuvre {ident} : image retirée, l'œuvre est encore protégée par le droit d'auteur (D10)")
+        return None
+    if not credit:
+        avertir(f"Œuvre {ident} : image sans crédit (colonne « Crédit image »)")
+    return image
+
+def lire_lien(ident, lien):
+    """Le lien vers la page de l'œuvre sur le site du musée, ou None. Il doit être une adresse web complète."""
+    if not lien:
+        return None
+    if not str(lien).startswith(("http://", "https://")):
+        avertir(f"Œuvre {ident} : « Lien de l'œuvre » doit commencer par https:// « {lien} »")
+        return None
+    return lien
+
 def lire_mouvements(wb):
     """Onglet Mouvements, avec les fiches de fiches/mouvements."""
     mouvements = []
@@ -221,9 +291,11 @@ def lire_groupes(wb, ids_mouv):
     return groupes
 
 def lire_artistes(wb, ids_mouv, noms_mouv, ids_groupes, noms_groupes):
-    """Onglet Artistes, avec les fiches de fiches/artistes. Vérifie le mouvement principal et les groupes."""
-    artistes = []
+    """Onglet Artistes, avec les fiches de fiches/artistes. Vérifie le mouvement principal et les groupes.
+    Renvoie (artistes, droits) : « droits » donne, pour chaque identifiant, les droits sur son œuvre (droits_artiste())."""
+    artistes, droits = [], {}
     for a in lire_onglet(wb, "Artistes"):
+        droits[a["ID"]] = droits_artiste(a["ID"], annee(a.get("Décès")), a.get("Domaine public ?"))
         md, vide = lire_fiche("artistes", a["ID"])
         if a.get("Mouvement principal") not in ids_mouv:
             avertir(f"Artiste {a['ID']} : mouvement inconnu « {a.get('Mouvement principal')} »")
@@ -236,15 +308,18 @@ def lire_artistes(wb, ids_mouv, noms_mouv, ids_groupes, noms_groupes):
             "groupes": lire_groupes_artiste(a.get("Groupes"), a["ID"], ids_groupes, noms_groupes),
             "phrase": typo(a.get("Phrase-clé (1 phrase)")), "fiche": md, "ficheVide": vide,
         })
-    return artistes
+    return artistes, droits
 
-def lire_oeuvres(wb, ids_mouv, ids_art):
-    """Onglet Œuvres, avec les fiches de fiches/oeuvres. Vérifie l'artiste, le mouvement et l'année."""
+def lire_oeuvres(wb, ids_mouv, droits_artistes):
+    """Onglet Œuvres, avec les fiches de fiches/oeuvres. Vérifie l'artiste, le mouvement, l'année et les droits de l'image.
+    « droits_artistes » vient de lire_artistes() : ses clés sont les identifiants des artistes."""
     oeuvres = []
     for o in lire_onglet(wb, "Œuvres"):
         md, vide = lire_fiche("oeuvres", o["ID"])
         niveau, md = niveau_oeuvre(o["ID"], md, vide)
-        if o.get("Artiste (ID)") not in ids_art:
+        droits = droits_oeuvre(droits_artistes.get(o.get("Artiste (ID)")), o.get("Domaine public ?"))
+        credit = typo(o.get("Crédit image"))
+        if o.get("Artiste (ID)") not in droits_artistes:
             avertir(f"Œuvre {o['ID']} : artiste inconnu « {o.get('Artiste (ID)')} »")
         if o.get("Mouvement") not in ids_mouv:
             avertir(f"Œuvre {o['ID']} : mouvement inconnu « {o.get('Mouvement')} »")
@@ -256,7 +331,10 @@ def lire_oeuvres(wb, ids_mouv, ids_art):
             "dateAffichee": typo(o.get("Date affichée")), "type": typo(o.get("Type")),
             "musee": typo(o.get("Musée")), "ville": typo(o.get("Ville")),
             "majeure": str(o.get("Majeure (Bible)") or "").lower() == "oui",
-            "image": o.get("Lien image"), "resume": typo(o.get("Résumé court (1 phrase)")),
+            "image": lire_image(o["ID"], o.get("Lien image"), credit, droits["protege"]), "credit": credit,
+            "domainePublic": not droits["protege"], "entreeDomainePublic": droits["entree"],
+            "lienOeuvre": lire_lien(o["ID"], o.get("Lien de l'œuvre")),
+            "resume": typo(o.get("Résumé court (1 phrase)")),
             "fiche": md, "ficheVide": vide, "niveau": niveau,
         })
     return oeuvres
@@ -451,6 +529,8 @@ def afficher_bilan(donnees):
     avec_page = sum(o["niveau"] != "referencee" for o in oeuvres)
     analysees = sum(o["niveau"] == "analysee" for o in oeuvres)
     print(f"Œuvres documentées : {avec_page} sur {len(oeuvres)}, dont {analysees} analysée(s)")
+    libres = sum(o["domainePublic"] for o in oeuvres)
+    print(f"Œuvres du domaine public en {ANNEE} : {libres} sur {len(oeuvres)}")
     print(f"Données écrites dans {SORTIE.relative_to(ICI)}")
     if avertissements:
         print(f"\n{len(avertissements)} point(s) à vérifier :")
@@ -469,9 +549,9 @@ def main():
     groupes = lire_groupes(wb, ids_mouv)
     ids_groupes = {g["id"] for g in groupes}
     noms_groupes = {g["nom"].lower(): g["id"] for g in groupes if g["nom"]}
-    artistes = lire_artistes(wb, ids_mouv, noms_mouv, ids_groupes, noms_groupes)
+    artistes, droits = lire_artistes(wb, ids_mouv, noms_mouv, ids_groupes, noms_groupes)
     ids_art = {a["id"] for a in artistes}
-    oeuvres = lire_oeuvres(wb, ids_mouv, ids_art)
+    oeuvres = lire_oeuvres(wb, ids_mouv, droits)
     evenements = lire_evenements(wb, ids_mouv)
     influences = lire_influences(wb, ids_art, ids_mouv)
     glossaire = lire_glossaire(wb)   # « Voir aussi » est vérifié plus bas, une fois tous les identifiants connus

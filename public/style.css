@@ -383,6 +383,8 @@ body.redimension .panneau { transition: none; }
 /* La marge de droite laisse la place à la croix */
 .fiche h2 { margin: 0 2.5rem 0.35rem 0; font-weight: 900; font-variation-settings: "wdth" 66; font-size: 2.6rem; line-height: 0.92; }
 .fiche .sous-titre { margin: 0 0 1rem; font-weight: 600; }
+/* Fiche d’une œuvre : l’artiste et la date, plus grands que les rubriques du dessous */
+.fiche .sous-titre-oeuvre { font-size: 1.2rem; font-weight: 700; line-height: 1.25; }
 .fiche .resume { margin: 0 0 1.25rem; font-size: 1.2rem; font-weight: 500; line-height: 1.35; }
 /* Rubriques (Nationalité, Disciplines, Mouvement…) : libellé à gauche, valeur à droite */
 .fiche dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.3rem 1rem; margin: 0 0 1.25rem; }
@@ -391,9 +393,28 @@ body.redimension .panneau { transition: none; }
 .fiche a { color: inherit; text-decoration-color: var(--c); text-decoration-thickness: 2px; text-underline-offset: 3px; }
 .fiche h3 { margin: 1.5rem 0 0.4rem; font-weight: 900; font-variation-settings: "wdth" 70; font-size: 1.35rem;
   border-top: 2px solid var(--encre); padding-top: 0.5rem; }
-.fiche .image { width: 100%; margin: 0 0 1rem; }
+/* Image d’une œuvre du domaine public, avec son crédit en dessous (D10) */
+.fiche .visuel { margin: 0 0 1rem; }
+.fiche .image { display: block; width: 100%; }
+.fiche .credit { margin-top: 0.35rem; font-size: 0.75rem; line-height: 1.35; color: var(--doux); }
 /* L’image de la fiche est dans un bouton, pour s’ouvrir aussi au clavier ; le bouton lui-même ne se voit pas */
 .agrandir { display: block; width: 100%; padding: 0; border: none; background: none; cursor: zoom-in; }
+
+/* Encart d’une œuvre encore protégée (D10), à la place de l’image : un cadre plein, avec la couleur du mouvement à gauche.
+   Plein, et non en pointillés : les pointillés sont réservés à « La fiche … est à venir ». */
+.fiche .encart-droits { margin: 0 0 1.25rem; padding: 1rem 1.1rem 1.1rem;
+  background: var(--surface-2); border: 2px solid var(--encre); border-left: 8px solid var(--c); }
+.fiche .encart-droits p { margin: 0 0 0.5rem; line-height: 1.45; }
+.fiche .encart-droits > :last-child { margin-bottom: 0; }
+.fiche .encart-droits .titre-encart { margin-bottom: 0.35rem; font: 900 1.35rem/1 var(--police-titre); font-variation-settings: "wdth" 70; }
+.fiche .encart-droits .entree-domaine { font-size: 0.88rem; font-weight: 600; color: var(--doux); }
+/* « 1er » : l’exposant ne doit pas agrandir l’interligne */
+.fiche .entree-domaine sup { line-height: 0; }
+/* Lien vers la page de l’œuvre : bordé comme « Lire la page ». « .fiche » devant le nom l’emporte sur la règle « .fiche a ». */
+.fiche .voir-oeuvre { display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 0.4rem; padding: calc(0.55rem - 2px) 0.9rem;
+  border: 2px solid var(--encre); background: var(--surface); color: var(--encre); text-decoration: none;
+  font: 800 0.9rem var(--police-titre); font-variation-settings: "wdth" 80; }
+.fiche .voir-oeuvre:hover { background: var(--encre); color: var(--fond); }
 
 /* Bouton « Explorer ce mouvement en grand » */
 .explorer { display: inline-block; margin: 0 0 1.25rem; padding: 0.55rem 0.9rem; border: none; cursor: pointer;
