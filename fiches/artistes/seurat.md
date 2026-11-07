@@ -7,6 +7,7 @@ type: artiste
 
 ## En une phrase
 Chef de file du pointillisme, Seurat a voulu dépasser l’impressionnisme par la science : des milliers de petits points de couleur pure, posés selon des règles précises.
+Voir [[neo-impressionnisme]].
 
 ## Parcours
 - **1878** : né en 1859 à Paris, il entre à l’École des beaux-arts, où il reçoit une formation très classique, dans la tradition d’Ingres.

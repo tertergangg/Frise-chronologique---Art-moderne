@@ -39,14 +39,25 @@ function lien(id, texte, surPage = false) {
   return `<a href="#${esc(id)}" data-id="${esc(id)}">${esc(texte)}</a>`;
 }
 
+// Destination d’un lien dans le panneau de la frise : « #id » ouvre la fiche sur place.
+// Un groupe n’a pas de fiche : il mène à la page de son mouvement (D22). Si ce mouvement n’a pas encore de page,
+// il ouvre sa fiche dans le panneau ; adresse() donnerait « /#mouvement », un lien que le panneau n’intercepte pas
+// et qui ne ferait rien, puisque seul le # de l’adresse changerait.
+function destinationPanneau(id) {
+  const groupe = GRP[id];
+  if (!groupe) return `#${id}`;
+  return aUnePage(groupe.mouvement) ? adresse(id) : `#${groupe.mouvement}`;
+}
+
 // Texte d’une fiche : les liens [[id]] et [[id|texte]] deviennent des liens Markdown, puis marked convertit le tout.
-// Comme pour lien(), « surPage » fait viser l’adresse de l’élément au lieu de « #id ».
+// Comme pour lien(), « surPage » fait viser l’adresse de l’élément au lieu de la destination du panneau.
 // La même forme de lien est vérifiée par verifier_liens(), dans construire.py : les deux règles doivent rester identiques.
 function markdown(md, surPage = false) {
   if (!md) return "";
   const avecLiens = md.replace(/\[\[([a-z0-9-]+)(?:\|([^\]]+))?\]\]/g, (_, id, texte) => {
-    const cible = MOUV[id] || ART[id] || OEU[id] || EVT[id];
-    const destination = surPage ? adresse(id) : `#${id}`;
+    // Le texte du lien par défaut : le nom (mouvement, artiste, groupe) ou le titre (œuvre, événement)
+    const cible = MOUV[id] || ART[id] || OEU[id] || EVT[id] || GRP[id];
+    const destination = surPage ? adresse(id) : destinationPanneau(id);
     return `[${texte || (cible ? cible.nom || cible.titre : id)}](${destination})`;
   });
   return `<div class="corps">${marked.parse(avecLiens)}</div>`;

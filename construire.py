@@ -400,15 +400,16 @@ def verifier_ensemble(donnees):
     verifier_orphelines("oeuvres", ids_oeu)
 
     # Les liens [[id]] peuvent viser un mouvement, un groupe, un artiste, une œuvre, un événement, un terme,
-    # un parcours ou une comparaison. Un lien vers un groupe, un terme, un parcours ou une comparaison est permis (D24),
-    # mais il est signalé : la frise ne sait pas les afficher (les groupes jusqu'à l'étape 2e, le reste jusqu'à la phase 4).
+    # un parcours ou une comparaison. Un lien vers un groupe mène à la page de son mouvement (D22).
+    # Un lien vers un terme, un parcours ou une comparaison est permis (D24), mais il est signalé :
+    # la frise ne sait pas encore les afficher (phase 4).
     ids_groupes = {g["id"] for g in groupes}
     ids_termes = {t["id"] for t in glossaire}
     ids_articles = {x["id"] for x in parcours + comparaisons}
     ids_connus = (ids_mouv | ids_groupes | ids_art | ids_oeu | {e["id"] for e in evenements}
                   | ids_termes | ids_articles)
     verifier_liens(mouvements + artistes + oeuvres + parcours + comparaisons, ids_connus,
-                   ids_groupes | ids_termes | ids_articles)
+                   ids_termes | ids_articles)
 
     # Le genre de chaque élément qu'une comparaison peut relier
     genres = {**{i: "mouvement" for i in ids_mouv}, **{i: "artiste" for i in ids_art}, **{i: "oeuvre" for i in ids_oeu}}
