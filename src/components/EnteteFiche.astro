@@ -1,0 +1,42 @@
+---
+// En-tête d’une fiche : la bande de couleur du mouvement à gauche, le surtitre, le titre, le chapeau,
+// et le bouton « Voir dans la frise ». Pour un mouvement, le repère chronologique remplace le filet du bas.
+//   surtitre  la ligne au-dessus du titre (« Mouvement · 1874–1886 · France (Paris) »…)
+//   titre     le nom de l’élément, seul titre <h1> de la page
+//   chapeau   une phrase sous le titre (le résumé du tableur), facultative
+//   c         la couleur de la bande, celle du mouvement
+//   frise     l’adresse de l’élément dans la frise
+//   periode   { debut, fin } : affiche le repère chronologique de cette période, facultatif
+import { D } from "../lib/donnees.js";
+
+const { surtitre, titre, chapeau = "", c, frise, periode } = Astro.props;
+
+// Repère : la période de tous les mouvements, arrondie aux décennies, et la place de cette période-ci.
+// Comme sur la frise, une période occupe toute son année de fin (d’où « fin + 1 »).
+let repere = null;
+if (periode) {
+  const premier = Math.floor(Math.min(...D.mouvements.map((m) => m.debut)) / 10) * 10;
+  const dernier = Math.ceil(Math.max(...D.mouvements.map((m) => m.fin + 1)) / 10) * 10;
+  const pourcent = (annee) => ((annee - premier) / (dernier - premier)) * 100;
+  repere = {
+    premier, dernier,
+    style: `--c:${c};--gauche:${pourcent(periode.debut)}%;--largeur:${pourcent(periode.fin + 1) - pourcent(periode.debut)}%;`
+      + `--decennies:${(dernier - premier) / 10}`,
+  };
+}
+---
+<header class={repere ? "entete-fiche avec-repere" : "entete-fiche"} style={`--c:${c}`}>
+  <div>
+    <p class="surtitre">{surtitre}</p>
+    <h1 class="titre-page">{titre}</h1>
+    {chapeau && <p class="chapeau">{chapeau}</p>}
+  </div>
+  {frise && <a class="bouton" href={frise}>Voir dans la frise <span aria-hidden="true">↗</span></a>}
+</header>
+{repere && (
+  <div class="repere" style={repere.style} role="img"
+    aria-label={`Repère chronologique : de ${periode.debut} à ${periode.fin}, sur la période ${repere.premier}–${repere.dernier}`}>
+    <div class="barre"><div class="segment"></div></div>
+    <div class="bornes"><span>{repere.premier}</span><span>{repere.dernier}</span></div>
+  </div>
+)}

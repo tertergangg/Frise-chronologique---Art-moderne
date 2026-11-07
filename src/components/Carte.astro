@@ -3,19 +3,21 @@
 // Comme Ligne.astro, elle déduit de l’identifiant son adresse et le texte de son lien (D13).
 //   id        l’identifiant de l’élément
 //   nom       le titre de la carte
-//   surtitre  la ligne au-dessus du titre (dates, lieu…), facultative
-//   extrait   une phrase sous le titre (un résumé), facultative
-//   pied      une ligne sous l’extrait (nombre d’artistes…), facultative
+//   surtitre  la ligne au-dessus du titre (dates, lieu, technique…), facultative
+//   extrait   une ligne sous le titre (un résumé, le nom de l’artiste), facultative
+//   majeure   vrai pour une œuvre majeure : la carte affiche « ★ Œuvre majeure »
+//   pied      une ligne en bas de la carte (nombre d’artistes…), facultative
 //   c         la couleur de la bande de gauche, celle du mouvement
 import { aUnePage, adresse } from "../lib/fiches.js";
 
-const { id, nom, surtitre = "", extrait = "", pied = "", c } = Astro.props;
+const { id, nom, surtitre = "", extrait = "", majeure = false, pied = "", c } = Astro.props;
 const lien = aUnePage(id) ? "Lire la page" : "Voir dans la frise";
 ---
 <a class="carte-page" href={adresse(id)} style={c ? `--c:${c}` : undefined}>
   {surtitre && <span class="meta-carte">{surtitre}</span>}
   <strong>{nom}</strong>
   {extrait && <span class="extrait">{extrait}</span>}
+  {majeure && <span class="majeure"><span aria-hidden="true">★</span> Œuvre majeure</span>}
   {pied && <span class="meta-carte">{pied}</span>}
   <span class="lien-carte">{lien} <span aria-hidden="true">↗</span></span>
 </a>

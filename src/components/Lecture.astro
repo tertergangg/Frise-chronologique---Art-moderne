@@ -1,0 +1,16 @@
+---
+// Zone de lecture d’une fiche : le sommaire « Dans cette page » à gauche, le texte à droite (<slot />).
+// Le sommaire est fait de vrais liens vers les ancres de la page : il marche sans JavaScript et au clavier.
+//   titres  les { id, texte } du sommaire, dans l’ordre de la page
+//   c       la couleur du mouvement, reprise par les citations du texte
+const { titres, c } = Astro.props;
+---
+<div class="lecture">
+  {titres.length > 0 && (
+    <nav class="sommaire-page" aria-label="Dans cette page">
+      <strong>Dans cette page</strong>
+      <ul>{titres.map((t) => <li><a href={`#${t.id}`}>{t.texte}</a></li>)}</ul>
+    </nav>
+  )}
+  <article class="texte" style={`--c:${c}`}><slot /></article>
+</div>

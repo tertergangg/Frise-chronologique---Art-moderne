@@ -1,0 +1,139 @@
+---
+// Page d’un mouvement, une page de contexte (ARCHITECTURE, partie B, « Les gabarits ») :
+// l’en-tête et son repère chronologique, puis le texte de la fiche et les sections calculées depuis le tableur.
+import Base from "../../layouts/Base.astro";
+import EnteteFiche from "../../components/EnteteFiche.astro";
+import Lecture from "../../components/Lecture.astro";
+import Ligne from "../../components/Ligne.astro";
+import Carte from "../../components/Carte.astro";
+import { D, MOUV, ART } from "../../lib/donnees.js";
+import { aUnePage, textePage } from "../../lib/fiches.js";
+
+// Astro appelle getStaticPaths() au build : chaque objet renvoyé devient une page, à l’adresse /mouvements/<id>/.
+// Seuls les mouvements dont la fiche est rédigée ont une page (D13).
+export function getStaticPaths() {
+  return D.mouvements.filter((m) => aUnePage(m.id)).map((m) => ({ params: { id: m.id }, props: { m } }));
+}
+
+const { m } = Astro.props;
+
+// Ce que la page affiche, toujours calculé depuis le tableur (D19). Une œuvre sans année passe en fin de liste.
+const parAnnee = (a, b) => (a.annee ?? Infinity) - (b.annee ?? Infinity);
+const groupes = D.groupes.filter((g) => g.mouvement === m.id);
+const membres = (g) => D.artistes.filter((a) => a.groupes.includes(g.id));
+const artistes = D.artistes.filter((a) => a.mouvement === m.id);
+const oeuvres = D.oeuvres.filter((o) => o.mouvement === m.id).sort(parAnnee);
+const majeures = oeuvres.filter((o) => o.majeure);
+const autresOeuvres = oeuvres.filter((o) => !o.majeure);
+const evenements = D.evenements.filter((x) => x.mouvement === m.id).sort(parAnnee);
+
+// Filiations et réactions (D23) : les relations entre ce mouvement et un autre, dans un sens comme dans l’autre
+const TYPES_ENTRE_MOUVEMENTS = { filiation: "Filiation", réaction: "Réaction" };
+const filiations = D.influences
+  .filter((i) => TYPES_ENTRE_MOUVEMENTS[i.type] && (i.de === m.id || i.vers === m.id))
+  .map((i) => ({ ...i, autre: MOUV[i.de === m.id ? i.vers : i.de] }))
+  .filter((i) => i.autre);
+
+// Les sections calculées qui ont un contenu : elles entrent dans le sommaire après les titres du texte
+const sections = [
+  groupes.length && { id: "groupes", texte: "Groupes" },
+  artistes.length && { id: "artistes", texte: "Artistes" },
+  majeures.length && { id: "oeuvres-majeures", texte: "Œuvres majeures" },
+  autresOeuvres.length && { id: "autres-oeuvres", texte: "Autres œuvres" },
+  evenements.length && { id: "moments-cles", texte: "Moments clés" },
+  filiations.length && { id: "filiations", texte: "Filiations et réactions" },
+].filter(Boolean);
+// Sur la page d’un mouvement, la section « En une phrase » reste : c’est une définition, pas le chapeau répété
+const texte = textePage(m.fiche, [...sections.map((s) => s.id), ...groupes.map((g) => g.id)]);
+
+const surtitre = ["Mouvement", `${m.debut}–${m.fin}`, m.lieu].filter(Boolean).join(" · ");
+const dates = (a) => `${a.naissance ?? "?"}–${a.deces ?? "?"}`;
+const periodeGroupe = (g) => (g.debut != null ? `${g.debut}–${g.fin ?? "?"}` : "");
+---
+<Base titre={m.nom} rubrique="mouvements"
+  ariane={[{ texte: "Frise", href: "/" }, { texte: "Mouvements", href: "/mouvements/" }, { texte: m.nom }]}>
+  <!-- « Voir dans la frise » ouvre pour l’instant la fiche du mouvement dans la frise ;
+       à la sous-étape 4, il ouvrira la vue mouvement (D27) -->
+  <EnteteFiche surtitre={surtitre} titre={m.nom} chapeau={m.resume} c={m.couleur}
+    frise={`/#${m.id}`} periode={{ debut: m.debut, fin: m.fin }} />
+
+  <Lecture titres={[...texte.titres, ...sections]} c={m.couleur}>
+    <Fragment set:html={texte.html} />
+
+    {groupes.length > 0 && (
+      <section>
+        <h2 id="groupes">Groupes</h2>
+        {groupes.map((g) => (
+          <section class="groupe" id={g.id}>
+            <h3>{g.nom}</h3>
+            {(periodeGroupe(g) || g.lieu) && (
+              <p class="detail-groupe">{[periodeGroupe(g), g.lieu].filter(Boolean).join(" · ")}</p>
+            )}
+            {g.resume && <p>{g.resume}</p>}
+            {membres(g).length > 0 && (
+              <ul class="liste">
+                {membres(g).map((a) => <Ligne id={a.id} nom={a.nom} detail={dates(a)} c={m.couleur} />)}
+              </ul>
+            )}
+          </section>
+        ))}
+      </section>
+    )}
+
+    {artistes.length > 0 && (
+      <section>
+        <h2 id="artistes">Artistes</h2>
+        <ul class="liste">
+          {artistes.map((a) => (
+            <Ligne id={a.id} nom={a.nom} detail={[dates(a), a.role].filter(Boolean).join(" · ")} c={m.couleur} />
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {majeures.length > 0 && (
+      <section>
+        <h2 id="oeuvres-majeures">Œuvres majeures</h2>
+        <div class="grille-cartes">
+          {majeures.map((o) => (
+            <Carte id={o.id} nom={o.titre} surtitre={[o.dateAffichee || o.annee, o.type].filter(Boolean).join(" · ")}
+              extrait={ART[o.artiste]?.nom} majeure={o.majeure} c={m.couleur} />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {autresOeuvres.length > 0 && (
+      <section>
+        <h2 id="autres-oeuvres">Autres œuvres</h2>
+        <ul class="liste">
+          {autresOeuvres.map((o) => (
+            <Ligne id={o.id} nom={o.titre} detail={[o.annee, ART[o.artiste]?.nom].filter(Boolean).join(" · ")} c={m.couleur} />
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {evenements.length > 0 && (
+      <section>
+        <h2 id="moments-cles">Moments clés</h2>
+        <ul class="liste">
+          {evenements.map((x) => (
+            <Ligne id={x.id} nom={x.titre} detail={[x.date || x.annee, x.lieu].filter(Boolean).join(" · ")} c={m.couleur} />
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {filiations.length > 0 && (
+      <section>
+        <h2 id="filiations">Filiations et réactions</h2>
+        <ul class="liste">
+          {filiations.map((i) => (
+            <Ligne id={i.autre.id} nom={i.autre.nom} detail={TYPES_ENTRE_MOUVEMENTS[i.type]} extrait={i.explication} c={i.autre.couleur} />
+          ))}
+        </ul>
+      </section>
+    )}
+  </Lecture>
+</Base>

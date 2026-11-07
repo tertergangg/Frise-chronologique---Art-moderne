@@ -60,12 +60,21 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
   font-variation-settings: "wdth" 66; letter-spacing: -0.01em; }
 .chapeau { margin: 0; max-width: 44rem; font-size: 1.18rem; font-weight: 500; line-height: 1.45; }
 .entete-page { margin-bottom: 2.2rem; padding-bottom: 1.6rem; border-bottom: 2px solid var(--encre); }
-/* En-tête d’une fiche : la bande de couleur de son mouvement à gauche ; la seconde colonne recevra « Voir dans la frise » */
+/* En-tête d’une fiche : la bande de couleur de son mouvement à gauche, le bouton « Voir dans la frise » à droite */
 .entete-fiche { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem 2rem; align-items: end;
   margin-bottom: 1.6rem; padding: 0.3rem 0 1.6rem 1.5rem; border-left: 8px solid var(--c); border-bottom: 2px solid var(--encre); }
+/* Avec un repère chronologique, c’est lui qui fait le filet du bas */
+.entete-fiche.avec-repere { margin-bottom: 0; border-bottom: none; }
+.entete-fiche .bouton { margin-bottom: 0.2rem; }
+/* Bouton bordé et ombré, comme ceux de la frise : la navigation garde le style de l’affiche (D25) */
+.bouton { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.9rem; white-space: nowrap; text-decoration: none;
+  border: 2px solid var(--encre); background: var(--surface); box-shadow: 4px 4px 0 var(--ombre);
+  font-weight: 700; font-size: 0.93rem; font-variation-settings: "wdth" 85; }
+.bouton:hover { background: var(--encre); color: var(--fond); }
 
 @media (max-width: 720px) {
   .entete-fiche { grid-template-columns: 1fr; padding-left: 1rem; }
+  .entete-fiche .bouton { justify-self: start; }
 }
 
 
@@ -79,22 +88,25 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
 
 
 /* =====================================================================
-   Repère chronologique : la période de tous les mouvements, et la place de celui-ci
+   Repère chronologique : une bande fine sous l’en-tête d’un mouvement
    ===================================================================== */
-/* Les valeurs calculées viennent de la page : --gauche, --largeur (en %) et --decennies (le nombre de décennies) */
-.repere { margin: 0 0 2.4rem; }
-.repere .barre { position: relative; height: 1rem; border: 2px solid var(--encre); background-color: var(--surface);
+/* Les valeurs calculées viennent de EnteteFiche.astro : --gauche, --largeur (en %) et --decennies (le nombre de décennies).
+   Son filet noir du haut tient lieu du filet de l’en-tête ; les traits fins marquent les décennies. */
+.repere { margin: 0 0 1.8rem; }
+.repere .barre { position: relative; height: 10px; border-top: 2px solid var(--encre); background-color: var(--surface-2);
   background-image: linear-gradient(to right, var(--grille) 1px, transparent 1px);
   background-size: calc(100% / var(--decennies)) 100%; }
 .repere .segment { position: absolute; top: 0; bottom: 0; left: var(--gauche); width: var(--largeur); background: var(--c); }
-.repere .bornes { display: flex; justify-content: space-between; margin-top: 0.3rem;
-  font-size: 0.8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.repere .bornes { display: flex; justify-content: space-between; margin-top: 0.25rem;
+  font-size: 0.72rem; font-weight: 700; color: var(--doux); font-variant-numeric: tabular-nums; }
 
 
 /* =====================================================================
    Lecture : le sommaire à gauche, le texte à droite
    ===================================================================== */
 .lecture { display: grid; grid-template-columns: 12rem minmax(0, 44rem); gap: 3rem; }
+/* Le texte reste dans sa colonne, même sans sommaire */
+.lecture > .texte { grid-column: 2; }
 .sommaire-page { position: sticky; top: 1rem; align-self: start; font-size: 0.88rem; }
 .sommaire-page strong { display: block; margin-bottom: 0.5rem; font-weight: 800; }
 .sommaire-page ul { list-style: none; margin: 0; padding: 0; }
@@ -103,6 +115,7 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
 
 @media (max-width: 720px) {
   .lecture { grid-template-columns: 1fr; gap: 1.5rem; }
+  .lecture > .texte { grid-column: auto; }
   .sommaire-page { position: static; }
   .sommaire-page ul { display: flex; flex-wrap: wrap; gap: 0 1rem; }
 }
@@ -135,7 +148,8 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
    Listes : une ligne par élément, avec le liseré de son mouvement
    ===================================================================== */
 .liste { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--encre); }
-.liste li { border-bottom: 2px solid var(--encre); }
+/* Un léger écart entre deux lignes, sous le filet de chacune */
+.liste li { margin-bottom: 0.4rem; border-bottom: 2px solid var(--encre); }
 .liste a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.1rem 1rem; align-items: center;
   padding: 0.75rem 0.4rem 0.75rem 1rem; border-left: 6px solid var(--c, transparent); text-decoration: none; }
 .liste a:hover { background: var(--surface-2); }
@@ -155,15 +169,16 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
    Cartes : les œuvres, et les mouvements dans leur répertoire (D25)
    ===================================================================== */
 .grille-cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1.4rem; align-items: stretch; }
-.carte-page { display: flex; flex-direction: column; gap: 0.3rem; padding: 0.95rem 1.1rem 1rem 1.2rem; text-decoration: none;
+.carte-page { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.8rem 1rem 0.85rem 1.1rem; text-decoration: none;
   background: var(--surface); border: 2px solid var(--encre); border-left: 8px solid var(--c, var(--encre));
   box-shadow: 4px 4px 0 var(--ombre); transition: transform 0.1s, box-shadow 0.1s; }
 .carte-page:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ombre); }
 .carte-page .meta-carte { font-size: 0.78rem; font-weight: 600; color: var(--doux); }
 .carte-page strong { font: 800 1.12rem/1.2 var(--police-titre); font-variation-settings: "wdth" 80; }
-.carte-page .extrait { font-size: 0.92rem; line-height: 1.45; }
+.carte-page .extrait { font-size: 0.95rem; line-height: 1.4; }
+.carte-page .majeure { font-size: 0.78rem; font-weight: 700; }
 /* Le lien reste en bas de la carte, même quand les cartes d’une rangée n’ont pas la même hauteur de texte */
-.carte-page .lien-carte { margin-top: auto; padding-top: 0.5rem; font-size: 0.84rem; font-weight: 800; }
+.carte-page .lien-carte { margin-top: auto; padding-top: 0.4rem; font-size: 0.84rem; font-weight: 800; }
 /* Grandes cartes : le répertoire des mouvements */
 .grille-cartes.grande .carte-page strong { font-size: 1.6rem; font-variation-settings: "wdth" 70; }
 

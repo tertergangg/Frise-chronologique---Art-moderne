@@ -10,7 +10,7 @@
 // il est intégré au script publié, comme les données.
 import { marked } from "marked";
 import { D, MOUV, ART, OEU, EVT, GRP } from "./donnees.js";
-import { esc, nomCourt, estImage } from "./outils.js";
+import { esc, nomCourt, estImage, sansAccent } from "./outils.js";
 
 // Un élément a-t-il sa propre page ? C’est la seule fonction qui en décide (D13, D21).
 // Un mouvement ou un artiste en a une dès que sa fiche est rédigée. Les œuvres documentées en auront une à l’étape 2f ;
@@ -51,6 +51,32 @@ function markdown(md, surPage = false) {
   });
   return `<div class="corps">${marked.parse(avecLiens)}</div>`;
 }
+
+// Texte d’une fiche pour sa page. Chaque titre ## reçoit un id, pour que le sommaire « Dans cette page » puisse y mener.
+// « pris » : les ids déjà utilisés par la page (ses sections calculées, ses groupes), à ne pas réutiliser.
+// « sansEnUnePhrase » : retirer la section « ## En une phrase ». Sur la page d’un artiste, elle répète le chapeau
+// (la phrase-clé du tableur) ; sur celle d’un mouvement, elle donne une définition que le chapeau n’a pas, et reste.
+// Renvoie { html, titres } : titres est la liste des { id, texte } des titres ##, dans l’ordre du texte.
+function textePage(md, pris = [], sansEnUnePhrase = false) {
+  if (!md) return { html: "", titres: [] };
+  // Découpe le texte juste avant chaque ligne qui commence par « ## » : chaque morceau est une section
+  const sections = md.split(/^(?=## )/m)
+    .filter((s) => !sansEnUnePhrase || s.split("\n")[0].trim() !== "## En une phrase");
+  const titres = [];
+  for (const s of sections) {
+    if (!s.startsWith("## ")) continue;   // le texte qui précède le premier titre
+    const texte = s.split("\n")[0].slice(3).replace(/[*_`]/g, "").trim();
+    let id = sansAccent(texte).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "section";
+    while (pris.includes(id) || titres.some((t) => t.id === id)) id += "-2";
+    titres.push({ id, texte });
+  }
+  // marked écrit les titres ## en <h2>, dans le même ordre : on leur donne leur id un par un
+  let rang = 0;
+  const html = markdown(sections.join(""), true)
+    .replace(/<h2>/g, () => (titres[rang] ? `<h2 id="${titres[rang++].id}">` : "<h2>"));
+  return { html, titres };
+}
+
 const aVenir = (quoi) => `<p class="a-venir">La fiche ${quoi} est à venir.</p>`;
 
 // Liste d’œuvres triée par année ; avec « avecArtiste », le nom court de l’artiste s’affiche à droite de la ligne
@@ -135,4 +161,4 @@ function ficheEvenement(x) {
     ${m ? `<dl><dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd></dl>` : ""}`;
 }
 
-export { ficheOeuvre, ficheArtiste, ficheMouvement, ficheEvenement, aUnePage, adresse, lien, markdown };
+export { ficheOeuvre, ficheArtiste, ficheMouvement, ficheEvenement, aUnePage, adresse, lien, markdown, textePage };
