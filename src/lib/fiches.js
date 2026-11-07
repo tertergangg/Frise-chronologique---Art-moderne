@@ -52,27 +52,22 @@ function markdown(md, surPage = false) {
   return `<div class="corps">${marked.parse(avecLiens)}</div>`;
 }
 
-// Texte d’une fiche pour sa page. Chaque titre ## reçoit un id, pour que le sommaire « Dans cette page » puisse y mener.
+// Texte d’une fiche pour sa page : chaque titre ## reçoit un id, pour que le sommaire « Dans cette page » puisse y mener.
 // « pris » : les ids déjà utilisés par la page (ses sections calculées, ses groupes), à ne pas réutiliser.
-// « sansEnUnePhrase » : retirer la section « ## En une phrase ». Sur la page d’un artiste, elle répète le chapeau
-// (la phrase-clé du tableur) ; sur celle d’un mouvement, elle donne une définition que le chapeau n’a pas, et reste.
 // Renvoie { html, titres } : titres est la liste des { id, texte } des titres ##, dans l’ordre du texte.
-function textePage(md, pris = [], sansEnUnePhrase = false) {
+function textePage(md, pris = []) {
   if (!md) return { html: "", titres: [] };
-  // Découpe le texte juste avant chaque ligne qui commence par « ## » : chaque morceau est une section
-  const sections = md.split(/^(?=## )/m)
-    .filter((s) => !sansEnUnePhrase || s.split("\n")[0].trim() !== "## En une phrase");
   const titres = [];
-  for (const s of sections) {
-    if (!s.startsWith("## ")) continue;   // le texte qui précède le premier titre
-    const texte = s.split("\n")[0].slice(3).replace(/[*_`]/g, "").trim();
+  // Les titres ## du Markdown, dans l’ordre : chacun reçoit un id tiré de son texte, sans accents
+  for (const [, ligne] of md.matchAll(/^## (.+)$/gm)) {
+    const texte = ligne.replace(/[*_`]/g, "").trim();
     let id = sansAccent(texte).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "section";
     while (pris.includes(id) || titres.some((t) => t.id === id)) id += "-2";
     titres.push({ id, texte });
   }
   // marked écrit les titres ## en <h2>, dans le même ordre : on leur donne leur id un par un
   let rang = 0;
-  const html = markdown(sections.join(""), true)
+  const html = markdown(md, true)
     .replace(/<h2>/g, () => (titres[rang] ? `<h2 id="${titres[rang++].id}">` : "<h2>"));
   return { html, titres };
 }

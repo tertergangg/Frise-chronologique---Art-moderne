@@ -1,0 +1,70 @@
+---
+// Répertoire des artistes : rangés par mouvement principal, dans l’ordre chronologique des mouvements,
+// avec un champ qui filtre la liste par nom (script en bas de page).
+import Base from "../../layouts/Base.astro";
+import Ligne from "../../components/Ligne.astro";
+import { D, mouvementsTries } from "../../lib/donnees.js";
+import { compter } from "../../lib/outils.js";
+
+// Un bloc par mouvement qui a au moins un artiste ; dans un bloc, l’ordre du tableur
+const blocs = mouvementsTries
+  .map((m) => ({ m, artistes: D.artistes.filter((a) => a.mouvement === m.id) }))
+  .filter((b) => b.artistes.length);
+const dates = (a) => `${a.naissance ?? "?"}–${a.deces ?? "?"}`;
+---
+<Base titre="Artistes" rubrique="artistes" ariane={[{ texte: "Frise", href: "/" }, { texte: "Artistes" }]}>
+  <header class="entete-page">
+    <p class="surtitre">{compter(D.artistes.length, "artistes")}</p>
+    <h1 class="titre-page">Artistes</h1>
+    <p class="chapeau">Rangés par mouvement principal. Un artiste qui a traversé plusieurs mouvements les cite sur sa page.</p>
+  </header>
+
+  <!-- Caché tant que le script ne l’a pas affiché : sans JavaScript, la page montre simplement tous les artistes -->
+  <div id="zone-filtre" class="filtre-repertoire" hidden>
+    <label for="filtre-artistes" class="visuellement-cache">Filtrer les artistes par nom</label>
+    <input id="filtre-artistes" class="champ" type="search" placeholder="Filtrer par nom…" autocomplete="off">
+  </div>
+
+  {blocs.map(({ m, artistes }) => (
+    <section class="repertoire-mouvement" style={`--c:${m.couleur}`}>
+      <h2 class="intertitre"><span class="pastille" aria-hidden="true"></span>{m.nom} <small>{m.debut}–{m.fin}</small></h2>
+      <ul class="liste">
+        {artistes.map((a) => (
+          <Ligne id={a.id} nom={a.nom} detail={[dates(a), a.role].filter(Boolean).join(" · ")} c={m.couleur} />
+        ))}
+      </ul>
+    </section>
+  ))}
+  <p id="aucun-artiste" class="aucun-resultat" hidden>Aucun artiste ne correspond.</p>
+</Base>
+
+<script>
+  // Filtre du répertoire : ne garde que les artistes dont le nom contient le texte tapé, sans tenir compte des accents.
+  // Un mouvement dont aucun artiste ne correspond disparaît avec son intertitre.
+  import { sansAccent } from "../../lib/outils.js";
+
+  const champ = document.querySelector("#filtre-artistes");
+  const blocs = [...document.querySelectorAll(".repertoire-mouvement")];
+  const aucun = document.querySelector("#aucun-artiste");
+
+  function filtrer() {
+    const q = sansAccent(champ.value.trim());
+    let visibles = 0;
+    for (const bloc of blocs) {
+      let dansLeBloc = 0;
+      for (const ligne of bloc.querySelectorAll("li")) {
+        const garde = sansAccent(ligne.querySelector(".nom").textContent).includes(q);
+        ligne.hidden = !garde;
+        if (garde) dansLeBloc += 1;
+      }
+      bloc.hidden = dansLeBloc === 0;
+      visibles += dansLeBloc;
+    }
+    aucun.hidden = visibles > 0;
+  }
+
+  document.querySelector("#zone-filtre").hidden = false;
+  champ.addEventListener("input", filtrer);
+  // Après un retour arrière, le navigateur peut avoir gardé le texte du champ : la liste doit le suivre
+  filtrer();
+</script>

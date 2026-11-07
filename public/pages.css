@@ -164,6 +164,19 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
   .liste .fleche { grid-column: 1; grid-row: auto; margin-top: 0.3rem; }
 }
 
+/* =====================================================================
+   Répertoire des artistes : le champ de filtre, puis un intertitre par mouvement
+   ===================================================================== */
+.filtre-repertoire { margin: 0 0 1.6rem; }
+/* Même apparence que les champs de la frise (recherche, Index) */
+.champ { display: block; width: 100%; padding: 0.55rem 0.75rem; border: 2px solid var(--encre); border-radius: 0;
+  background: var(--surface); color: var(--encre); font: 500 1rem var(--police-texte); }
+.aucun-resultat { margin: 0; color: var(--doux); }
+.repertoire-mouvement + .repertoire-mouvement { margin-top: 2.2rem; }
+.intertitre { display: flex; align-items: baseline; gap: 0.7rem; margin: 0 0 0.7rem;
+  font: 900 1.5rem/1.1 var(--police-titre); font-variation-settings: "wdth" 70; }
+.intertitre .pastille { width: 0.9rem; height: 0.9rem; flex: none; background: var(--c); }
+.intertitre small { font: 600 0.85rem var(--police-texte); color: var(--doux); }
 
 /* =====================================================================
    Cartes : les œuvres, et les mouvements dans leur répertoire (D25)

@@ -43,7 +43,6 @@ const sections = [
   evenements.length && { id: "moments-cles", texte: "Moments clés" },
   filiations.length && { id: "filiations", texte: "Filiations et réactions" },
 ].filter(Boolean);
-// Sur la page d’un mouvement, la section « En une phrase » reste : c’est une définition, pas le chapeau répété
 const texte = textePage(m.fiche, [...sections.map((s) => s.id), ...groupes.map((g) => g.id)]);
 
 const surtitre = ["Mouvement", `${m.debut}–${m.fin}`, m.lieu].filter(Boolean).join(" · ");

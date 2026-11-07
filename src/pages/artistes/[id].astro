@@ -1,0 +1,96 @@
+---
+// Page d’un artiste, une page de trajectoire (ARCHITECTURE, partie B, « Les gabarits ») :
+// l’en-tête et ses rubriques, puis le texte de la fiche, ses œuvres dans l’ordre chronologique et ses liens.
+// Pas de chapeau : la section « En une phrase » de la fiche le remplace (la phrase-clé du tableur reste dans la frise).
+import Base from "../../layouts/Base.astro";
+import EnteteFiche from "../../components/EnteteFiche.astro";
+import Lecture from "../../components/Lecture.astro";
+import Ligne from "../../components/Ligne.astro";
+import Carte from "../../components/Carte.astro";
+import { D, MOUV, ART, GRP, couleur } from "../../lib/donnees.js";
+import { aUnePage, adresse, textePage } from "../../lib/fiches.js";
+
+// Une page par artiste dont la fiche est rédigée (D13), à l’adresse /artistes/<id>/
+export function getStaticPaths() {
+  return D.artistes.filter((a) => aUnePage(a.id)).map((a) => ({ params: { id: a.id }, props: { a } }));
+}
+
+const { a } = Astro.props;
+const m = MOUV[a.mouvement];
+const c = couleur(a.mouvement);
+const dates = (x) => `${x.naissance ?? "?"}–${x.deces ?? "?"}`;
+
+// Ses œuvres, de la plus ancienne à la plus récente ; une œuvre sans année passe en fin de liste
+const oeuvres = D.oeuvres.filter((o) => o.artiste === a.id)
+  .sort((x, y) => (x.annee ?? Infinity) - (y.annee ?? Infinity));
+
+// Ses liens (D23) : avec un autre artiste, ou avec un mouvement qu’il a influencé
+function verbe(i) {
+  if (i.type === "influence") return i.de === a.id ? "A influencé" : "Influencé par";
+  return { collaboration: "Collaboration", rivalité: "Rivalité" }[i.type] ?? "Lien";
+}
+const liens = D.influences
+  .filter((i) => i.de === a.id || i.vers === a.id)
+  .map((i) => {
+    const id = i.de === a.id ? i.vers : i.de;
+    return { ...i, autre: ART[id] || MOUV[id] };
+  })
+  .filter((i) => i.autre);
+// Le détail d’un lien : le verbe, puis le mouvement de l’autre artiste (un mouvement n’en a pas)
+const detailLien = (i) => [verbe(i), ART[i.autre.id] ? MOUV[i.autre.mouvement]?.nom : ""].filter(Boolean).join(" · ");
+const couleurLien = (i) => (ART[i.autre.id] ? couleur(i.autre.mouvement) : i.autre.couleur);
+
+// Les rubriques « Aussi » et « Groupes » : un identifiant connu devient un lien, une valeur inconnue reste du texte
+const aussi = a.autres.map((x) => ({ href: MOUV[x] ? adresse(x) : null, texte: MOUV[x]?.nom ?? x }));
+const groupes = a.groupes.filter((g) => GRP[g]).map((g) => ({ href: adresse(g), texte: GRP[g].nom }));
+
+const sections = [
+  oeuvres.length && { id: "oeuvres", texte: "Œuvres" },
+  liens.length && { id: "liens", texte: "Liens" },
+].filter(Boolean);
+const texte = textePage(a.fiche, sections.map((s) => s.id));
+---
+<Base titre={a.nom} rubrique="artistes"
+  ariane={[{ texte: "Frise", href: "/" }, { texte: "Artistes", href: "/artistes/" }, { texte: a.nom }]}>
+  <EnteteFiche surtitre={`Artiste · ${dates(a)}`} titre={a.nom} c={c} frise={`/#${a.id}`} />
+
+  <dl class="meta">
+    {a.nationalite && <div><dt>Nationalité</dt><dd>{a.nationalite}</dd></div>}
+    {a.role && <div><dt>Disciplines</dt><dd>{a.role}</dd></div>}
+    {m && <div><dt>Mouvement</dt><dd><a href={adresse(m.id)}>{m.nom}</a></dd></div>}
+    {[["Aussi", aussi], ["Groupes", groupes]].map(([titre, liste]) => liste.length > 0 && (
+      <div><dt>{titre}</dt><dd>
+        {liste.map((x, i) => (
+          <Fragment>{i > 0 && ", "}{x.href ? <a href={x.href}>{x.texte}</a> : x.texte}</Fragment>
+        ))}
+      </dd></div>
+    ))}
+  </dl>
+
+  <Lecture titres={[...texte.titres, ...sections]} c={c}>
+    <Fragment set:html={texte.html} />
+
+    {oeuvres.length > 0 && (
+      <section>
+        <h2 id="oeuvres">Œuvres</h2>
+        <div class="grille-cartes">
+          {oeuvres.map((o) => (
+            <Carte id={o.id} nom={o.titre} surtitre={[o.dateAffichee || o.annee, o.type].filter(Boolean).join(" · ")}
+              majeure={o.majeure} c={c} />
+          ))}
+        </div>
+      </section>
+    )}
+
+    {liens.length > 0 && (
+      <section>
+        <h2 id="liens">Liens</h2>
+        <ul class="liste">
+          {liens.map((i) => (
+            <Ligne id={i.autre.id} nom={i.autre.nom} detail={detailLien(i)} extrait={i.explication} c={couleurLien(i)} />
+          ))}
+        </ul>
+      </section>
+    )}
+  </Lecture>
+</Base>
