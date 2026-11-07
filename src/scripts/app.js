@@ -243,11 +243,20 @@ function dessiner() {
   majDecennies();
 }
 
+// L’adresse suit la vue (D38) : « ?mouvement=<id> » en vue mouvement, rien dans les autres vues.
+// Le « #id » de la fiche ouverte est gardé. replaceState change l’adresse sans recharger la page
+// et sans ajouter d’étape à l’historique, comme pour les fiches.
+function majAdresseVue() {
+  const recherche = etat.vue === "mouvement" ? `?mouvement=${encodeURIComponent(etat.mouvement)}` : "";
+  try { history.replaceState(null, "", location.pathname + recherche + location.hash); } catch (err) { /* aperçu sans historique */ }
+}
+
 // Change de vue ; « annee » = année à placer au bord gauche ensuite
 function changerVue(vue, options = {}) {
   etat.vue = vue;
   if (options.mouvement) etat.mouvement = options.mouvement;
   dessiner();
+  majAdresseVue();
   defile.scrollTop = 0;
   if (vue === "detail") allerAnnee(options.annee ?? REGLAGES.depart, false);
   else defile.scrollLeft = 0;
@@ -732,9 +741,20 @@ boutonTheme.addEventListener("click", () => {
 majBoutonTheme();
 
 /* ---------- Démarrage ---------- */
-dessiner();
-allerAnnee(REGLAGES.depart, false);
+// « ?mouvement=<id> » ouvre la vue mouvement (D38) : c’est l’adresse que vise « Voir dans la frise » depuis une page mouvement.
+// URLSearchParams lit la partie « ?… » de l’adresse ; get() renvoie null si le paramètre est absent.
+// Object.hasOwn, et non MOUV[…] seul : MOUV["constructor"] existe sur tout objet JavaScript, et ouvrirait une vue vide.
+const mouvementDepart = new URLSearchParams(location.search).get("mouvement");
+if (mouvementDepart !== null && Object.hasOwn(MOUV, mouvementDepart)) {
+  changerVue("mouvement", { mouvement: mouvementDepart });
+} else {
+  dessiner();
+  allerAnnee(REGLAGES.depart, false);
+  // Un mouvement inconnu : on retire de l’adresse ce paramètre, qui ne mène à rien
+  if (mouvementDepart !== null) majAdresseVue();
+}
 let attente;
 window.addEventListener("resize", () => { clearTimeout(attente); attente = setTimeout(dessiner, 150); });
+// Le « #id » de l’adresse ouvre sa fiche, une fois la vue affichée : en vue mouvement, la fiche d’un mouvement n’a pas « Explorer… »
 const depart = decodeURIComponent(location.hash.slice(1));
 if (depart) ouvrir(depart, true);

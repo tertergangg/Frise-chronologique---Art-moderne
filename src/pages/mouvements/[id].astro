@@ -51,10 +51,9 @@ const periodeGroupe = (g) => (g.debut != null ? `${g.debut}–${g.fin ?? "?"}` :
 ---
 <Base titre={m.nom} rubrique="mouvements"
   ariane={[{ texte: "Frise", href: "/" }, { texte: "Mouvements", href: "/mouvements/" }, { texte: m.nom }]}>
-  <!-- « Voir dans la frise » ouvre pour l’instant la fiche du mouvement dans la frise ;
-       à la sous-étape 4, il ouvrira la vue mouvement (D27) -->
+  <!-- « Voir dans la frise » ouvre la vue mouvement de la frise (D27, D38) -->
   <EnteteFiche surtitre={surtitre} titre={m.nom} chapeau={m.resume} c={m.couleur}
-    frise={`/#${m.id}`} periode={{ debut: m.debut, fin: m.fin }} />
+    frise={`/?mouvement=${m.id}`} periode={{ debut: m.debut, fin: m.fin }} />
 
   <Lecture titres={[...texte.titres, ...sections]} c={m.couleur}>
     <Fragment set:html={texte.html} />
