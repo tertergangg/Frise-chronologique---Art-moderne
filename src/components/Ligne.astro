@@ -1,0 +1,22 @@
+---
+// Une ligne de liste : le nom d’un élément, un détail, un extrait facultatif, et une flèche qui dit où mène le lien.
+// L’adresse et le texte de la flèche se déduisent de l’identifiant : la ligne mène à la page de l’élément s’il en a une,
+// sinon à la frise (D13).
+//   id       l’identifiant de l’élément
+//   nom      le texte principal de la ligne
+//   detail   une ligne de détail (dates, lieu…), facultative
+//   extrait  une phrase sous le détail (un résumé), facultative
+//   c        la couleur du liseré, celle du mouvement ; sans elle, pas de liseré
+import { aUnePage, adresse } from "../lib/fiches.js";
+
+const { id, nom, detail = "", extrait = "", c } = Astro.props;
+const fleche = aUnePage(id) ? "Lire la page" : "Voir dans la frise";
+---
+<li>
+  <a href={adresse(id)} style={c ? `--c:${c}` : undefined}>
+    <span class="nom">{nom}</span>
+    {detail && <span class="detail">{detail}</span>}
+    {extrait && <span class="extrait">{extrait}</span>}
+    <span class="fleche">{fleche} <span aria-hidden="true">↗</span></span>
+  </a>
+</li>

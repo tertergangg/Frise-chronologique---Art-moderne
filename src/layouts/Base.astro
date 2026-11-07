@@ -1,0 +1,68 @@
+---
+// Gabarit commun des pages du site : <head>, en-tête avec le menu, fil d’Ariane, puis le contenu de la page (<slot />).
+// La frise (index.astro) ne l’utilise pas encore : elle recevra le menu au lot 4.
+// D’ici là, le <head> est écrit aux deux endroits : un changement des polices ou du script du thème se fait dans les deux.
+//
+// Ce que la page lui passe :
+//   titre     le titre de la page, affiché dans l’onglet du navigateur
+//   rubrique  l’entrée du menu à mettre en noir ("mouvements", "artistes"…)
+//   ariane    le fil d’Ariane : une liste de { texte, href } ; le dernier, sans href, est la page affichée
+const { titre, rubrique, ariane = [] } = Astro.props;
+
+// Le menu du site (D18). Œuvres arrive à l’étape 2f et Comprendre en phase 4 :
+// une rubrique n’entre dans le menu qu’avec son contenu.
+const MENU = [
+  { rubrique: "frise", texte: "Frise", href: "/" },
+  { rubrique: "mouvements", texte: "Mouvements", href: "/mouvements/" },
+  { rubrique: "artistes", texte: "Artistes", href: "/artistes/" },
+];
+---
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{titre} · L’art moderne</title>
+  <!-- Thème clair ou sombre, posé avant l’affichage pour éviter un flash du mauvais thème (copie du script de index.astro).
+       Les pages n’ont pas encore de bouton de thème : elles suivent le choix fait sur la frise, ou le réglage de l’appareil. -->
+  <script is:inline>
+    (() => {
+      let theme = null;
+      try { theme = localStorage.getItem("theme"); } catch (err) { /* stockage indisponible */ }
+      if (theme !== "light" && theme !== "dark") {
+        theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
+  <!-- style.css apporte les variables (couleurs, polices, mode sombre) ; pages.css, l’apparence des pages -->
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/pages.css">
+</head>
+<body class="page">
+  <header class="entete-site">
+    <a class="marque" href="/"><strong>L’art moderne</strong><span>1874–1960 · Une histoire en mouvements</span></a>
+    <nav class="menu" aria-label="Rubriques du site">
+      {MENU.map((r) => (
+        <a href={r.href} aria-current={r.rubrique === rubrique ? "page" : undefined}>{r.texte}</a>
+      ))}
+    </nav>
+  </header>
+
+  <main class="contenu">
+    {ariane.length > 0 && (
+      <nav class="ariane" aria-label="Fil d’Ariane">
+        <ol>
+          {ariane.map((x) => (
+            <li>{x.href ? <a href={x.href}>{x.texte}</a> : <span aria-current="page">{x.texte}</span>}</li>
+          ))}
+        </ol>
+      </nav>
+    )}
+    <slot />
+  </main>
+</body>
+</html>

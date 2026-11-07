@@ -1,0 +1,31 @@
+---
+// Répertoire des mouvements : tous les mouvements, dans l’ordre chronologique de leur début, en cartes (D25).
+import Base from "../../layouts/Base.astro";
+import Carte from "../../components/Carte.astro";
+import { D, mouvementsTries } from "../../lib/donnees.js";
+import { compter } from "../../lib/outils.js";
+
+// Les bornes de la période, calculées depuis le tableur : elles suivent d’elles-mêmes l’ajout d’un mouvement
+const debut = mouvementsTries[0].debut;
+const fin = Math.max(...mouvementsTries.map((m) => m.fin));
+
+// Nombre d’artistes et d’œuvres d’un mouvement
+function effectifs(m) {
+  const artistes = D.artistes.filter((a) => a.mouvement === m.id).length;
+  const oeuvres = D.oeuvres.filter((o) => o.mouvement === m.id).length;
+  return `${compter(artistes, "artistes")} · ${compter(oeuvres, "oeuvres")}`;
+}
+---
+<Base titre="Mouvements" rubrique="mouvements" ariane={[{ texte: "Frise", href: "/" }, { texte: "Mouvements" }]}>
+  <header class="entete-page">
+    <p class="surtitre">{compter(mouvementsTries.length, "mouvements")}, de {debut} à {fin}</p>
+    <h1 class="titre-page">Mouvements</h1>
+    <p class="chapeau">Du premier Salon impressionniste à l’expressionnisme abstrait, dans l’ordre où ils sont nés.</p>
+  </header>
+  <div class="grille-cartes grande">
+    {mouvementsTries.map((m) => (
+      <Carte id={m.id} nom={m.nom} surtitre={[`${m.debut}–${m.fin}`, m.lieu].filter(Boolean).join(" · ")}
+        extrait={m.resume} pied={effectifs(m)} c={m.couleur} />
+    ))}
+  </div>
+</Base>

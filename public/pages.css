@@ -1,0 +1,175 @@
+/* =====================================================================
+   Apparence des pages (mouvements, artistes)
+
+   Chargé après style.css, dont il reprend les variables : couleurs, polices et mode sombre.
+   La frise est l’affiche, les pages sont le livre (D25) : l’en-tête garde le style de la frise ;
+   le contenu utilise des filets, et la typographie porte la hiérarchie.
+   Les classes de style.css servent à la frise (.carte, .entete, .bande…) : les pages utilisent d’autres noms.
+   Rangé comme style.css : un bloc par élément, dans l’ordre de la page, chacun avec sa version téléphone.
+   Le bloc « Mouvement réduit » est en toute fin.
+   ===================================================================== */
+
+
+/* =====================================================================
+   Base
+   ===================================================================== */
+/* style.css fige la page de la frise à la hauteur de l’écran, avec une seule zone qui défile : ici, la page défile normalement */
+body.page { height: auto; display: block; overflow: visible; font-size: 16px; line-height: 1.55; }
+/* :where() ne compte pas dans la priorité des règles : les règles plus précises, plus bas, l’emportent */
+:where(body.page) a { color: inherit; text-underline-offset: 3px; }
+
+
+/* =====================================================================
+   En-tête du site
+   ===================================================================== */
+.entete-site { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem 2rem;
+  padding: 0.9rem clamp(1rem, 3vw, 2.25rem); border-bottom: 3px solid var(--encre); }
+.marque { display: flex; flex-direction: column; text-decoration: none; }
+.marque strong { font: 900 2.1rem/0.92 var(--police-titre); font-variation-settings: "wdth" 66; letter-spacing: -0.01em; }
+.marque span { margin-top: 0.2rem; font-weight: 700; font-size: 0.8rem; font-variation-settings: "wdth" 85; }
+/* Menu : la rubrique en cours est en noir, comme un bouton enfoncé de la frise */
+.menu { display: flex; gap: 0.15rem; }
+.menu a { padding: 0.45rem 0.7rem; border: 2px solid transparent; text-decoration: none; white-space: nowrap;
+  font-weight: 700; font-size: 0.96rem; font-variation-settings: "wdth" 85; }
+.menu a:hover { border-color: var(--encre); }
+.menu a[aria-current] { background: var(--encre); color: var(--fond); }
+
+@media (max-width: 720px) {
+  .entete-site { gap: 0.6rem 1rem; padding-top: 0.75rem; padding-bottom: 0.6rem; }
+  .marque strong { font-size: 1.65rem; }
+  .menu { width: 100%; overflow-x: auto; scrollbar-width: none; }
+}
+
+
+/* =====================================================================
+   Contenu et fil d’Ariane
+   ===================================================================== */
+.contenu { max-width: 1200px; margin: 0 auto; padding: 1.8rem clamp(1rem, 3vw, 2.25rem) 4rem; }
+.ariane ol { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0 0 1.8rem; padding: 0; list-style: none;
+  font-size: 0.84rem; color: var(--doux); }
+/* La barre entre deux étapes est dessinée en CSS : un lecteur d’écran ne la lit pas */
+.ariane li + li::before { content: "/"; margin-right: 0.45rem; }
+.ariane a { color: var(--encre); }
+
+
+/* =====================================================================
+   En-têtes : d’un répertoire, d’une fiche
+   ===================================================================== */
+.surtitre { margin: 0; font-weight: 700; font-size: 0.86rem; font-variation-settings: "wdth" 85; color: var(--doux); }
+.titre-page { margin: 0.25rem 0 0.6rem; font: 900 clamp(2.5rem, 6vw, 4rem)/0.98 var(--police-titre);
+  font-variation-settings: "wdth" 66; letter-spacing: -0.01em; }
+.chapeau { margin: 0; max-width: 44rem; font-size: 1.18rem; font-weight: 500; line-height: 1.45; }
+.entete-page { margin-bottom: 2.2rem; padding-bottom: 1.6rem; border-bottom: 2px solid var(--encre); }
+/* En-tête d’une fiche : la bande de couleur de son mouvement à gauche ; la seconde colonne recevra « Voir dans la frise » */
+.entete-fiche { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem 2rem; align-items: end;
+  margin-bottom: 1.6rem; padding: 0.3rem 0 1.6rem 1.5rem; border-left: 8px solid var(--c); border-bottom: 2px solid var(--encre); }
+
+@media (max-width: 720px) {
+  .entete-fiche { grid-template-columns: 1fr; padding-left: 1rem; }
+}
+
+
+/* =====================================================================
+   Rubriques d’une fiche (Période, Lieu, Nationalité…)
+   ===================================================================== */
+.meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1rem 2rem; margin: 0 0 1.6rem;
+  padding: 1rem 0; border-bottom: 2px solid var(--encre); }
+.meta dt { font-size: 0.8rem; color: var(--doux); font-weight: 600; }
+.meta dd { margin: 0.1rem 0 0; font-weight: 700; }
+
+
+/* =====================================================================
+   Repère chronologique : la période de tous les mouvements, et la place de celui-ci
+   ===================================================================== */
+/* Les valeurs calculées viennent de la page : --gauche, --largeur (en %) et --decennies (le nombre de décennies) */
+.repere { margin: 0 0 2.4rem; }
+.repere .barre { position: relative; height: 1rem; border: 2px solid var(--encre); background-color: var(--surface);
+  background-image: linear-gradient(to right, var(--grille) 1px, transparent 1px);
+  background-size: calc(100% / var(--decennies)) 100%; }
+.repere .segment { position: absolute; top: 0; bottom: 0; left: var(--gauche); width: var(--largeur); background: var(--c); }
+.repere .bornes { display: flex; justify-content: space-between; margin-top: 0.3rem;
+  font-size: 0.8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+
+/* =====================================================================
+   Lecture : le sommaire à gauche, le texte à droite
+   ===================================================================== */
+.lecture { display: grid; grid-template-columns: 12rem minmax(0, 44rem); gap: 3rem; }
+.sommaire-page { position: sticky; top: 1rem; align-self: start; font-size: 0.88rem; }
+.sommaire-page strong { display: block; margin-bottom: 0.5rem; font-weight: 800; }
+.sommaire-page ul { list-style: none; margin: 0; padding: 0; }
+.sommaire-page a { display: block; padding: 0.35rem 0; border-bottom: 1px solid var(--grille); color: var(--doux); text-decoration: none; }
+.sommaire-page a:hover { color: var(--encre); }
+
+@media (max-width: 720px) {
+  .lecture { grid-template-columns: 1fr; gap: 1.5rem; }
+  .sommaire-page { position: static; }
+  .sommaire-page ul { display: flex; flex-wrap: wrap; gap: 0 1rem; }
+}
+
+
+/* =====================================================================
+   Texte d’une fiche, puis les sections calculées (artistes, œuvres…)
+   ===================================================================== */
+/* --c, la couleur du mouvement, est posée sur .texte par la page */
+.texte { font-size: 1.06rem; line-height: 1.72; }
+.texte h2 { margin: 2.4rem 0 0.8rem; padding-top: 0.6rem; border-top: 2px solid var(--encre); scroll-margin-top: 1rem;
+  font: 900 1.75rem/1.1 var(--police-titre); font-variation-settings: "wdth" 70; }
+/* Le premier titre de la page colle au haut de la colonne, à la hauteur du sommaire */
+.texte > :first-child > h2:first-child { margin-top: 0; }
+.texte h3 { margin: 1.8rem 0 0.5rem; font: 800 1.25rem/1.2 var(--police-titre); font-variation-settings: "wdth" 75; }
+.texte p { margin: 0 0 1rem; }
+.texte .corps ul { padding-left: 1.2rem; }
+.texte .corps li { margin-bottom: 0.4rem; }
+.texte blockquote { margin: 0.4rem 0 1.2rem; padding: 0.2rem 0 0.2rem 1.1rem; border-left: 5px solid var(--c);
+  font-size: 1.2rem; font-weight: 600; }
+.texte blockquote p { margin: 0; }
+
+/* Un groupe (D22), section de la page de son mouvement, avec son ancre */
+.groupe { margin: 0 0 1.8rem; scroll-margin-top: 1rem; }
+.groupe h3 { margin: 0 0 0.2rem; }
+.groupe .detail-groupe { margin: 0 0 0.5rem; font-size: 0.88rem; font-weight: 600; color: var(--doux); }
+
+
+/* =====================================================================
+   Listes : une ligne par élément, avec le liseré de son mouvement
+   ===================================================================== */
+.liste { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--encre); }
+.liste li { border-bottom: 2px solid var(--encre); }
+.liste a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.1rem 1rem; align-items: center;
+  padding: 0.75rem 0.4rem 0.75rem 1rem; border-left: 6px solid var(--c, transparent); text-decoration: none; }
+.liste a:hover { background: var(--surface-2); }
+.liste .nom { font: 900 1.25rem/1.15 var(--police-titre); font-variation-settings: "wdth" 70; }
+.liste .detail { grid-column: 1; font-size: 0.84rem; color: var(--doux); }
+.liste .extrait { grid-column: 1; margin-top: 0.2rem; font-size: 0.95rem; line-height: 1.45; }
+/* La flèche occupe la seconde colonne, sur toute la hauteur de la ligne */
+.liste .fleche { grid-column: 2; grid-row: 1 / span 3; font-size: 0.85rem; font-weight: 800; white-space: nowrap; }
+
+@media (max-width: 720px) {
+  .liste a { grid-template-columns: 1fr; }
+  .liste .fleche { grid-column: 1; grid-row: auto; margin-top: 0.3rem; }
+}
+
+
+/* =====================================================================
+   Cartes : les œuvres, et les mouvements dans leur répertoire (D25)
+   ===================================================================== */
+.grille-cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1.4rem; align-items: stretch; }
+.carte-page { display: flex; flex-direction: column; gap: 0.3rem; padding: 0.95rem 1.1rem 1rem 1.2rem; text-decoration: none;
+  background: var(--surface); border: 2px solid var(--encre); border-left: 8px solid var(--c, var(--encre));
+  box-shadow: 4px 4px 0 var(--ombre); transition: transform 0.1s, box-shadow 0.1s; }
+.carte-page:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ombre); }
+.carte-page .meta-carte { font-size: 0.78rem; font-weight: 600; color: var(--doux); }
+.carte-page strong { font: 800 1.12rem/1.2 var(--police-titre); font-variation-settings: "wdth" 80; }
+.carte-page .extrait { font-size: 0.92rem; line-height: 1.45; }
+/* Le lien reste en bas de la carte, même quand les cartes d’une rangée n’ont pas la même hauteur de texte */
+.carte-page .lien-carte { margin-top: auto; padding-top: 0.5rem; font-size: 0.84rem; font-weight: 800; }
+/* Grandes cartes : le répertoire des mouvements */
+.grille-cartes.grande .carte-page strong { font-size: 1.6rem; font-variation-settings: "wdth" 70; }
+
+
+/* =====================================================================
+   Mouvement réduit
+   En toute fin de fichier : à poids égal, c’est la règle écrite en dernier qui gagne.
+   ===================================================================== */
+@media (prefers-reduced-motion: reduce) { .carte-page { transition: none; } }
