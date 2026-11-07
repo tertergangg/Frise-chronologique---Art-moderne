@@ -85,6 +85,13 @@ function textePage(md, pris = []) {
 
 const aVenir = (quoi) => `<p class="a-venir">La fiche ${quoi} est à venir.</p>`;
 
+// Lien « Lire la page » du panneau de la frise (D19), seulement si l’élément a sa page (D13).
+// C’est un vrai lien vers l’adresse de la page, et non un « #id » : le panneau le laisse donc passer sans l’intercepter.
+function lirePage(id) {
+  if (!aUnePage(id)) return "";
+  return `<a class="lire-page" href="${esc(adresse(id))}">Lire la page <span aria-hidden="true">↗</span></a>`;
+}
+
 // Liste d’œuvres triée par année ; avec « avecArtiste », le nom court de l’artiste s’affiche à droite de la ligne
 function listeOeuvres(liste, avecArtiste = false) {
   if (!liste.length) return "";
@@ -105,6 +112,7 @@ function ficheOeuvre(o) {
     ? `<button type="button" class="agrandir" data-agrandir aria-label="Agrandir l’image : ${esc(o.titre)}"><img class="image" src="${esc(o.image)}" alt="${esc(o.titre)}"></button>` : "";
   return `${image}<h2>${esc(o.titre)}</h2>
     <p class="sous-titre">${a ? lien(a.id, a.nom) + ", " : ""}${esc(o.dateAffichee || o.annee)}</p>
+        ${lirePage(o.id)}
     ${o.resume ? `<p class="resume">${esc(o.resume)}</p>` : ""}
     <dl>
       ${m ? `<dt>Mouvement</dt><dd>${lien(m.id, m.nom)}</dd>` : ""}
@@ -129,6 +137,7 @@ function ficheArtiste(a) {
   const aussi = a.autres.map((x) => (MOUV[x] ? lien(x, MOUV[x].nom) : esc(x))).join(", ");
   return `<h2>${esc(a.nom)}</h2>
     <p class="sous-titre">${a.naissance ?? "?"}–${a.deces ?? "?"}</p>
+        ${lirePage(a.id)}
     <dl>
       ${a.nationalite ? `<dt>Nationalité</dt><dd>${esc(a.nationalite)}</dd>` : ""}
       ${a.role ? `<dt>Disciplines</dt><dd>${esc(a.role)}</dd>` : ""}
@@ -149,9 +158,12 @@ function ficheMouvement(m, avecExplorer = false) {
   const majeures = oeuvres.filter((o) => o.majeure);
   const autresOeuvres = oeuvres.filter((o) => !o.majeure);
   const evts = D.evenements.filter((x) => x.mouvement === m.id);
+  // « Lire la page » et « Explorer… » côte à côte, dans un bloc qui aligne leurs cadres ; pas de bloc si aucun ne s’affiche
+  const boutons = lirePage(m.id)
+    + (avecExplorer ? `<button type="button" class="explorer" data-explorer="${esc(m.id)}">Explorer ce mouvement en grand</button>` : "");
   return `<h2>${esc(m.nom)}</h2>
     <p class="sous-titre">${m.debut}–${m.fin}${m.lieu ? ", " + esc(m.lieu) : ""}</p>
-    ${avecExplorer ? `<button type="button" class="explorer" data-explorer="${esc(m.id)}">Explorer ce mouvement en grand</button>` : ""}
+    ${boutons ? `<div class="actions-fiche">${boutons}</div>` : ""}
     ${m.ficheVide ? aVenir("de ce mouvement") : markdown(m.fiche)}
     ${artistes.length ? `<h3>Artistes majeurs</h3><ul class="liens-liste">${artistes.map((a) => `<li><span class="an">${a.naissance ?? ""}</span><span>${lien(a.id, a.nom)}</span></li>`).join("")}</ul>` : ""}
     ${evts.length ? `<h3>Moments clés</h3><ul class="liens-liste">${evts.map((x) => `<li><span class="an">${x.annee}</span><span>${lien(x.id, x.titre)}</span></li>`).join("")}</ul>` : ""}

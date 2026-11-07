@@ -401,6 +401,16 @@ body.redimension .panneau { transition: none; }
   box-shadow: 4px 4px 0 var(--c); }
 .explorer:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--c); }
 
+/* Lien « Lire la page » (D19) : bordé comme les boutons de l’en-tête, pour se distinguer du bouton noir « Explorer… ».
+   inline-flex centre son texte en hauteur, même quand le bloc .actions-fiche l’étire.
+   « .fiche » devant le nom l’emporte sur la règle « .fiche a » plus haut. */
+.fiche .lire-page { display: inline-flex; align-items: center; gap: 0.3rem; margin: 0 0 1.25rem; padding: calc(0.55rem - 2px) 0.9rem;
+  border: 2px solid var(--encre); background: var(--surface); color: var(--encre); text-decoration: none;
+  font: 800 0.9rem var(--police-titre); font-variation-settings: "wdth" 80; }
+.fiche .lire-page:hover { background: var(--encre); color: var(--fond); }
+.fiche .actions-fiche { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0.6rem; margin: 0 0 1.25rem; }
+.fiche .actions-fiche > * { margin: 0; }
+
 /* Listes d’œuvres, d’artistes, d’événements et de liens */
 .liens-liste { list-style: none; padding: 0; margin: 0; }
 .liens-liste li { padding: 0.3rem 0; display: flex; gap: 0.75rem; border-bottom: 1px solid var(--encre); font-size: 0.92rem; }
