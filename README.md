@@ -31,7 +31,7 @@ Cloudflare n’a pas Python : `src/data/frise.json` est donc enregistré dans Gi
 1. **Tableur** : modifie-le dans Excel, sans changer son nom ni son format .xlsx.
 2. **Fiches** : rédige-les dans VS Code. Pour lier une autre fiche : `[[derain]]`, ou `[[derain|Derain]]` pour choisir le texte du lien.
 3. **Vérifier** : `python construire.py`. Le script affiche le bilan du contenu, puis les points à vérifier. L’avertissement `Data Validation extension is not supported` est sans danger.
-4. **Voir le résultat** : `npm run dev`, puis ouvre l’adresse affichée. Recharge la page après chaque modification ; `Ctrl + C` arrête l’aperçu. Pour tester la version qui sera publiée : `npm run build`, puis `npm run preview`.
+4. **Voir le résultat** : `npm run dev`, puis ouvre l’adresse affichée : la frise est à `/`, les pages à `/mouvements/` et `/artistes/`. Recharge la page après chaque modification ; `Ctrl + C` arrête l’aperçu. Pour tester la version qui sera publiée : `npm run build`, puis `npm run preview`.
 
 Une fiche s’affiche dès qu’elle contient du vrai texte. Sinon, le site indique « fiche à venir ».
 
@@ -83,8 +83,14 @@ La branche `main` est le site en ligne. Le dépôt est public : le tableur et le
 | un modèle de fiche                                                    | `fiches/_gabarits/`                                                      |
 | les vérifications des données                                         | `construire.py`                                                          |
 | les couleurs et polices du site                                       | les variables `:root` de `public/style.css`, et `:root[data-theme="dark"]` pour le mode sombre |
-| le titre, le sous-titre, les boutons de l’en-tête                     | `src/pages/index.astro`                                                  |
+| le titre, le sous-titre, les boutons de l’en-tête de la frise         | `src/pages/index.astro`                                                  |
 | l’aide « Comment lire la frise », l’Index                             | `src/scripts/app.js`                                                     |
-| les rubriques des fiches                                              | `src/lib/fiches.js`                                                      |
+| les rubriques des fiches du panneau                                   | `src/lib/fiches.js`                                                      |
 | la période affichée, l’année de départ, les zooms, la taille des cartes | l’objet `REGLAGES`, en haut de `src/scripts/app.js`                    |
 | le nom court d’un artiste (« Van Gogh »)                              | `NOMS_COURTS`, dans `src/lib/outils.js`                                  |
+| l’apparence des pages                                                 | `public/pages.css`                                                       |
+| l’en-tête, le menu et le fil d’Ariane des pages                       | `src/layouts/Base.astro`                                                 |
+| la composition d’une page de mouvement ou d’artiste                   | `src/pages/mouvements/[id].astro`, `src/pages/artistes/[id].astro`       |
+| les répertoires                                                       | `src/pages/mouvements/index.astro`, `src/pages/artistes/index.astro`     |
+| une ligne de liste, une carte, l’en-tête d’une fiche, le sommaire     | `src/components/`                                                        |
+| quelles fiches ont une page, où mène un lien                          | `aUnePage()` et `adresse()`, dans `src/lib/fiches.js`                    |
