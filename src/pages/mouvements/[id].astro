@@ -49,7 +49,7 @@ const surtitre = ["Mouvement", `${m.debut}–${m.fin}`, m.lieu].filter(Boolean).
 const dates = (a) => `${a.naissance ?? "?"}–${a.deces ?? "?"}`;
 const periodeGroupe = (g) => (g.debut != null ? `${g.debut}–${g.fin ?? "?"}` : "");
 ---
-<Base titre={m.nom} rubrique="mouvements"
+<Base titre={m.nom} description={m.resume} rubrique="mouvements"
   ariane={[{ texte: "Frise", href: "/" }, { texte: "Mouvements", href: "/mouvements/" }, { texte: m.nom }]}>
   <!-- « Voir dans la frise » ouvre la vue mouvement de la frise (D27, D38) -->
   <EnteteFiche surtitre={surtitre} titre={m.nom} chapeau={m.resume} c={m.couleur}

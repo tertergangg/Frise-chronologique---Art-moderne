@@ -31,7 +31,7 @@ const image = imageVisible(o);
 const autres = D.oeuvres.filter((x) => x.artiste === o.artiste && x.id !== o.id)
   .sort((x, y) => (x.annee ?? Infinity) - (y.annee ?? Infinity));
 ---
-<Base titre={o.titre} rubrique="oeuvres"
+<Base titre={o.titre} description={o.resume} rubrique="oeuvres"
   ariane={[{ texte: "Frise", href: "/" }, { texte: "Œuvres", href: "/oeuvres/" }, { texte: o.titre }]}>
   <!-- Le résumé du tableur sert de chapeau ; « Voir dans la frise » ouvre la frise sur l’œuvre (D27) -->
   <EnteteFiche surtitre={surtitre} titre={o.titre} chapeau={o.resume} c={c} frise={`/#${o.id}`} />

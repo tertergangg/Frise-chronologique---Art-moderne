@@ -50,7 +50,7 @@ const sections = [
 ].filter(Boolean);
 const texte = textePage(a.fiche, sections.map((s) => s.id));
 ---
-<Base titre={a.nom} rubrique="artistes"
+<Base titre={a.nom} description={a.phrase} rubrique="artistes"
   ariane={[{ texte: "Frise", href: "/" }, { texte: "Artistes", href: "/artistes/" }, { texte: a.nom }]}>
   <EnteteFiche surtitre={`Artiste · ${dates(a)}`} titre={a.nom} c={c} frise={`/#${a.id}`} />
 

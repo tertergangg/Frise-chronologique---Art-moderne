@@ -4,10 +4,11 @@
 // D’ici là, le <head> est écrit aux deux endroits : un changement des polices ou du script du thème se fait dans les deux.
 //
 // Ce que la page lui passe :
-//   titre     le titre de la page, affiché dans l’onglet du navigateur
-//   rubrique  l’entrée du menu à mettre en noir ("mouvements", "artistes"…)
-//   ariane    le fil d’Ariane : une liste de { texte, href } ; le dernier, sans href, est la page affichée
-const { titre, rubrique, ariane = [] } = Astro.props;
+//   titre        le titre de la page, affiché dans l’onglet du navigateur
+//   description  une phrase qui résume la page, montrée par les moteurs de recherche sous le titre ; facultative
+//   rubrique     l’entrée du menu à mettre en noir ("mouvements", "artistes"…)
+//   ariane       le fil d’Ariane : une liste de { texte, href } ; le dernier, sans href, est la page affichée
+const { titre, description = "", rubrique, ariane = [] } = Astro.props;
 
 // Le menu du site (D18). Comprendre arrive en phase 4 : une rubrique n’entre dans le menu qu’avec son contenu.
 const MENU = [
@@ -23,6 +24,8 @@ const MENU = [
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>{titre} · L’art moderne</title>
+  <!-- Sans description, pas de balise : le moteur de recherche choisit alors lui-même un extrait de la page -->
+  {description && <meta name="description" content={description}>}
   <!-- Thème clair ou sombre, posé avant l’affichage pour éviter un flash du mauvais thème (copie du script de index.astro).
        Les pages n’ont pas encore de bouton de thème : elles suivent le choix fait sur la frise, ou le réglage de l’appareil. -->
   <script is:inline>
