@@ -1,0 +1,40 @@
+---
+// Page À propos : qui fait ce site, et pourquoi.
+// Le texte est écrit ici, dans le gabarit : c’est une page fixe, sans fiche ni ligne dans le tableur.
+import Base from "../layouts/Base.astro";
+
+// L’adresse de contact, écrite une seule fois. Provisoire : example.com est un domaine réservé aux exemples.
+const COURRIEL = "contact@example.com";
+
+// Description pour les moteurs de recherche
+const description = "Qui fait ce site et pourquoi : un passionné d’art moderne qui construit seul une frise et des pages pour comprendre les mouvements, les artistes et les œuvres.";
+---
+<Base titre="À propos" description={description} ariane={[{ texte: "Frise", href: "/" }, { texte: "À propos" }]}>
+  <header class="entete-page">
+    <h1 class="titre-page">À propos</h1>
+    <p class="chapeau">Qui fait ce site, et pourquoi.</p>
+  </header>
+
+  <article class="texte page-simple">
+    <p>Je m’appelle Térence, j’ai 23 ans, et je suis étudiant. Je ne suis ni historien de l’art ni conservateur de musée : je suis un passionné.</p>
+
+    <h2>D’où vient ce site</h2>
+    <p>Au début, je n’y comprenais rien. Devant un tableau, je ne savais pas quoi regarder, et les noms des mouvements se mélangeaient dans ma tête. Puis, peu à peu, je me suis passionné pour la peinture, et surtout pour l’art moderne.</p>
+    <p>Alors j’ai cherché à comprendre. J’ai lu des livres, parcouru des dizaines de sites, et j’ai appris, petit à petit, à regarder et à apprécier la peinture.</p>
+    <p>Un jour, j’ai eu l’idée de créer mon propre site : un site gratuit, accessible à tous et interactif, qui rassemble simplement les grands mouvements, les grands artistes et les grandes œuvres de l’art moderne, et qui montre comment ils s’articulent. C’est le site que j’aurais aimé trouver quand j’ai commencé.</p>
+
+    <h2>Ce que vous trouverez ici</h2>
+    <p>Au cœur du site, une <a href="/">frise chronologique</a>, de 1874 à 1960, pour voir ce qui se passe en même temps. Autour d’elle, une page par <a href="/mouvements/">mouvement</a>, par <a href="/artistes/">artiste</a> et par <a href="/oeuvres/">œuvre</a>, pour savoir quoi regarder, et pourquoi.</p>
+
+    <h2>Un site fait par un passionné</h2>
+    <p>Je n’ai pas la prétention d’être un expert en histoire de l’art. Toutes les informations présentées ici sont tirées de sources que je cite sur le site.</p>
+    <p>Je travaille entièrement seul sur ce projet : les textes, les données et le site lui-même. J’ai donc dû faire des choix. Les listes de mouvements, d’artistes et d’œuvres ne sont pas exhaustives : certains noms manquent encore, et de nombreuses fiches sont à venir. Le site s’enrichit au fil du temps.</p>
+
+    <h2>Pourquoi certaines œuvres n’ont pas d’image</h2>
+    <p>Une grande partie de l’art moderne est encore protégée par le droit d’auteur : en France, une œuvre n’entre dans le domaine public que soixante-dix ans après la mort de l’artiste. Ce site n’affiche donc que les images des œuvres libres de droits. Pour les autres, il indique, quand c’est possible, où les voir en ligne, sur le site du musée qui les conserve.</p>
+
+    <h2>Me contacter</h2>
+    <p>Une erreur, une question, un artiste ou une œuvre que vous aimeriez voir ici ? Je suis toujours heureux d’échanger, et chaque suggestion m’aide à améliorer le site.</p>
+    <p>Écrivez-moi à <a href={`mailto:${COURRIEL}`}>{COURRIEL}</a>.</p>
+  </article>
+</Base>

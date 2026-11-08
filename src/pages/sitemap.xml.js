@@ -6,9 +6,9 @@ import { D } from "../lib/donnees.js";
 import { aUnePage, adresse } from "../lib/fiches.js";
 import { esc } from "../lib/outils.js";
 
-// Les pages qui existent quel que soit le contenu : la frise, les trois répertoires et le plan du site.
-// À compléter quand une page fixe s’ajoute (À propos, étape 2h) : npm run verifier signale une page absente du sitemap.
-const PAGES_FIXES = ["/", "/mouvements/", "/artistes/", "/oeuvres/", "/plan-du-site/"];
+// Les pages qui existent quel que soit le contenu : la frise, les trois répertoires, À propos et le plan du site.
+// À compléter quand une page fixe s’ajoute : npm run verifier signale une page absente du sitemap.
+const PAGES_FIXES = ["/", "/mouvements/", "/artistes/", "/oeuvres/", "/a-propos/", "/plan-du-site/"];
 
 // « site » vient du champ site d’astro.config.mjs : les adresses du sitemap doivent être complètes
 export function GET({ site }) {

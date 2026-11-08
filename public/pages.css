@@ -179,6 +179,11 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
 .texte blockquote { margin: 0.4rem 0 1.2rem; padding: 0.2rem 0 0.2rem 1.1rem; border-left: 5px solid var(--c);
   font-size: 1.2rem; font-weight: 600; }
 .texte blockquote p { margin: 0; }
+/* Page simple (À propos) : le fil d’Ariane, l’en-tête et le texte dans une seule colonne de lecture, centrée.
+   :has() repère la zone de contenu qui contient une page simple : Base.astro n’a pas besoin de le savoir.
+   La première règle garde au moins la largeur du texte dans un navigateur qui ne connaîtrait pas :has(). */
+.page-simple { max-width: 44rem; }
+.contenu:has(> .page-simple) > * { max-width: 44rem; margin-inline: auto; }
 
 /* Un groupe (D22), section de la page de son mouvement, avec son ancre */
 .groupe { margin: 0 0 1.8rem; scroll-margin-top: 1rem; }
