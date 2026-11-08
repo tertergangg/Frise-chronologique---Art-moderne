@@ -2,6 +2,10 @@
 // Page de la frise.
 // style.css et le dossier images se trouvent dans le dossier public : Astro les publie tels quels.
 // Le script de la frise, src/scripts/app.js, est traité par Astro : il importe les données de src/data/frise.json et la librairie marked.
+
+// Adresse canonique de la frise : toujours « / » sur le site de production, même en vue mouvement (/?mouvement=…),
+// qui est la même page avec un autre affichage
+const canonique = new URL("/", Astro.site);
 ---
 <!DOCTYPE html>
 <html lang="fr">
@@ -9,6 +13,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>L’art moderne, 1874–1960</title>
+  <!-- Phrase montrée par les moteurs de recherche sous le titre (aussi écrite dans Base.astro pour les pages, jusqu’au lot 4) -->
+  <meta name="description" content="Une frise chronologique interactive de l’art moderne (1874–1960) : mouvements, artistes et œuvres, pour voir ce qui se passe en même temps.">
+    <link rel="canonical" href={canonique}>
   <!-- Thème clair ou sombre, posé avant l’affichage pour éviter un flash du mauvais thème.
        Sans choix mémorisé, on suit le réglage de l’appareil. Le bouton est géré dans app.js (section « Thème »). -->
   <script is:inline>

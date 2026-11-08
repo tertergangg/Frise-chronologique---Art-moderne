@@ -20,6 +20,9 @@ const total = blocs.reduce((n, b) => n + b.oeuvres.length, 0);
 const debut = mouvementsTries[0].debut;
 const fin = Math.max(...mouvementsTries.map((m) => m.fin));
 
+// Description pour les moteurs de recherche ; le nombre et les dates suivent le tableur
+const description = `Catalogue de ${compter(total, "oeuvres")} de l’art moderne (${debut}–${fin}), rangées par mouvement, avec une recherche par titre ou par artiste.`;
+
 // L’image n’est montrée que pour une œuvre du domaine public ; construire.py a déjà retiré les autres (D10).
 // La même règle que sur la page œuvre ; sans image, la carte affiche un aplat « Œuvre protégée » ou « Image à venir ».
 const imageVisible = (o) => (o.domainePublic && estImage(o.image) ? o.image : null);
@@ -27,7 +30,7 @@ const imageVisible = (o) => (o.domainePublic && estImage(o.image) ? o.image : nu
 // Le texte où cherche le champ : le titre et l’artiste, déjà sans accents, comme le texte tapé
 const texteRecherche = (o) => sansAccent([o.titre, ART[o.artiste]?.nom].filter(Boolean).join(" "));
 ---
-<Base titre="Œuvres" rubrique="oeuvres" ariane={[{ texte: "Frise", href: "/" }, { texte: "Œuvres" }]}>
+<Base titre="Œuvres" description={description} rubrique="oeuvres" ariane={[{ texte: "Frise", href: "/" }, { texte: "Œuvres" }]}>
   <header class="entete-page">
     <p class="surtitre">Catalogue · {debut}–{fin}</p>
     <h1 class="titre-page">Œuvres</h1>

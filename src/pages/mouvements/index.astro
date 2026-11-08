@@ -9,6 +9,9 @@ import { compter } from "../../lib/outils.js";
 const debut = mouvementsTries[0].debut;
 const fin = Math.max(...mouvementsTries.map((m) => m.fin));
 
+// Description pour les moteurs de recherche ; le nombre et les dates suivent le tableur
+const description = `Les ${compter(mouvementsTries.length, "mouvements")} de l’art moderne (${debut}–${fin}), de l’impressionnisme à l’expressionnisme abstrait : dates, lieux, artistes et œuvres.`;
+
 // Nombre d’artistes et d’œuvres d’un mouvement
 function effectifs(m) {
   const artistes = D.artistes.filter((a) => a.mouvement === m.id).length;
@@ -16,7 +19,7 @@ function effectifs(m) {
   return `${compter(artistes, "artistes")} · ${compter(oeuvres, "oeuvres")}`;
 }
 ---
-<Base titre="Mouvements" rubrique="mouvements" ariane={[{ texte: "Frise", href: "/" }, { texte: "Mouvements" }]}>
+<Base titre="Mouvements" description={description} rubrique="mouvements" ariane={[{ texte: "Frise", href: "/" }, { texte: "Mouvements" }]}>
   <header class="entete-page">
     <p class="surtitre">{compter(mouvementsTries.length, "mouvements")}, de {debut} à {fin}</p>
     <h1 class="titre-page">Mouvements</h1>

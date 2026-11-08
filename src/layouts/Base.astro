@@ -10,6 +10,12 @@
 //   ariane       le fil d’Ariane : une liste de { texte, href } ; le dernier, sans href, est la page affichée
 const { titre, description = "", rubrique, ariane = [] } = Astro.props;
 
+// Adresse canonique : l’adresse officielle de la page, toujours sur le site de production (champ site d’astro.config.mjs)
+// et toujours avec la barre finale, comme les liens de adresse(). Une version de test, ou une adresse tapée sans barre
+// finale, renvoie ainsi Google vers la même page, au lieu de lui faire compter deux pages identiques.
+const chemin = Astro.url.pathname.endsWith("/") ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const canonique = new URL(chemin, Astro.site);
+
 // Le menu du site (D18). Comprendre arrive en phase 4 : une rubrique n’entre dans le menu qu’avec son contenu.
 const MENU = [
   { rubrique: "frise", texte: "Frise", href: "/" },
@@ -26,6 +32,7 @@ const MENU = [
   <title>{titre} · L’art moderne</title>
   <!-- Sans description, pas de balise : le moteur de recherche choisit alors lui-même un extrait de la page -->
   {description && <meta name="description" content={description}>}
+  <link rel="canonical" href={canonique}>
   <!-- Thème clair ou sombre, posé avant l’affichage pour éviter un flash du mauvais thème (copie du script de index.astro).
        Les pages n’ont pas encore de bouton de thème : elles suivent le choix fait sur la frise, ou le réglage de l’appareil. -->
   <script is:inline>

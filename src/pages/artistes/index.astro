@@ -11,8 +11,11 @@ const blocs = mouvementsTries
   .map((m) => ({ m, artistes: D.artistes.filter((a) => a.mouvement === m.id) }))
   .filter((b) => b.artistes.length);
 const dates = (a) => `${a.naissance ?? "?"}–${a.deces ?? "?"}`;
+
+// Description pour les moteurs de recherche ; le nombre suit le tableur
+const description = `${compter(D.artistes.length, "artistes")} de l’art moderne, rangés par mouvement, avec leurs dates et leurs disciplines.`;
 ---
-<Base titre="Artistes" rubrique="artistes" ariane={[{ texte: "Frise", href: "/" }, { texte: "Artistes" }]}>
+<Base titre="Artistes" description={description} rubrique="artistes" ariane={[{ texte: "Frise", href: "/" }, { texte: "Artistes" }]}>
   <header class="entete-page">
     <p class="surtitre">{compter(D.artistes.length, "artistes")}</p>
     <h1 class="titre-page">Artistes</h1>
