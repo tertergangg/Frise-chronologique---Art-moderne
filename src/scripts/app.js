@@ -630,13 +630,29 @@ function majListeIndex() {
   $("#liste-index").innerHTML = htmlListeIndex();
 }
 
+// Les pages du site, que la frise n’atteint pas encore autrement : elle recevra le menu du site au lot 4 (D18).
+// Ce sont de vrais liens : le clic du panneau n’intercepte que les liens « #id », ceux-ci mènent donc à la page.
+const PAGES_SITE = [
+  { texte: "Mouvements", href: "/mouvements/" },
+  { texte: "Artistes", href: "/artistes/" },
+  { texte: "Œuvres", href: "/oeuvres/" },
+  { texte: "À propos", href: "/a-propos/" },
+  { texte: "Plan du site", href: "/plan-du-site/" }
+];
+
 function afficherIndex() {
   etatIndex.actif = true;
   const onglets = Object.entries(ONGLETS_INDEX).map(([cle, o]) =>
     `<button type="button" class="onglet" data-onglet="${cle}" aria-pressed="${cle === etatIndex.onglet}">${o.titre}</button>`).join("");
+  // aria-labelledby : le lecteur d’écran annonce la navigation par son titre visible, sans le répéter
+  const lignePages = `<nav class="pages-site" aria-labelledby="titre-pages-site">
+      <p id="titre-pages-site">Pages du site</p>
+      <ul>${PAGES_SITE.map((p) => `<li><a href="${p.href}">${p.texte}</a></li>`).join("")}</ul>
+    </nav>`;
   contenu.innerHTML = `<section class="index" aria-label="Index">
     <h2>Index.</h2>
     <details class="comment-lire"><summary>Comment lire la frise</summary><p>${AIDE_FRISE}</p></details>
+    ${lignePages}
     <div class="onglets">${onglets}</div>
     <label for="champ-index" class="visuellement-cache">Rechercher dans l’index</label>
     <input id="champ-index" class="champ-index" type="search" placeholder="Rechercher…" autocomplete="off" value="${esc(etatIndex.recherche)}">
