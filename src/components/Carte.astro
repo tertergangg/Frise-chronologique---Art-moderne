@@ -7,20 +7,22 @@
 //   extrait   une ligne sous le titre (un résumé, le nom de l’artiste), facultative
 //   majeure   vrai pour une œuvre majeure : la carte affiche « ★ Œuvre majeure »
 //   pied      une ligne en bas de la carte (nombre d’artistes…), facultative
-//   c         la couleur de la bande de gauche, celle du mouvement
+//   c         la couleur du mouvement : la bande de gauche, ou le trait sous la vignette
 //   vignette  { image, protegee } : affiche une vignette en haut de la carte, facultative (D10).
-//             L’image si elle est donnée ; sinon un aplat « Œuvre protégée » ou « Image à venir ».
+//             L’image si elle est donnée ; sinon un aplat hachuré « Œuvre protégée » ou un aplat uni « Image à venir ».
+// Tout autre attribut (data-majeure…) est recopié sur le lien : le catalogue s’en sert pour ses filtres.
 import { aUnePage, adresse } from "../lib/fiches.js";
 
-const { id, nom, surtitre = "", extrait = "", majeure = false, pied = "", c, vignette } = Astro.props;
+const { id, nom, surtitre = "", extrait = "", majeure = false, pied = "", c, vignette, ...attributs } = Astro.props;
 const lien = aUnePage(id) ? "Lire la page" : "Voir dans la frise";
 ---
-<a class="carte-page" href={adresse(id)} style={c ? `--c:${c}` : undefined}>
+<a class:list={["carte-page", { "avec-vignette": Boolean(vignette) }]} href={adresse(id)}
+  style={c ? `--c:${c}` : undefined} {...attributs}>
   {vignette && (
     <span class="vignette-carte">
       {vignette.image
         ? <img src={vignette.image} alt="" loading="lazy" />
-        : <span class="sans-image">{vignette.protegee ? "Œuvre protégée" : "Image à venir"}</span>}
+        : <span class:list={["sans-image", { protegee: vignette.protegee }]}>{vignette.protegee ? "Œuvre protégée" : "Image à venir"}</span>}
     </span>
   )}
   {surtitre && <span class="meta-carte">{surtitre}</span>}

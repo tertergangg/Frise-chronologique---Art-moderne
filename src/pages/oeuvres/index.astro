@@ -1,0 +1,114 @@
+---
+// Catalogue des œuvres : rangées par mouvement, dans l’ordre chronologique des mouvements, en cartes (D25, D37),
+// avec une vignette sur chaque carte (D10), une recherche par titre ou par artiste et deux filtres (script en bas de page).
+import Base from "../../layouts/Base.astro";
+import Carte from "../../components/Carte.astro";
+import { D, ART, mouvementsTries } from "../../lib/donnees.js";
+import { compter, sansAccent, estImage } from "../../lib/outils.js";
+
+// Un bloc par mouvement qui a au moins une œuvre ; dans un bloc, les œuvres par année, une œuvre sans année en fin de liste.
+// Une œuvre au mouvement inconnu (signalée par construire.py) n’entre dans aucun bloc.
+const blocs = mouvementsTries
+  .map((m) => ({
+    m,
+    oeuvres: D.oeuvres.filter((o) => o.mouvement === m.id).sort((a, b) => (a.annee ?? Infinity) - (b.annee ?? Infinity)),
+  }))
+  .filter((b) => b.oeuvres.length);
+const total = blocs.reduce((n, b) => n + b.oeuvres.length, 0);
+
+// Les bornes de la période, calculées depuis le tableur
+const debut = mouvementsTries[0].debut;
+const fin = Math.max(...mouvementsTries.map((m) => m.fin));
+
+// L’image n’est montrée que pour une œuvre du domaine public ; construire.py a déjà retiré les autres (D10).
+// La même règle que sur la page œuvre ; sans image, la carte affiche un aplat « Œuvre protégée » ou « Image à venir ».
+const imageVisible = (o) => (o.domainePublic && estImage(o.image) ? o.image : null);
+
+// Le texte où cherche le champ : le titre et l’artiste, déjà sans accents, comme le texte tapé
+const texteRecherche = (o) => sansAccent([o.titre, ART[o.artiste]?.nom].filter(Boolean).join(" "));
+---
+<Base titre="Œuvres" rubrique="oeuvres" ariane={[{ texte: "Frise", href: "/" }, { texte: "Œuvres" }]}>
+  <header class="entete-page">
+    <p class="surtitre">Catalogue · {debut}–{fin}</p>
+    <h1 class="titre-page">Œuvres</h1>
+    <p class="chapeau chapeau-large">Les œuvres sont rangées par mouvement, de la plus ancienne à la plus récente. La liste n’est pas exhaustive bien sûr, mais elle réunit de grands chefs-d’œuvre de l’art moderne.</p>
+  </header>
+
+  <!-- Caché tant que le script ne l’a pas affiché : sans JavaScript, la page montre simplement toutes les œuvres -->
+  <div id="zone-filtres" class="filtres-catalogue" hidden>
+    <div class="recherche-catalogue">
+      <svg class="loupe" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>
+      <label for="recherche-oeuvres" class="visuellement-cache">Rechercher une œuvre ou un artiste</label>
+      <input id="recherche-oeuvres" class="champ" type="search" placeholder="Rechercher une œuvre ou un artiste…" autocomplete="off">
+    </div>
+    <label for="filtre-mouvement" class="visuellement-cache">Filtrer par mouvement</label>
+    <select id="filtre-mouvement" class="champ">
+      <option value="">Tous les mouvements</option>
+      {blocs.map(({ m }) => <option value={m.id}>{m.nom}</option>)}
+    </select>
+    <label class="case"><input type="checkbox" id="filtre-majeures"> Œuvres majeures seulement</label>
+  </div>
+
+  <p id="compteur-oeuvres" class="compteur-catalogue" aria-live="polite">{compter(total, "oeuvres")}</p>
+
+  {blocs.map(({ m, oeuvres }) => (
+    <section class="repertoire-mouvement" data-mouvement={m.id} style={`--c:${m.couleur}`}>
+      <h2 class="intertitre"><span class="pastille" aria-hidden="true"></span>{m.nom} <small>{m.debut}–{m.fin}</small></h2>
+      <div class="grille-cartes">
+        {oeuvres.map((o) => (
+          <Carte id={o.id} nom={o.titre} surtitre={[o.dateAffichee || o.annee, o.type].filter(Boolean).join(" · ")}
+            extrait={ART[o.artiste]?.nom} majeure={o.majeure} c={m.couleur}
+            vignette={{ image: imageVisible(o), protegee: !o.domainePublic }}
+            data-majeure={o.majeure ? "oui" : "non"} data-recherche={texteRecherche(o)} />
+        ))}
+      </div>
+    </section>
+  ))}
+  <p id="aucune-oeuvre" class="aucun-resultat" hidden>Aucune œuvre ne correspond.</p>
+</Base>
+
+<script>
+  // Recherche et filtres du catalogue, en amélioration progressive. Les critères s’additionnent :
+  // une carte reste visible si elle les remplit tous. Un mouvement sans carte visible disparaît avec son intertitre.
+  import { sansAccent, compter } from "../../lib/outils.js";
+
+  const champ = document.querySelector("#recherche-oeuvres");
+  const choixMouvement = document.querySelector("#filtre-mouvement");
+  const caseMajeures = document.querySelector("#filtre-majeures");
+  const compteur = document.querySelector("#compteur-oeuvres");
+  const aucune = document.querySelector("#aucune-oeuvre");
+  const blocs = [...document.querySelectorAll(".repertoire-mouvement")];
+
+  // Une carte remplit-elle les critères du champ et de la case ? « q » est le texte cherché, déjà sans accents
+  function garder(carte, q) {
+    return carte.dataset.recherche.includes(q) && (!caseMajeures.checked || carte.dataset.majeure === "oui");
+  }
+
+  function filtrer() {
+    const q = sansAccent(champ.value.trim());
+    let visibles = 0;
+    for (const bloc of blocs) {
+      let dansLeBloc = 0;
+      // Un autre mouvement que celui choisi : le bloc entier est caché, sans regarder ses cartes
+      if (!choixMouvement.value || bloc.dataset.mouvement === choixMouvement.value) {
+        for (const carte of bloc.querySelectorAll(".carte-page")) {
+          const garde = garder(carte, q);
+          carte.hidden = !garde;
+          if (garde) dansLeBloc += 1;
+        }
+      }
+      bloc.hidden = dansLeBloc === 0;
+      visibles += dansLeBloc;
+    }
+    compteur.textContent = compter(visibles, "oeuvres");
+    aucune.hidden = visibles > 0;
+  }
+
+  document.querySelector("#zone-filtres").hidden = false;
+  // « input » suit chaque lettre tapée ; « change » suit la liste et la case
+  champ.addEventListener("input", filtrer);
+  choixMouvement.addEventListener("change", filtrer);
+  caseMajeures.addEventListener("change", filtrer);
+  // Après un retour arrière, le navigateur peut avoir gardé le texte et les choix : la liste doit les suivre
+  filtrer();
+</script>

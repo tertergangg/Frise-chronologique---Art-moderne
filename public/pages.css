@@ -59,6 +59,7 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
 .titre-page { margin: 0.25rem 0 0.6rem; font: 900 clamp(2.5rem, 6vw, 4rem)/0.98 var(--police-titre);
   font-variation-settings: "wdth" 66; letter-spacing: -0.01em; }
 .chapeau { margin: 0; max-width: 44rem; font-size: 1.18rem; font-weight: 500; line-height: 1.45; }
+.chapeau-large { max-width: 62rem; }
 .entete-page { margin-bottom: 2.2rem; padding-bottom: 1.6rem; border-bottom: 2px solid var(--encre); }
 /* En-tête d’une fiche : la bande de couleur de son mouvement à gauche, le bouton « Voir dans la frise » à droite */
 .entete-fiche { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem 2rem; align-items: end;
@@ -206,18 +207,37 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
 }
 
 /* =====================================================================
-   Répertoire des artistes : le champ de filtre, puis un intertitre par mouvement
+   Répertoires (artistes, œuvres) : la recherche et les filtres, puis un intertitre par mouvement
    ===================================================================== */
 .filtre-repertoire { margin: 0 0 1.6rem; }
 /* Même apparence que les champs de la frise (recherche, Index) */
 .champ { display: block; width: 100%; padding: 0.55rem 0.75rem; border: 2px solid var(--encre); border-radius: 0;
   background: var(--surface); color: var(--encre); font: 500 1rem var(--police-texte); }
 .aucun-resultat { margin: 0; color: var(--doux); }
-.repertoire-mouvement + .repertoire-mouvement { margin-top: 2.2rem; }
+/* Seuls les blocs visibles s’écartent du précédent : quand un filtre cache le premier, le suivant remonte en haut */
+.repertoire-mouvement:not([hidden]) ~ .repertoire-mouvement:not([hidden]) { margin-top: 2.2rem; }
 .intertitre { display: flex; align-items: baseline; gap: 0.7rem; margin: 0 0 0.7rem;
   font: 900 1.5rem/1.1 var(--police-titre); font-variation-settings: "wdth" 70; }
 .intertitre .pastille { width: 0.9rem; height: 0.9rem; flex: none; background: var(--c); }
 .intertitre small { font: 600 0.85rem var(--police-texte); color: var(--doux); }
+
+/* Catalogue des œuvres : la recherche prend la place libre, la liste et les cases gardent leur taille.
+   display: flex l’emporterait sur l’attribut hidden : la règle [hidden] le rétablit. */
+.filtres-catalogue { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0.8rem 1.2rem; margin: 0 0 1rem; }
+.filtres-catalogue[hidden] { display: none; }
+.recherche-catalogue { position: relative; flex: 1 1 18rem; }
+.recherche-catalogue .champ { padding-left: 2.4rem; }
+.recherche-catalogue .loupe { position: absolute; left: 0.75rem; top: 50%; width: 1.1rem; height: 1.1rem; transform: translateY(-50%);
+  fill: none; stroke: currentColor; stroke-width: 2; pointer-events: none; }
+.filtres-catalogue select.champ { width: auto; cursor: pointer; }
+.case { display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer; white-space: nowrap; font-size: 0.95rem; font-weight: 600; }
+.case input { width: 1.1rem; height: 1.1rem; margin: 0; accent-color: var(--encre); }
+.compteur-catalogue { margin: 0 0 1.4rem; font-size: 0.86rem; font-weight: 600; color: var(--doux); }
+
+@media (max-width: 720px) {
+  .recherche-catalogue { flex-basis: 100%; }
+  .filtres-catalogue select.champ { width: 100%; }
+}
 
 /* =====================================================================
    Cartes : les œuvres, et les mouvements dans leur répertoire (D25)
@@ -227,6 +247,8 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
   background: var(--surface); border: 2px solid var(--encre); border-left: 8px solid var(--c, var(--encre));
   box-shadow: 4px 4px 0 var(--ombre); transition: transform 0.1s, box-shadow 0.1s; }
 .carte-page:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ombre); }
+/* display: flex l’emporterait sur l’attribut hidden, que posent les filtres du catalogue */
+.carte-page[hidden] { display: none; }
 .carte-page .meta-carte { font-size: 0.78rem; font-weight: 600; color: var(--doux); }
 .carte-page strong { font: 800 1.12rem/1.2 var(--police-titre); font-variation-settings: "wdth" 80; }
 .carte-page .extrait { font-size: 0.95rem; line-height: 1.4; }
@@ -235,13 +257,19 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
 .carte-page .lien-carte { margin-top: auto; padding-top: 0.4rem; font-size: 0.84rem; font-weight: 800; }
 /* Grandes cartes : le répertoire des mouvements */
 .grille-cartes.grande .carte-page strong { font-size: 1.6rem; font-variation-settings: "wdth" 70; }
-/* Vignette d’une œuvre, en haut de sa carte (page œuvre) : elle déborde sur la marge intérieure pour toucher les bords.
-   Sans image, un aplat qui garde la même hauteur, pour que les cartes d’une rangée restent alignées. */
-.carte-page .vignette-carte { display: block; margin: -0.8rem -1rem 0.5rem -1.1rem; aspect-ratio: 3 / 2; overflow: hidden;
-  background: var(--surface-2); border-bottom: 2px solid var(--encre); }
+/* Carte avec vignette (catalogue, « Du même artiste ») : un cadre égal sur les quatre côtés, l’image bord à bord en haut,
+   et la couleur du mouvement en trait sous l’image, plutôt qu’en bande à gauche qui bordait l’image d’un seul côté. */
+.carte-page.avec-vignette { border-left-width: 2px; padding-left: 1rem; }
+/* La vignette déborde sur la marge intérieure pour toucher le cadre. Sans image, un aplat de même hauteur,
+   pour que les cartes d’une rangée restent alignées. L’image est recadrée ; l’œuvre entière est sur sa page. */
+.carte-page .vignette-carte { display: block; margin: -0.8rem -1rem 0.6rem; aspect-ratio: 3 / 2; overflow: hidden;
+  background: var(--surface-2); border-bottom: 4px solid var(--c, var(--encre)); }
 .carte-page .vignette-carte img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .carte-page .sans-image { display: flex; align-items: center; justify-content: center; height: 100%;
   font-size: 0.78rem; font-weight: 700; color: var(--doux); }
+/* Œuvre protégée : de fines hachures, pour la distinguer d’un coup d’œil d’une image simplement à venir (D10) */
+.carte-page .sans-image.protegee {
+  background: repeating-linear-gradient(-45deg, transparent 0 9px, var(--grille) 9px 11px); }
 
 
 /* =====================================================================

@@ -9,12 +9,12 @@
 //   ariane    le fil d’Ariane : une liste de { texte, href } ; le dernier, sans href, est la page affichée
 const { titre, rubrique, ariane = [] } = Astro.props;
 
-// Le menu du site (D18). Œuvres arrive à l’étape 2f et Comprendre en phase 4 :
-// une rubrique n’entre dans le menu qu’avec son contenu.
+// Le menu du site (D18). Comprendre arrive en phase 4 : une rubrique n’entre dans le menu qu’avec son contenu.
 const MENU = [
   { rubrique: "frise", texte: "Frise", href: "/" },
   { rubrique: "mouvements", texte: "Mouvements", href: "/mouvements/" },
   { rubrique: "artistes", texte: "Artistes", href: "/artistes/" },
+  { rubrique: "oeuvres", texte: "Œuvres", href: "/oeuvres/" },
 ];
 ---
 <!DOCTYPE html>
