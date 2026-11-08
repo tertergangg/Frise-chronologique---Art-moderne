@@ -32,6 +32,7 @@ Cloudflare n’a pas Python : `src/data/frise.json` est donc enregistré dans Gi
 2. **Fiches** : rédige-les dans VS Code. Pour lier une autre fiche : `[[derain]]`, ou `[[derain|Derain]]` pour choisir le texte du lien.
 3. **Vérifier** : `python construire.py`. Le script affiche le bilan du contenu, puis les points à vérifier. L’avertissement `Data Validation extension is not supported` est sans danger.
 4. **Voir le résultat** : `npm run dev`, puis ouvre l’adresse affichée : la frise est à `/`, les pages à `/mouvements/` et `/artistes/`, et une œuvre documentée à `/oeuvres/<id>/`. Recharge la page après chaque modification ; `Ctrl + C` arrête l’aperçu. Pour tester la version qui sera publiée : `npm run build`, puis `npm run preview`.
+5. **Contrôler le site construit** : après `npm run build`, `npm run verifier` vérifie les liens, les ancres et le sitemap des pages de `dist/`. Il répond « Aucun lien cassé », ou donne la liste des problèmes.
 
 Une fiche s’affiche dès qu’elle contient du vrai texte. Sinon, le site indique « fiche à venir ».
 
@@ -63,7 +64,7 @@ git commit -m "Court résumé du changement"
 git push -u origin nom-de-la-tache
 ```
 
-Cloudflare publie alors une version de test de la branche, visible dans son tableau de bord. Si tout va bien :
+Cloudflare publie alors une version de test de la branche, visible dans son tableau de bord. Si tout va bien, et si `npm run build` puis `npm run verifier` ne signalent rien :
 
 ```
 git switch main
@@ -94,7 +95,11 @@ La branche `main` est le site en ligne. Le dépôt est public : le tableur et le
 | la composition d’une page de mouvement, d’artiste ou d’œuvre          | `src/pages/mouvements/[id].astro`, `src/pages/artistes/[id].astro`, `src/pages/oeuvres/[id].astro` |
 | la phrase de l’encart d’une œuvre protégée                            | `encartDroits()`, dans `src/lib/fiches.js`                               |
 | la durée de protection des œuvres (70 ans)                            | `DUREE_PROTECTION`, en haut de `construire.py`                           |
-| les répertoires                                                       | `src/pages/mouvements/index.astro`, `src/pages/artistes/index.astro`     |
+| les répertoires et le catalogue                                       | `src/pages/mouvements/index.astro`, `src/pages/artistes/index.astro`, `src/pages/oeuvres/index.astro` |
+| la description d’une page (moteurs de recherche)                      | le résumé court ou la phrase-clé du tableur ; pour la frise et les répertoires, leur fichier dans `src/pages/` |
+| l’adresse du site (canoniques, sitemap, robots.txt)                   | le champ `site` d’`astro.config.mjs`                                     |
+| les pages fixes du sitemap                                            | `PAGES_FIXES`, dans `src/pages/sitemap.xml.js`                           |
+| le contrôle des liens du site construit                               | `verifier_dist.mjs`                                                      |
 | une ligne de liste, une carte, l’en-tête d’une fiche, le sommaire     | `src/components/`                                                        |
 | quelles fiches ont une page, où mène un lien                          | `aUnePage()` et `adresse()`, dans `src/lib/fiches.js`                    |
 | la source d’une image, le lien vers le musée                          | les colonnes « Crédit image » et « Lien de l’œuvre » de l’onglet Œuvres |
