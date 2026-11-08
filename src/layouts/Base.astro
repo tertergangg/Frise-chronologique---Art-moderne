@@ -1,5 +1,5 @@
 ---
-// Gabarit commun des pages du site : <head>, en-tête avec le menu, fil d’Ariane, puis le contenu de la page (<slot />).
+// Gabarit commun des pages du site : <head>, en-tête avec le menu, fil d’Ariane, contenu de la page (<slot />), puis pied de page.
 // La frise (index.astro) ne l’utilise pas encore : elle recevra le menu au lot 4.
 // D’ici là, le <head> est écrit aux deux endroits : un changement des polices ou du script du thème se fait dans les deux.
 //
@@ -22,6 +22,12 @@ const MENU = [
   { rubrique: "mouvements", texte: "Mouvements", href: "/mouvements/" },
   { rubrique: "artistes", texte: "Artistes", href: "/artistes/" },
   { rubrique: "oeuvres", texte: "Œuvres", href: "/oeuvres/" },
+];
+
+// Le pied de page (D18) : les pages utiles à tout le site, qui ne sont pas des rubriques du menu
+const PIED = [
+  { texte: "À propos", href: "/a-propos/" },
+  { texte: "Plan du site", href: "/plan-du-site/" },
 ];
 ---
 <!DOCTYPE html>
@@ -74,5 +80,16 @@ const MENU = [
     )}
     <slot />
   </main>
+
+  <!-- Le lien de la page affichée est marqué aria-current : comparé à « chemin », qui a toujours sa barre finale -->
+  <footer class="pied-site">
+    <nav aria-label="Pied de page">
+      <ul>
+        {PIED.map((p) => (
+          <li><a href={p.href} aria-current={p.href === chemin ? "page" : undefined}>{p.texte}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </footer>
 </body>
 </html>

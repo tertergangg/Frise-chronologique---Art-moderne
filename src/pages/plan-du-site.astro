@@ -1,0 +1,66 @@
+---
+// Plan du site : toutes les pages, rangées par rubrique, en listes de liens.
+// Les listes sont calculées comme le sitemap, avec aUnePage() et adresse() (D40) :
+// une fiche qui gagne sa page y apparaît d’elle-même, et le plan ne peut pas contredire les liens du site.
+import Base from "../layouts/Base.astro";
+import { D, ART, mouvementsTries } from "../lib/donnees.js";
+import { aUnePage, adresse } from "../lib/fiches.js";
+import { compter, nomCourt } from "../lib/outils.js";
+
+// Les pages fixes, dans l’ordre du menu puis du pied de page
+const PAGES_FIXES = [
+  { texte: "Frise chronologique", href: "/" },
+  { texte: "Mouvements", href: "/mouvements/" },
+  { texte: "Artistes", href: "/artistes/" },
+  { texte: "Œuvres", href: "/oeuvres/" },
+  { texte: "À propos", href: "/a-propos/" },
+];
+
+const mouvements = mouvementsTries.filter((m) => aUnePage(m.id));
+// localeCompare trie à la française, comme l’Index de la frise : « Édouard » se range avec les E
+const artistes = D.artistes.filter((a) => aUnePage(a.id))
+  .sort((a, b) => nomCourt(a.nom).localeCompare(nomCourt(b.nom), "fr"));
+// Par année ; une œuvre sans année (Infinity) passe en fin de liste, comme sur les autres pages
+const oeuvres = D.oeuvres.filter((o) => aUnePage(o.id))
+  .sort((a, b) => (a.annee ?? Infinity) - (b.annee ?? Infinity));
+
+// Une rubrique : son titre, son compte (facultatif) et ses lignes { texte, detail, href }.
+// Une rubrique sans page (les œuvres, tant qu’aucune n’est documentée) n’est pas affichée.
+const rubriques = [
+  { titre: "Le site", lignes: PAGES_FIXES.map((p) => ({ texte: p.texte, detail: "", href: p.href })) },
+  {
+    titre: "Mouvements", compte: compter(mouvements.length, "mouvements"),
+    lignes: mouvements.map((m) => ({ texte: m.nom, detail: `${m.debut}–${m.fin}`, href: adresse(m.id) })),
+  },
+  {
+    titre: "Artistes", compte: compter(artistes.length, "artistes"),
+    lignes: artistes.map((a) => ({ texte: a.nom, detail: `${a.naissance ?? "?"}–${a.deces ?? "?"}`, href: adresse(a.id) })),
+  },
+  {
+    titre: "Œuvres", compte: compter(oeuvres.length, "oeuvres"),
+    lignes: oeuvres.map((o) => ({
+      texte: o.titre, detail: [o.annee, ART[o.artiste]?.nom].filter(Boolean).join(" · "), href: adresse(o.id),
+    })),
+  },
+].filter((r) => r.lignes.length > 0);
+
+// Description pour les moteurs de recherche
+const description = "Toutes les pages du site, rangées par rubrique : la frise, les répertoires, et les pages des mouvements, des artistes et des œuvres.";
+---
+<Base titre="Plan du site" description={description} ariane={[{ texte: "Frise", href: "/" }, { texte: "Plan du site" }]}>
+  <header class="entete-page">
+    <h1 class="titre-page">Plan du site</h1>
+  </header>
+  <div class="plan-site">
+    {rubriques.map((r) => (
+      <section>
+        <h2 class="intertitre">{r.titre} {r.compte && <small>{r.compte}</small>}</h2>
+        <ul class="liste-plan">
+          {r.lignes.map((l) => (
+            <li><a href={l.href}>{l.texte}</a>{l.detail && <small>{l.detail}</small>}</li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</Base>
