@@ -85,13 +85,14 @@ La branche `main` est le site en ligne. Le dépôt est public : le tableur et le
 | un modèle de fiche                                                    | `fiches/_gabarits/`                                                      |
 | les vérifications des données                                         | `construire.py`                                                          |
 | les couleurs et polices du site                                       | les variables `:root` de `public/style.css`, et `:root[data-theme="dark"]` pour le mode sombre |
-| le titre, le sous-titre, les boutons de l’en-tête de la frise         | `src/pages/index.astro`                                                  |
+| l’en-tête du site (titre, menu, « Au hasard », Index, thème)          | `src/components/EnteteSite.astro` ; son apparence dans `public/style.css` |
+| la ligne des mouvements et l’étoile « Œuvres majeures » de la frise   | `src/pages/index.astro` ; les boutons des mouvements, `src/scripts/app.js` |
 | l’aide « Comment lire la frise », l’Index                             | `src/scripts/app.js`                                                     |
 | les rubriques des fiches du panneau                                   | `src/lib/fiches.js`                                                      |
 | la période affichée, l’année de départ, les zooms, la taille des cartes | l’objet `REGLAGES`, en haut de `src/scripts/app.js`                    |
 | le nom court d’un artiste (« Van Gogh »)                              | `NOMS_COURTS`, dans `src/lib/outils.js`                                  |
 | l’apparence des pages                                                 | `public/pages.css`                                                       |
-| l’en-tête, le menu, le fil d’Ariane et le pied de page des pages     | `src/layouts/Base.astro`                                                 |
+| le fil d’Ariane et le pied de page des pages                          | `src/layouts/Base.astro`                                                 |
 | la composition d’une page de mouvement, d’artiste ou d’œuvre          | `src/pages/mouvements/[id].astro`, `src/pages/artistes/[id].astro`, `src/pages/oeuvres/[id].astro` |
 | la phrase de l’encart d’une œuvre protégée                            | `encartDroits()`, dans `src/lib/fiches.js`                               |
 | la durée de protection des œuvres (70 ans)                            | `DUREE_PROTECTION`, en haut de `construire.py`                           |
@@ -99,7 +100,7 @@ La branche `main` est le site en ligne. Le dépôt est public : le tableur et le
 | la description d’une page (moteurs de recherche)                      | le résumé court ou la phrase-clé du tableur ; pour la frise, les répertoires et les pages fixes, leur fichier dans `src/pages/` |
 | l’adresse du site (canoniques, sitemap, robots.txt)                   | le champ `site` d’`astro.config.mjs`                                     |
 | le texte de la page À propos, l’adresse de contact                    | `src/pages/a-propos.astro` (l’adresse : constante `COURRIEL`)            |
-| ajouter une page fixe                                                 | son fichier dans `src/pages/`, puis `PAGES_FIXES` dans `src/pages/sitemap.xml.js` et dans `src/pages/plan-du-site.astro` ; `PIED` dans `Base.astro` ou `PAGES_SITE` dans `src/scripts/app.js` pour y mener |
+| ajouter une page fixe                                                 | son fichier dans `src/pages/`, puis une ligne dans `PAGES_FIXES` (`src/lib/site.js`), d’où le menu, le pied de page, le bas de l’Index, le plan du site et le sitemap la tirent |
 | le contrôle des liens du site construit                               | `verifier_dist.mjs`                                                      |
 | une ligne de liste, une carte, l’en-tête d’une fiche, le sommaire     | `src/components/`                                                        |
 | quelles fiches ont une page, où mène un lien                          | `aUnePage()` et `adresse()`, dans `src/lib/fiches.js`                    |
