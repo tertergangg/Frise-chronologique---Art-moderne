@@ -22,8 +22,8 @@ const REGLAGES = {
   depart: 1870,          // année affichée à gauche au chargement
   pxParAn: 66,           // largeur d’une année en vue détaillée, en pixels
   largeurCarte: 196,     // largeur d’une carte d’œuvre, en pixels
-  pxParAnMoyen: 28,      // largeur d’une année au zoom « Moyen », en pixels
-  largeurCarteMoyenne: 140, // largeur d’une carte au zoom « Moyen », en pixels
+  pxParAnMoyen: 28,      // largeur d’une année au zoom « Intermédiaire », en pixels
+  largeurCarteMoyenne: 140, // largeur d’une carte au zoom « Intermédiaire », en pixels
   hauteurLigne: 48,      // hauteur d’une ligne de cartes dans un couloir
   largeurEtiquettes: 220, // largeur de la colonne des noms à gauche
   margeAvant: 10,        // vue mouvement : on montre aussi les œuvres jusqu’à 10 ans avant le début (les œuvres fondatrices)
@@ -36,9 +36,9 @@ const petitEcran = () => window.matchMedia("(max-width: 720px)").matches;
 const reduireMouvement = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const douceur = () => (reduireMouvement() ? "auto" : "smooth");
 
-// « moyen » : la vue détail au zoom « Moyen » (barre du bas). Il est gardé quand on passe dans une autre vue,
-// pour retrouver le même zoom en revenant à la frise.
-const etat = { vue: "detail", mouvement: null, majeures: true, moyen: false };
+// « moyen » : la vue détail au zoom « Intermédiaire » (barre du bas). C’est le zoom d’ouverture de la frise.
+// Il est gardé quand on passe dans une autre vue, pour retrouver le même zoom en revenant à la frise.
+const etat = { vue: "detail", mouvement: null, majeures: true, moyen: true };
 const zoomMoyen = () => etat.vue === "detail" && etat.moyen;
 // Le niveau affiché, tel que le nomment les boutons de la barre du bas ("mouvement" n’a pas de bouton)
 const niveauAffiche = () => (etat.vue === "detail" ? (etat.moyen ? "moyen" : "detail") : etat.vue);
@@ -68,7 +68,7 @@ function fenetre() {
     const fin = Math.max(m.fin + 1, ...annees, debut + 9) + 1;
     return { debut, fin, lab, carte, ppa: Math.max(mobile ? 60 : 70, place / (fin - debut)) };
   }
-  // Vue détail, à l’un de ses deux niveaux de zoom : « Détail » ou « Moyen »
+  // Vue détail, à l’un de ses deux niveaux de zoom : « Détail » ou « Intermédiaire »
   const pxParAn = zoomMoyen() ? REGLAGES.pxParAnMoyen : REGLAGES.pxParAn;
   return { debut: REGLAGES.debut, fin: REGLAGES.fin, lab, carte, ppa: mobile ? pxParAn * 0.75 : pxParAn };
 }
@@ -116,7 +116,7 @@ function horsPeriode(o) {
   if (!m || o.annee == null) return "";
   return o.annee < m.debut ? "avant" : o.annee > m.fin ? "apres" : "";
 }
-// Au zoom « Moyen », la carte est plus étroite : le nom court de l’artiste suffit (l’aperçu au survol garde le nom complet)
+// Au zoom « Intermédiaire », la carte est plus étroite : le nom court de l’artiste suffit (l’aperçu au survol garde le nom complet)
 function artisteCarte(o) {
   const a = ART[o.artiste];
   if (!a) return "";
@@ -282,8 +282,8 @@ const anneeGauche = () => { const f = fenetre(); return f.debut + (defile.scroll
 const barre = $("#decennies");
 barre.innerHTML = `<div class="niveaux" role="group" aria-label="Niveau de zoom">
     <button type="button" class="niveau" data-niveau="ensemble" aria-pressed="false">Ensemble</button>
-    <button type="button" class="niveau" data-niveau="moyen" aria-pressed="false">Moyen</button>
-    <button type="button" class="niveau" data-niveau="detail" aria-pressed="true">Détail</button>
+    <button type="button" class="niveau" data-niveau="moyen" aria-pressed="true">Intermédiaire</button>
+    <button type="button" class="niveau" data-niveau="detail" aria-pressed="false">Détail</button>
   </div>
   <button type="button" class="fleche" data-pas="-1" aria-label="Reculer">‹</button>
   <div class="liste"></div>
@@ -344,7 +344,7 @@ function hautRepere(repere) {
   return c.offsetTop + repere.part * c.offsetHeight - hauteurAxe();
 }
 
-// Entre « Détail » et « Moyen », on garde sa place : la même année à gauche, le même couloir en haut.
+// Entre « Détail » et « Intermédiaire », on garde sa place : la même année à gauche, le même couloir en haut.
 // Les deux repères se lisent avant de redessiner, car ils dépendent de l’échelle actuelle.
 function changerZoom(moyen) {
   const annee = anneeGauche();
@@ -413,7 +413,7 @@ defile.addEventListener("keydown", (ev) => {
 
 /* ---------- Retour depuis la vue mouvement, et sommaire des mouvements ---------- */
 $("#bandeau").addEventListener("click", (ev) => {
-  // Comme les boutons Détail et Moyen : on retrouve la frise à l’année qui était au bord gauche
+  // Comme les boutons Détail et Intermédiaire : on retrouve la frise à l’année qui était au bord gauche
   if (ev.target.closest("[data-action='detail']")) changerVue("detail", { annee: anneeGauche() });
   const lire = ev.target.closest("[data-id]");
   if (lire) ouvrir(lire.dataset.id);
@@ -566,7 +566,12 @@ function ouvrir(id, centrer = false) {
   $("#interieur-panneau").scrollTop = 0;
   toile.querySelectorAll(".choisi").forEach((n) => n.classList.remove("choisi"));
   toile.querySelectorAll(`[data-id="${CSS.escape(id)}"]`).forEach((n) => n.classList.add("choisi"));
-  if (centrer && annee && etat.vue === "detail") allerAnnee(annee - 3, true, hautCentre(id));
+  // La carte arrive à la même distance du bord gauche à tous les zooms : celle de 3 ans au zoom « Détail ».
+  // Le décalage se compte en pixels, puis se convertit en années à l’échelle du zoom affiché (fenetre().ppa).
+  if (centrer && annee && etat.vue === "detail") {
+    const decalage = 3 * REGLAGES.pxParAn * (petitEcran() ? 0.75 : 1);
+    allerAnnee(annee - decalage / fenetre().ppa, true, hautCentre(id));
+  }
   try { history.replaceState(null, "", "#" + id); } catch (err) { /* aperçu sans historique */ }
 }
 function fermer() {

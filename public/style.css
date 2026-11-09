@@ -303,7 +303,7 @@ body[data-vue="ensemble"] .defile { cursor: default; }
 .decennies .fleche:first-of-type { border-left: none; border-right: 2px solid var(--encre); }
 .decennies .decennie.visible { background: var(--encre); color: var(--fond); }
 .decennies button:hover { background: var(--surface-2); color: var(--encre); }
-/* Niveaux de zoom : Ensemble, Moyen, Détail. Celui qui est affiché est en noir. */
+/* Niveaux de zoom : Ensemble, Intermédiaire, Détail. Celui qui est affiché est en noir. */
 .decennies .niveaux { flex: none; display: flex; border-right: 3px solid var(--encre); }
 .decennies .niveau { padding: 0.55rem 0.8rem; white-space: nowrap;
   font: 900 1rem var(--police-titre); font-variation-settings: "wdth" 72; }
