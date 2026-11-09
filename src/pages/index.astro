@@ -2,28 +2,18 @@
 // Page de la frise.
 // style.css et le dossier images se trouvent dans le dossier public : Astro les publie tels quels.
 // Le script de la frise, src/scripts/app.js, est traité par Astro : il importe les données de src/data/frise.json et la librairie marked.
-import ScriptTheme from "../components/ScriptTheme.astro";
+// Le contenu du <head> est commun avec les pages (TeteHtml.astro) ; la frise ne charge pas pages.css.
+import TeteHtml from "../components/TeteHtml.astro";
 import EnteteSite from "../components/EnteteSite.astro";
 
-// Adresse canonique de la frise : toujours « / » sur le site de production, même en vue mouvement (/?mouvement=…),
-// qui est la même page avec un autre affichage
-const canonique = new URL("/", Astro.site);
+// Phrase montrée par les moteurs de recherche sous le titre
+const DESCRIPTION = "Une frise chronologique interactive de l’art moderne (1874–1960) : mouvements, artistes et œuvres, pour voir ce qui se passe en même temps.";
 ---
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>L’art moderne, 1874–1960</title>
-  <!-- Phrase montrée par les moteurs de recherche sous le titre (aussi écrite dans Base.astro pour les pages, jusqu’au lot 4) -->
-  <meta name="description" content="Une frise chronologique interactive de l’art moderne (1874–1960) : mouvements, artistes et œuvres, pour voir ce qui se passe en même temps.">
-    <link rel="canonical" href={canonique}>
-  <!-- Thème clair ou sombre, posé avant l’affichage : script commun aux pages (ScriptTheme.astro) -->
-  <ScriptTheme />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/style.css">
+  <!-- Adresse canonique : toujours « / », même en vue mouvement (/?mouvement=…), qui est la même page avec un autre affichage -->
+  <TeteHtml titre="L’art moderne, 1874–1960" description={DESCRIPTION} chemin="/" />
 </head>
 <body>
   <!-- Le titre de la page, pour les lecteurs d’écran : l’en-tête n’affiche que la marque compacte du site (D54) -->

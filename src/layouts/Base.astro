@@ -1,25 +1,22 @@
 ---
 // Gabarit commun des pages du site : <head>, en-tête (EnteteSite.astro), fil d’Ariane, contenu de la page (<slot />), puis pied de page.
-// La frise (index.astro) ne l’utilise pas encore : elle le rejoindra au lot 4 (étape 4e).
-// D’ici là, le <head> est écrit aux deux endroits : un changement des polices, de la description ou de la canonique
-// se fait dans les deux. Le script du thème, lui, est commun (ScriptTheme.astro).
+// La frise (index.astro) ne l’utilise pas : son corps est trop différent (ni body.page, ni pages.css, ni pied de page, D55).
+// Elle partage avec les pages le contenu du <head> (TeteHtml.astro) et l’en-tête (EnteteSite.astro).
 //
 // Ce que la page lui passe :
-//   titre        le titre de la page, affiché dans l’onglet du navigateur
+//   titre        le titre de la page, affiché dans l’onglet du navigateur, suivi du nom du site
 //   description  une phrase qui résume la page, montrée par les moteurs de recherche sous le titre ; facultative
 //   rubrique     l’entrée du menu à mettre en noir ("mouvements", "artistes"…), c’est-à-dire la « cle » d’une page de src/lib/site.js
 //   ariane       le fil d’Ariane : une liste de { texte, href } ; le dernier, sans href, est la page affichée
 import { PAGES_FIXES } from "../lib/site.js";
-import ScriptTheme from "../components/ScriptTheme.astro";
+import TeteHtml from "../components/TeteHtml.astro";
 import EnteteSite from "../components/EnteteSite.astro";
 
 const { titre, description = "", rubrique, ariane = [] } = Astro.props;
 
-// Adresse canonique : l’adresse officielle de la page, toujours sur le site de production (champ site d’astro.config.mjs)
-// et toujours avec la barre finale, comme les liens de adresse(). Une version de test, ou une adresse tapée sans barre
-// finale, renvoie ainsi Google vers la même page, au lieu de lui faire compter deux pages identiques.
+// L’adresse de la page, toujours avec la barre finale, comme les liens de adresse(). Elle sert à l’adresse canonique
+// (TeteHtml.astro) et à mettre en noir la page affichée, dans le menu comme dans le pied de page.
 const chemin = Astro.url.pathname.endsWith("/") ? Astro.url.pathname : `${Astro.url.pathname}/`;
-const canonique = new URL(chemin, Astro.site);
 
 // Le pied de page (D18) : la liste des pages fixes est dans src/lib/site.js
 const PIED = PAGES_FIXES.filter((p) => p.pied);
@@ -27,20 +24,10 @@ const PIED = PAGES_FIXES.filter((p) => p.pied);
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>{titre} · L’art moderne</title>
-  <!-- Sans description, pas de balise : le moteur de recherche choisit alors lui-même un extrait de la page -->
-  {description && <meta name="description" content={description}>}
-  <link rel="canonical" href={canonique}>
-  <!-- Thème clair ou sombre, posé avant l’affichage : script commun avec la frise (ScriptTheme.astro) -->
-  <ScriptTheme />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
-  <!-- style.css apporte les variables (couleurs, polices, mode sombre) et le bouton de thème ; pages.css, l’apparence des pages -->
-  <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="/pages.css">
+  <!-- Contenu du <head> commun avec la frise ; pages.css, l’apparence des pages, est chargé après style.css (D39) -->
+  <TeteHtml titre={`${titre} · L’art moderne`} description={description} chemin={chemin}>
+    <link rel="stylesheet" href="/pages.css">
+  </TeteHtml>
 </head>
 <body class="page">
   <EnteteSite rubrique={rubrique} chemin={chemin} />

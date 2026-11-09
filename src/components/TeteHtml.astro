@@ -1,0 +1,33 @@
+---
+// Contenu du <head>, commun à la frise (index.astro) et aux pages (Base.astro) : un changement des polices,
+// de la description ou de l’adresse canonique se fait ici seulement.
+// La balise <head> elle-même reste écrite dans index.astro et Base.astro, comme avant : seul son contenu est partagé.
+//
+// Ce que la page lui passe :
+//   titre        le titre complet, affiché dans l’onglet du navigateur
+//   description  une phrase qui résume la page, montrée par les moteurs de recherche sous le titre ; facultative
+//   chemin       l’adresse de la page, avec sa barre finale : elle donne l’adresse canonique
+// Le contenu placé entre les balises du composant arrive à la fin du <head>, dans le <slot /> : les pages y mettent pages.css.
+import ScriptTheme from "./ScriptTheme.astro";
+
+const { titre, description = "", chemin } = Astro.props;
+
+// Adresse canonique : l’adresse officielle de la page, toujours sur le site de production (champ site d’astro.config.mjs).
+// Une version de test, ou une adresse tapée sans barre finale, renvoie ainsi Google vers la même page,
+// au lieu de lui faire compter deux pages identiques.
+const canonique = new URL(chemin, Astro.site);
+---
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{titre}</title>
+<!-- Sans description, pas de balise : le moteur de recherche choisit alors lui-même un extrait de la page -->
+{description && <meta name="description" content={description}>}
+<link rel="canonical" href={canonique}>
+<!-- Thème clair ou sombre, posé avant l’affichage (ScriptTheme.astro) : il doit précéder les feuilles de style -->
+<ScriptTheme />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
+<!-- style.css apporte les variables (couleurs, polices, mode sombre), l’en-tête du site et la frise -->
+<link rel="stylesheet" href="/style.css">
+<slot />
