@@ -1,0 +1,26 @@
+---
+// En-tête du site : le titre, le menu (les rubriques, puis « À propos » à l’écart, D55) et le bouton de thème.
+// Utilisé par Base.astro. La frise le recevra à l’étape 4d, avec « Au hasard » et l’Index (D54).
+//
+// Ce que la page lui passe :
+//   rubrique   la rubrique en cours, mise en noir dans le menu (la « cle » d’une page de src/lib/site.js) ; facultative
+//   chemin     l’adresse de la page, avec sa barre finale : elle met en noir une page fixe du menu, comme À propos
+import { PAGES_FIXES } from "../lib/site.js";
+import BoutonTheme from "./BoutonTheme.astro";
+
+const { rubrique, chemin } = Astro.props;
+
+const MENU = PAGES_FIXES.filter((p) => p.menu);
+// Une entrée est « en cours » si c’est la rubrique de la page, ou si c’est la page elle-même
+const enCours = (p) => p.cle === rubrique || p.href === chemin;
+---
+<header class="entete-site">
+  <a class="marque" href="/"><strong>L’art moderne</strong><span>1874–1960 · Une histoire en mouvements</span></a>
+  <nav class="menu" aria-label="Menu du site">
+    {MENU.map((p) => (
+      <a href={p.href} class={p.aPart ? "a-part" : undefined} aria-current={enCours(p) ? "page" : undefined}>{p.texte}</a>
+    ))}
+  </nav>
+  <!-- Le même bouton que sur la frise (BoutonTheme.astro) : le choix vaut pour tout le site -->
+  <BoutonTheme />
+</header>

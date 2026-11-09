@@ -33,6 +33,8 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
   font-weight: 700; font-size: 0.96rem; font-variation-settings: "wdth" 85; }
 .menu a:hover { border-color: var(--encre); }
 .menu a[aria-current] { background: var(--encre); color: var(--fond); }
+/* À propos suit les rubriques, à l’écart et un peu moins gras : on voit qu’il n’en est pas une (D55) */
+.menu .a-part { margin-left: 0.8rem; font-weight: 600; }
 /* Bouton de thème, commun avec la frise (son dessin est dans style.css) : poussé au bout de la ligne (D54) */
 .entete-site .bouton-theme { margin-left: auto; }
 

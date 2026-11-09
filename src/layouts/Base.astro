@@ -1,5 +1,5 @@
 ---
-// Gabarit commun des pages du site : <head>, en-tête avec le menu, fil d’Ariane, contenu de la page (<slot />), puis pied de page.
+// Gabarit commun des pages du site : <head>, en-tête (EnteteSite.astro), fil d’Ariane, contenu de la page (<slot />), puis pied de page.
 // La frise (index.astro) ne l’utilise pas encore : elle le rejoindra au lot 4 (étape 4e).
 // D’ici là, le <head> est écrit aux deux endroits : un changement des polices, de la description ou de la canonique
 // se fait dans les deux. Le script du thème, lui, est commun (ScriptTheme.astro).
@@ -11,7 +11,7 @@
 //   ariane       le fil d’Ariane : une liste de { texte, href } ; le dernier, sans href, est la page affichée
 import { PAGES_FIXES } from "../lib/site.js";
 import ScriptTheme from "../components/ScriptTheme.astro";
-import BoutonTheme from "../components/BoutonTheme.astro";
+import EnteteSite from "../components/EnteteSite.astro";
 
 const { titre, description = "", rubrique, ariane = [] } = Astro.props;
 
@@ -21,8 +21,7 @@ const { titre, description = "", rubrique, ariane = [] } = Astro.props;
 const chemin = Astro.url.pathname.endsWith("/") ? Astro.url.pathname : `${Astro.url.pathname}/`;
 const canonique = new URL(chemin, Astro.site);
 
-// Le menu et le pied de page (D18) : la liste des pages fixes est dans src/lib/site.js
-const MENU = PAGES_FIXES.filter((p) => p.menu);
+// Le pied de page (D18) : la liste des pages fixes est dans src/lib/site.js
 const PIED = PAGES_FIXES.filter((p) => p.pied);
 ---
 <!DOCTYPE html>
@@ -44,16 +43,7 @@ const PIED = PAGES_FIXES.filter((p) => p.pied);
   <link rel="stylesheet" href="/pages.css">
 </head>
 <body class="page">
-  <header class="entete-site">
-    <a class="marque" href="/"><strong>L’art moderne</strong><span>1874–1960 · Une histoire en mouvements</span></a>
-    <nav class="menu" aria-label="Rubriques du site">
-      {MENU.map((p) => (
-        <a href={p.href} aria-current={p.cle === rubrique ? "page" : undefined}>{p.texte}</a>
-      ))}
-    </nav>
-    <!-- Le même bouton que sur la frise (BoutonTheme.astro) : le choix vaut pour tout le site -->
-    <BoutonTheme />
-  </header>
+  <EnteteSite rubrique={rubrique} chemin={chemin} />
 
   <main class="contenu">
     {ariane.length > 0 && (
