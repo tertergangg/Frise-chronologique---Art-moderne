@@ -14,6 +14,8 @@ import { D, MOUV, ART, OEU, EVT, couleur, mouvementsTries } from "../lib/donnees
 import { esc, sansAccent, nomCourt, ONGLETS_INDEX, compter, estImage } from "../lib/outils.js";
 // Le contenu des fiches, partagé avec les pages : src/lib/fiches.js
 import { ficheOeuvre, ficheArtiste, ficheMouvement, ficheEvenement } from "../lib/fiches.js";
+// Les pages fixes du site (menu, pied de page, Index) : src/lib/site.js, partagé avec les pages
+import { PAGES_FIXES } from "../lib/site.js";
 
 /* ---------- Réglages : tu peux modifier ces valeurs ---------- */
 const REGLAGES = {
@@ -635,15 +637,9 @@ function majListeIndex() {
   $("#liste-index").innerHTML = htmlListeIndex();
 }
 
-// Les pages du site, que la frise n’atteint pas encore autrement : elle recevra le menu du site au lot 4 (D18).
-// Ce sont de vrais liens : le clic du panneau n’intercepte que les liens « #id », ceux-ci mènent donc à la page.
-const PAGES_SITE = [
-  { texte: "Mouvements", href: "/mouvements/" },
-  { texte: "Artistes", href: "/artistes/" },
-  { texte: "Œuvres", href: "/oeuvres/" },
-  { texte: "À propos", href: "/a-propos/" },
-  { texte: "Plan du site", href: "/plan-du-site/" }
-];
+// Les pages du site, que la frise n’atteint pas encore autrement : toutes les pages fixes sauf la frise elle-même.
+// Ligne provisoire (D51), retirée à l’étape 4c. Ce sont de vrais liens : le clic du panneau n’intercepte que les liens « #id ».
+const PAGES_SITE = PAGES_FIXES.filter((p) => p.href !== "/");
 
 function afficherIndex() {
   etatIndex.actif = true;

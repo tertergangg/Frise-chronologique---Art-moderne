@@ -6,15 +6,10 @@ import Base from "../layouts/Base.astro";
 import { D, ART, mouvementsTries } from "../lib/donnees.js";
 import { aUnePage, adresse } from "../lib/fiches.js";
 import { compter, nomCourt } from "../lib/outils.js";
+import { PAGES_FIXES } from "../lib/site.js";
 
-// Les pages fixes, dans l’ordre du menu puis du pied de page
-const PAGES_FIXES = [
-  { texte: "Frise chronologique", href: "/" },
-  { texte: "Mouvements", href: "/mouvements/" },
-  { texte: "Artistes", href: "/artistes/" },
-  { texte: "Œuvres", href: "/oeuvres/" },
-  { texte: "À propos", href: "/a-propos/" },
-];
+// Les pages fixes (src/lib/site.js), dans l’ordre du menu puis du pied de page ; le plan ne se liste pas lui-même
+const pagesDuPlan = PAGES_FIXES.filter((p) => p.cle !== "plan-du-site");
 
 const mouvements = mouvementsTries.filter((m) => aUnePage(m.id));
 // localeCompare trie à la française, comme l’Index de la frise : « Édouard » se range avec les E
@@ -27,7 +22,7 @@ const oeuvres = D.oeuvres.filter((o) => aUnePage(o.id))
 // Une rubrique : son titre, son compte (facultatif) et ses lignes { texte, detail, href }.
 // Une rubrique sans page (les œuvres, tant qu’aucune n’est documentée) n’est pas affichée.
 const rubriques = [
-  { titre: "Le site", lignes: PAGES_FIXES.map((p) => ({ texte: p.texte, detail: "", href: p.href })) },
+  { titre: "Le site", lignes: pagesDuPlan.map((p) => ({ texte: p.titre ?? p.texte, detail: "", href: p.href })) },
   {
     titre: "Mouvements", compte: compter(mouvements.length, "mouvements"),
     lignes: mouvements.map((m) => ({ texte: m.nom, detail: `${m.debut}–${m.fin}`, href: adresse(m.id) })),

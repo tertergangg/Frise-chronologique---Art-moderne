@@ -5,17 +5,15 @@
 import { D } from "../lib/donnees.js";
 import { aUnePage, adresse } from "../lib/fiches.js";
 import { esc } from "../lib/outils.js";
+import { PAGES_FIXES } from "../lib/site.js";
 
-// Les pages qui existent quel que soit le contenu : la frise, les trois répertoires, À propos et le plan du site.
-// À compléter quand une page fixe s’ajoute : npm run verifier signale une page absente du sitemap.
-const PAGES_FIXES = ["/", "/mouvements/", "/artistes/", "/oeuvres/", "/a-propos/", "/plan-du-site/"];
-
-// « site » vient du champ site d’astro.config.mjs : les adresses du sitemap doivent être complètes
+// « site » vient du champ site d’astro.config.mjs : les adresses du sitemap doivent être complètes.
+// Les pages fixes viennent de src/lib/site.js : npm run verifier signale une page absente du sitemap.
 export function GET({ site }) {
   const fiches = [...D.mouvements, ...D.artistes, ...D.oeuvres]
     .filter((x) => aUnePage(x.id))
     .map((x) => adresse(x.id));
-  const lignes = [...PAGES_FIXES, ...fiches]
+  const lignes = [...PAGES_FIXES.map((p) => p.href), ...fiches]
     .map((chemin) => `  <url><loc>${esc(new URL(chemin, site).href)}</loc></url>`);
   const xml = [
     `<?xml version="1.0" encoding="UTF-8"?>`,
