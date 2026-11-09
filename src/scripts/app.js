@@ -544,6 +544,25 @@ document.addEventListener("click", (ev) => { if (!ev.target.closest(".recherche"
 // Le contenu des fiches est fabriqué par src/lib/fiches.js ; ici, le panneau qui les affiche
 const panneau = $("#panneau"), contenu = $("#contenu-panneau");
 
+// L’élément qui avait le focus quand le panneau s’est ouvert (bouton Index, « Au hasard », carte…) :
+// fermer() le lui rend, pour qu’on reprenne au clavier là où on était (D53)
+let declencheur = null;
+
+// Affiche le panneau ; s’il était fermé, retient d’où l’on vient. Passer d’une fiche à l’autre ne change pas ce point de départ.
+function montrerPanneau() {
+  if (panneau.hidden) declencheur = document.activeElement;
+  panneau.hidden = false;
+}
+
+// Rend le focus au déclencheur. S’il a disparu (la frise a été redessinée) ou si rien n’avait le focus
+// (ouverture par l’adresse, ou clic dans Safari, qui ne donne pas le focus aux boutons), le focus va à la frise.
+// preventScroll : la frise ne défile pas pour montrer l’élément
+function rendreFocus() {
+  const cible = declencheur?.isConnected && declencheur !== document.body ? declencheur : defile;
+  declencheur = null;
+  cible.focus({ preventScroll: true });
+}
+
 // Défilement vertical qui place au milieu de la frise la carte d’une œuvre ou le repère d’un événement.
 // Renvoie null si l’élément n’est pas affiché (par exemple une œuvre non majeure quand la case est cochée).
 function hautCentre(id) {
@@ -563,7 +582,7 @@ function ouvrir(id, centrer = false) {
   else return;
   const retour = etatIndex.actif ? `<button type="button" class="retour-index" data-retour-index>‹ Retour à l’index</button>` : "";
   contenu.innerHTML = `${retour}<article class="fiche" style="--c:${c}"><div class="filet"></div>${html}</article>`;
-  panneau.hidden = false;
+  montrerPanneau();
   panneau.setAttribute("aria-live", "polite");   // l’Index coupe l’annonce automatique : une fiche la remet
   $("#interieur-panneau").scrollTop = 0;
   toile.querySelectorAll(".choisi").forEach((n) => n.classList.remove("choisi"));
@@ -577,10 +596,13 @@ function ouvrir(id, centrer = false) {
   try { history.replaceState(null, "", "#" + id); } catch (err) { /* aperçu sans historique */ }
 }
 function fermer() {
+  // À regarder avant de cacher le panneau : si le focus est ailleurs (dans la frise), on ne le déplace pas
+  const focusDansPanneau = panneau.contains(document.activeElement);
   panneau.hidden = true;
   etatIndex.actif = false;   // à la prochaine ouverture du panneau, pas de lien de retour
   toile.querySelectorAll(".choisi").forEach((n) => n.classList.remove("choisi"));
   try { history.replaceState(null, "", location.pathname + location.search); } catch (err) { /* idem */ }
+  if (focusDansPanneau) rendreFocus();
 }
 $("#fermer").addEventListener("click", fermer);
 
@@ -595,11 +617,17 @@ const AIDE_FRISE = "Avance dans le temps avec les décennies en bas de page ou e
   + "et prends du recul avec la vue d’ensemble. Clique sur une bande de couleur pour explorer un mouvement en grand, "
   + "sur un nom ou une œuvre pour ouvrir sa fiche.";
 
-// Les lignes d’un onglet, déjà triées : { id, titre, detail }
+// Le texte dans lequel cherche le champ de l’Index : les noms donnés, réunis et sans accents
+const texteRecherche = (...noms) => sansAccent(noms.filter(Boolean).join(" "));
+
+// Les lignes d’un onglet, déjà triées : { id, titre, detail, cherche }
+// « cherche » : le nom de l’élément et ceux de ce qui lui est lié, pour qu’on trouve un artiste par son mouvement
+// et une œuvre par son artiste ou son mouvement
 function lignesIndex(onglet) {
   if (onglet === "mouvements") {
     return mouvementsTries.map((m) => ({
-      id: m.id, titre: m.nom, detail: [`${m.debut}–${m.fin}`, m.lieu].filter(Boolean).join(" · ")
+      id: m.id, titre: m.nom, detail: [`${m.debut}–${m.fin}`, m.lieu].filter(Boolean).join(" · "),
+      cherche: texteRecherche(m.nom)
     }));
   }
   if (onglet === "artistes") {
@@ -608,21 +636,23 @@ function lignesIndex(onglet) {
       .sort((a, b) => nomCourt(a.nom).localeCompare(nomCourt(b.nom), "fr"))
       .map((a) => ({
         id: a.id, titre: a.nom,
-        detail: [`${a.naissance ?? "?"}–${a.deces ?? "?"}`, MOUV[a.mouvement]?.nom].filter(Boolean).join(" · ")
+        detail: [`${a.naissance ?? "?"}–${a.deces ?? "?"}`, MOUV[a.mouvement]?.nom].filter(Boolean).join(" · "),
+        cherche: texteRecherche(a.nom, MOUV[a.mouvement]?.nom)
       }));
   }
   // Œuvres par année, puis par titre ; une œuvre sans année (Infinity) passe en fin de liste
   return [...D.oeuvres]
     .sort((a, b) => ((a.annee ?? Infinity) - (b.annee ?? Infinity)) || String(a.titre ?? "").localeCompare(String(b.titre ?? ""), "fr"))
     .map((o) => ({
-      id: o.id, titre: o.titre, detail: [o.annee, ART[o.artiste]?.nom].filter(Boolean).join(" · ")
+      id: o.id, titre: o.titre, detail: [o.annee, ART[o.artiste]?.nom].filter(Boolean).join(" · "),
+      cherche: texteRecherche(o.titre, ART[o.artiste]?.nom, MOUV[o.mouvement]?.nom)
     }));
 }
 
 // Le compteur et la liste, filtrés par le texte cherché (sans tenir compte des accents)
 function htmlListeIndex() {
   const q = sansAccent(etatIndex.recherche.trim());
-  const lignes = lignesIndex(etatIndex.onglet).filter((x) => sansAccent(x.titre).includes(q));
+  const lignes = lignesIndex(etatIndex.onglet).filter((x) => x.cherche.includes(q));
   const liste = lignes.length
     ? `<ul class="index-liste">${lignes.map((x) => `<li><a href="#${esc(x.id)}" data-id="${esc(x.id)}">
         <span class="index-nom">${esc(x.titre)}</span>
@@ -659,7 +689,7 @@ function afficherIndex() {
     <input id="champ-index" class="champ-index" type="search" placeholder="Rechercher…" autocomplete="off" value="${esc(etatIndex.recherche)}">
     <div id="liste-index">${htmlListeIndex()}</div>
   </section>`;
-  panneau.hidden = false;
+  montrerPanneau();
   // Sans cela, un lecteur d’écran lirait tout l’Index à l’ouverture, puis à chaque lettre tapée
   panneau.setAttribute("aria-live", "off");
   $("#interieur-panneau").scrollTop = 0;
@@ -681,6 +711,14 @@ contenu.addEventListener("input", (ev) => {
   if (ev.target.id !== "champ-index") return;
   etatIndex.recherche = ev.target.value;
   majListeIndex();
+});
+// Entrée, dans le champ : ouvre le premier résultat, comme le champ de recherche de l’en-tête
+contenu.addEventListener("keydown", (ev) => {
+  if (ev.target.id !== "champ-index" || ev.key !== "Enter") return;
+  const premier = $("#liste-index a[data-id]");
+  if (!premier) return;
+  ev.preventDefault();
+  ouvrir(premier.dataset.id, true);
 });
 
 /* ---------- Image d’une œuvre en grand ---------- */
