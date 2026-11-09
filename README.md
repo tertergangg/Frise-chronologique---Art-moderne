@@ -86,6 +86,7 @@ La branche `main` est le site en ligne. Le dépôt est public : le tableur et le
 | les vérifications des données                                         | `construire.py`                                                          |
 | les couleurs et polices du site                                       | les variables `:root` de `public/style.css`, et `:root[data-theme="dark"]` pour le mode sombre |
 | l’en-tête du site (titre, menu, « Au hasard », Index, thème)          | `src/components/EnteteSite.astro` ; son apparence dans `public/style.css` |
+| le `<head>` de toutes les pages (polices, feuilles de style, canonique) | `src/components/TeteHtml.astro`                                        |
 | la ligne des mouvements et l’étoile « Œuvres majeures » de la frise   | `src/pages/index.astro` ; les boutons des mouvements, `src/scripts/app.js` |
 | l’aide « Comment lire la frise », l’Index                             | `src/scripts/app.js`                                                     |
 | les rubriques des fiches du panneau                                   | `src/lib/fiches.js`                                                      |
