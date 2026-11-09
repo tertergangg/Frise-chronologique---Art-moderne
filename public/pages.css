@@ -35,14 +35,17 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
 .menu a[aria-current] { background: var(--encre); color: var(--fond); }
 /* À propos suit les rubriques, à l’écart et un peu moins gras : on voit qu’il n’en est pas une (D55) */
 .menu .a-part { margin-left: 0.8rem; font-weight: 600; }
-/* Bouton de thème, commun avec la frise (son dessin est dans style.css) : poussé au bout de la ligne (D54) */
-.entete-site .bouton-theme { margin-left: auto; }
+/* « Au hasard », l’Index et le bouton de thème, poussés au bout de la ligne (D54).
+   Les deux premiers sont des liens dessinés comme les boutons de la frise (style.css) : on retire le soulignement des liens */
+.outils-site { display: flex; align-items: center; gap: 0.6rem; margin-left: auto; }
+.outils-site a { text-decoration: none; }
 
 @media (max-width: 720px) {
   .entete-site { gap: 0.6rem 1rem; padding-top: 0.75rem; padding-bottom: 0.6rem; }
   .marque strong { font-size: 1.65rem; }
-  /* Le menu passe après le bouton : le bouton reste sur la ligne du titre, le menu prend la ligne du dessous.
+  /* Sous le titre, sur sa propre ligne et calée à gauche, comme les outils de la frise ; le menu passe en dessous.
      Provisoire : le ☰ réunira menu et thème à l’étape 4f. */
+  .outils-site { width: 100%; margin-left: 0; }
   .menu { order: 1; width: 100%; overflow-x: auto; scrollbar-width: none; }
 }
 
