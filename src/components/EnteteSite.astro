@@ -1,20 +1,28 @@
 ---
 // En-tête du site : le titre, le menu (les rubriques, puis « À propos » à l’écart, D55), puis à droite
-// « Au hasard », l’Index et le bouton de thème (D54). Utilisé par Base.astro ; la frise le recevra à l’étape 4d.
-// « Au hasard » et l’Index sont des liens vers la frise, qui tire l’œuvre ou ouvre l’Index (D53) :
-// les pages n’ont ni les données ni le panneau.
+// « Au hasard », l’Index et le bouton de thème (D54). Utilisé par Base.astro et par la frise (index.astro).
+// Sur les pages, « Au hasard » et l’Index sont des liens vers la frise, qui tire l’œuvre ou ouvre l’Index (D53) :
+// les pages n’ont ni les données ni le panneau. Sur la frise, ce sont des boutons, qu’app.js écoute par leurs ids.
 //
 // Ce que la page lui passe :
 //   rubrique   la rubrique en cours, mise en noir dans le menu (la « cle » d’une page de src/lib/site.js) ; facultative
 //   chemin     l’adresse de la page, avec sa barre finale : elle met en noir une page fixe du menu, comme À propos
+//   surFrise   vrai sur la frise : « Au hasard » et l’Index y sont des boutons ; facultatif
+// Le contenu placé entre les balises du composant arrive dans le <slot /> : la frise y met sa ligne des mouvements (D54).
 import { PAGES_FIXES, ANCRES_FRISE } from "../lib/site.js";
 import BoutonTheme from "./BoutonTheme.astro";
 
-const { rubrique, chemin } = Astro.props;
+const { rubrique, chemin, surFrise = false } = Astro.props;
 
 const MENU = PAGES_FIXES.filter((p) => p.menu);
 // Une entrée est « en cours » si c’est la rubrique de la page, ou si c’est la page elle-même
 const enCours = (p) => p.cle === rubrique || p.href === chemin;
+
+// Balise de « Au hasard » et de l’Index : un bouton sur la frise, un lien ailleurs.
+// Astro dessine la balise dont le nom est dans la variable (son nom doit commencer par une majuscule).
+const Outil = surFrise ? "button" : "a";
+const attributsHasard = surFrise ? { type: "button", id: "hasard" } : { href: `/#${ANCRES_FRISE.hasard}` };
+const attributsIndex = surFrise ? { type: "button", id: "ouvrir-index" } : { href: `/#${ANCRES_FRISE.index}` };
 ---
 <header class="entete-site">
   <a class="marque" href="/"><strong>L’art moderne</strong><span>1874–1960 · Une histoire en mouvements</span></a>
@@ -24,10 +32,12 @@ const enCours = (p) => p.cle === rubrique || p.href === chemin;
     ))}
   </nav>
   <div class="outils-site">
-    <!-- Mêmes classes et mêmes deux libellés que les boutons de la frise (style.css n’affiche qu’un libellé) -->
-    <a class="hasard" href={`/#${ANCRES_FRISE.hasard}`}><span class="long">Une œuvre au hasard</span><span class="court">Au hasard</span></a>
-    <a class="bouton-index" href={`/#${ANCRES_FRISE.index}`}><span class="trois-traits" aria-hidden="true"></span>Index</a>
-    <!-- Le même bouton que sur la frise (BoutonTheme.astro) : le choix vaut pour tout le site -->
+    <!-- Deux libellés : le long sur ordinateur, le court sur téléphone (style.css n’en affiche qu’un) -->
+    <Outil class="hasard" {...attributsHasard}><span class="long">Une œuvre au hasard</span><span class="court">Au hasard</span></Outil>
+    <!-- La loupe, dessinée en SVG comme celle du catalogue : en currentColor, elle passe en clair au survol -->
+    <Outil class="bouton-index" {...attributsIndex}><svg class="icone-index" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg>Index</Outil>
+    <!-- Le même bouton sur la frise et les pages (BoutonTheme.astro) : le choix vaut pour tout le site -->
     <BoutonTheme />
   </div>
+  <slot />
 </header>

@@ -241,6 +241,8 @@ function dessiner() {
 
   // Boutons de zoom : seul celui du niveau affiché est enfoncé (aucun en vue mouvement)
   barre.querySelectorAll("[data-niveau]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.niveau === niveauAffiche())));
+  boutonMajeures.setAttribute("aria-pressed", String(etat.majeures));
+  marquerMouvementOuvert();
   remplirReperes(f);
   majDecennies();
 }
@@ -428,10 +430,19 @@ sommaire.addEventListener("click", (ev) => {
   const b = ev.target.closest("[data-mouvement]");
   if (b) explorer(b.dataset.mouvement);
 });
+// En vue mouvement, le bouton du mouvement ouvert reste rempli de sa couleur (D54) : aria-current le signale
+// aussi aux lecteurs d’écran. Dans les autres vues, aucun bouton n’est marqué.
+function marquerMouvementOuvert() {
+  sommaire.querySelectorAll("[data-mouvement]").forEach((b) => {
+    if (etat.vue === "mouvement" && b.dataset.mouvement === etat.mouvement) b.setAttribute("aria-current", "true");
+    else b.removeAttribute("aria-current");
+  });
+}
 
-const caseMajeures = $("#majeures");
-caseMajeures.checked = etat.majeures;
-caseMajeures.addEventListener("change", () => { etat.majeures = caseMajeures.checked; dessiner(); });
+// L’étoile « Œuvres majeures seulement », au bout de la ligne des mouvements : un bouton à deux états,
+// dont dessiner() tient à jour l’attribut aria-pressed
+const boutonMajeures = $("#majeures");
+boutonMajeures.addEventListener("click", () => { etat.majeures = !etat.majeures; dessiner(); });
 
 let dernierHasard = null;
 function oeuvreAuHasard() {
@@ -511,36 +522,6 @@ toile.addEventListener("click", (ev) => {
   const zone = ev.target.closest(".bande[data-mouvement], .bande-globale");
   if (zone && etat.vue !== "mouvement") explorer(zone.dataset.mouvement);
 });
-
-/* ---------- Recherche ---------- */
-const index = [
-  ...D.mouvements.map((m) => ({ id: m.id, texte: m.nom, detail: `Mouvement, ${m.debut}–${m.fin}` })),
-  ...D.artistes.map((a) => ({ id: a.id, texte: a.nom, detail: `Artiste, ${a.naissance ?? "?"}–${a.deces ?? "?"}` })),
-  ...D.oeuvres.map((o) => ({ id: o.id, texte: o.titre, detail: `${ART[o.artiste]?.nom ?? ""}, ${o.annee ?? ""}` })),
-  ...D.evenements.map((x) => ({ id: x.id, texte: x.titre, detail: `Événement, ${x.annee}` })),
-];
-const champ = $("#champ-recherche"), resultats = $("#resultats");
-let choix = 0, trouves = [];
-champ.addEventListener("input", () => {
-  const q = sansAccent(champ.value.trim());
-  trouves = q.length < 2 ? [] : index.filter((x) => sansAccent(x.texte).includes(q)).slice(0, 12);
-  choix = 0; afficherResultats();
-});
-champ.addEventListener("keydown", (ev) => {
-  if (!trouves.length) return;
-  if (ev.key === "ArrowDown") { choix = (choix + 1) % trouves.length; afficherResultats(); ev.preventDefault(); }
-  if (ev.key === "ArrowUp") { choix = (choix - 1 + trouves.length) % trouves.length; afficherResultats(); ev.preventDefault(); }
-  if (ev.key === "Enter") { choisir(trouves[choix].id); ev.preventDefault(); }
-});
-function afficherResultats() {
-  resultats.hidden = !trouves.length && champ.value.trim().length < 2;
-  resultats.innerHTML = trouves.length
-    ? trouves.map((x, i) => `<li role="option" data-id="${esc(x.id)}" aria-selected="${i === choix}">${esc(x.texte)}<small>${esc(x.detail)}</small></li>`).join("")
-    : `<li aria-disabled="true">Aucun résultat<small>Essaie un nom d’artiste ou un titre.</small></li>`;
-}
-resultats.addEventListener("click", (ev) => { const li = ev.target.closest("li[data-id]"); if (li) choisir(li.dataset.id); });
-function choisir(id) { champ.value = ""; trouves = []; resultats.hidden = true; ouvrir(id, true); }
-document.addEventListener("click", (ev) => { if (!ev.target.closest(".recherche")) resultats.hidden = true; });
 
 /* ---------- Fiches ---------- */
 // Le contenu des fiches est fabriqué par src/lib/fiches.js ; ici, le panneau qui les affiche
@@ -713,7 +694,7 @@ contenu.addEventListener("input", (ev) => {
   etatIndex.recherche = ev.target.value;
   majListeIndex();
 });
-// Entrée, dans le champ : ouvre le premier résultat, comme le champ de recherche de l’en-tête
+// Entrée, dans le champ : ouvre le premier résultat
 contenu.addEventListener("keydown", (ev) => {
   if (ev.target.id !== "champ-index" || ev.key !== "Enter") return;
   const premier = $("#liste-index a[data-id]");

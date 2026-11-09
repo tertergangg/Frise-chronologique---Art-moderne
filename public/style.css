@@ -55,27 +55,29 @@ button { font: inherit; color: inherit; }
 
 
 /* =====================================================================
-   En-tête
+   En-tête du site : commun à la frise et aux pages (EnteteSite.astro)
    ===================================================================== */
-/* Une grille de deux colonnes. Ligne 1 : titre | outils. Ligne 2 : sommaire | réglages */
-.entete { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.6rem 2rem; align-items: center;
-  padding: 0.8rem clamp(1rem, 3vw, 2.25rem) 0.7rem; border-bottom: 3px solid var(--encre); }
-.entete h1 { margin: 0; font-family: var(--police-titre); font-weight: 900; font-stretch: 70%; font-variation-settings: "wdth" 66;
-  font-size: clamp(2.2rem, 3.8vw, 3rem); line-height: 0.95; letter-spacing: -0.01em; }
-.sous-titre-site { margin: 0.2rem 0 0; font-size: 0.9rem; font-weight: 600; font-variation-settings: "wdth" 85; }
-.outils { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-
-/* Recherche et liste des résultats */
-.recherche { position: relative; }
-.recherche input { width: 16rem; max-width: 70vw; padding: 0.5rem 0.75rem; }
-/* Le champ de l’Index a la même apparence que celui de la recherche */
-.recherche input, .champ-index { font: 500 1rem var(--police-texte); border: 2px solid var(--encre); border-radius: 0; background: var(--surface); color: var(--encre); }
-.resultats { position: absolute; z-index: 30; right: 0; top: calc(100% + 4px); width: 22rem; max-width: 90vw; max-height: 60vh; overflow: auto;
-  margin: 0; padding: 0.25rem; list-style: none;
-  background: var(--surface); border: 2px solid var(--encre); box-shadow: 5px 5px 0 var(--ombre); }
-.resultats li { padding: 0.45rem 0.6rem; cursor: pointer; font-weight: 600; }
-.resultats li small { display: block; font-weight: 400; opacity: 0.75; }
-.resultats li[aria-selected="true"], .resultats li:hover { background: var(--encre); color: var(--fond); }
+/* Ligne 1 : le titre, le menu, puis les outils au bout. Sur la frise, ligne 2 : les mouvements (D54).
+   flex: none : sur la frise, la page est une colonne flexible (voir « Base »), où l’en-tête ne doit pas se tasser */
+.entete-site { flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem 2rem;
+  padding: 0.9rem clamp(1rem, 3vw, 2.25rem); border-bottom: 3px solid var(--encre); }
+/* Les liens gardent la couleur du texte : pages.css le fait pour tous les liens des pages, mais il n’est pas chargé sur la frise */
+.entete-site a { color: inherit; }
+.marque { display: flex; flex-direction: column; text-decoration: none; }
+.marque strong { font: 900 2.1rem/0.92 var(--police-titre); font-variation-settings: "wdth" 66; letter-spacing: -0.01em; }
+.marque span { margin-top: 0.2rem; font-weight: 700; font-size: 0.8rem; font-variation-settings: "wdth" 85; }
+/* Menu : la rubrique en cours est en noir, comme un bouton enfoncé de la frise */
+.menu { display: flex; gap: 0.15rem; }
+.menu a { padding: 0.45rem 0.7rem; border: 2px solid transparent; text-decoration: none; white-space: nowrap;
+  font-weight: 700; font-size: 0.96rem; font-variation-settings: "wdth" 85; }
+.menu a:hover { border-color: var(--encre); }
+.menu a[aria-current] { background: var(--encre); color: var(--fond); }
+/* À propos suit les rubriques, à l’écart et un peu moins gras : on voit qu’il n’en est pas une (D55) */
+.menu .a-part { margin-left: 0.8rem; font-weight: 600; }
+/* « Au hasard », l’Index et le bouton de thème, poussés au bout de la ligne (D54).
+   Sur les pages, les deux premiers sont des liens : on retire leur soulignement */
+.outils-site { display: flex; align-items: center; gap: 0.75rem; margin-left: auto; }
+.outils-site a { text-decoration: none; }
 
 /* Les boutons bordés : « Une œuvre au hasard », « Index », les onglets de l’Index et le bouton de thème */
 .hasard, .bouton-index, .onglet, .bouton-theme { display: inline-flex; align-items: center; cursor: pointer; white-space: nowrap;
@@ -83,49 +85,60 @@ button { font: inherit; color: inherit; }
   border: 2px solid var(--encre); background: var(--surface); }
 /* L’onglet choisi de l’Index reste noir, comme un bouton survolé */
 .hasard:hover, .bouton-index:hover, .onglet:hover, .onglet[aria-pressed="true"], .bouton-theme:hover { background: var(--encre); color: var(--fond); }
-/* Deux libellés pour « Une œuvre au hasard » : le long sur ordinateur, le court sur téléphone */
-.hasard .court { display: none; }
-/* Bouton « Index » : trois traits avant le mot, dessinés en CSS.
-   Ils sont en currentColor : ils passent donc en clair, comme le texte, quand le bouton devient noir au survol */
-.bouton-index { gap: 0.55rem; padding-left: 0.8rem; padding-right: 1.1rem; }
-.trois-traits { flex: none; width: 1.1rem; height: 0.8rem;
-  background:
-    linear-gradient(currentColor, currentColor) top / 100% 2px no-repeat,
-    linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat,
-    linear-gradient(currentColor, currentColor) bottom / 100% 2px no-repeat; }
-
-/* Sommaire : chaque bouton emmène au mouvement et ouvre sa fiche */
-.filtres { display: flex; flex-wrap: wrap; gap: 0.35rem; }
-.filtre { display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;
-  font: 700 0.9rem var(--police-texte); font-variation-settings: "wdth" 85; padding: 0.35rem 0.75rem 0.35rem 0.4rem;
-  border: 2px solid var(--encre); background: var(--surface); }
-.filtre .pastille { width: 0.95rem; height: 0.95rem; flex: none; background: var(--c); }
-.filtre:hover { background: var(--c); color: #FFFFFF; }
-.filtre:hover .pastille { background: #FFFFFF; }
-
-/* Deuxième ligne, colonne de droite : la case « Œuvres majeures seulement » à gauche, le bouton de thème à droite, sous « Index » */
-.reglages { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; align-self: start; }
-/* Calée en haut, à la hauteur de la première rangée de mouvements, même quand le sommaire tient sur deux lignes */
-.bascule { display: flex; gap: 0.4rem; align-items: center; cursor: pointer; white-space: nowrap; align-self: start; margin-top: 0.3rem;
-  font-size: 0.95rem; font-weight: 600; }
-/* Bouton de thème : carré de la hauteur des boutons des mouvements, pour s’aligner sur leur première rangée */
-.bouton-theme { justify-content: center; flex: none; width: 2.25rem; height: 2.25rem; padding: 0; }
+/* Deux libellés pour « Une œuvre au hasard » et pour l’étoile « Œuvres majeures » : le long sur ordinateur, le court sur téléphone */
+.hasard .court, .bouton-majeures .court { display: none; }
+/* Les trois boutons de l’en-tête : la même hauteur, fixe, et l’ombre décalée de la navigation (D25).
+   « Au hasard » et l’Index ont un texte un peu plus grand que les onglets de l’Index, qui partagent leur dessin */
+.hasard, .bouton-index, .bouton-theme { height: 2.5rem; box-shadow: 4px 4px 0 var(--ombre); }
+.hasard, .bouton-index { font-size: 1rem; }
+.hasard { padding: 0 1.05rem; }
+/* Bouton « Index » : la loupe avant le mot (D53).
+   Elle est en currentColor : elle passe en clair, comme le texte, quand le bouton devient noir au survol */
+.bouton-index { gap: 0.5rem; padding: 0 1.25rem 0 0.95rem; }
+.icone-index { flex: none; width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 2.5; }
+/* Bouton de thème : un carré, de la hauteur des deux autres */
+.bouton-theme { justify-content: center; flex: none; width: 2.5rem; padding: 0; }
 /* Icônes en currentColor : elles passent en clair, comme le texte, au survol.
    La lune s’affiche en mode clair, le soleil en mode sombre */
 .bouton-theme .icone { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 2; }
 :root[data-theme="dark"] .icone-lune, :root:not([data-theme="dark"]) .icone-soleil { display: none; }
 
+/* Ligne 2, sur la frise : les mouvements, puis l’étoile « Œuvres majeures seulement ».
+   Toute la largeur (flex-basis 100 %) la fait passer sous la ligne 1 */
+.ligne-frise { flex: 1 0 100%; display: flex; align-items: center; gap: 1rem; }
+/* Les mouvements prennent la place que laisse l’étoile, sur une seule ligne : trop longue, elle défile, et l’étoile reste visible.
+   Chaque bouton ouvre le mouvement en grand.
+   Le padding et la marge négative de 4px gardent visible le contour du focus, que le défilement couperait sinon */
+.filtres { flex: 1; min-width: 0; display: flex; gap: 0.3rem; overflow-x: auto; scrollbar-width: none; padding: 4px; margin: -4px; }
+/* Boutons resserrés pour tenir sur une ligne (D54) : pastille de 12px, police plus étroite, marges réduites */
+.filtre { flex: none; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer;
+  font: 700 0.9rem var(--police-texte); font-variation-settings: "wdth" 76; padding: 0.3rem 0.55rem 0.3rem 0.35rem;
+  border: 2px solid var(--encre); background: var(--surface); }
+.filtre .pastille { width: 0.75rem; height: 0.75rem; flex: none; background: var(--c); }
+/* Survolé, ou ouvert en vue mouvement (aria-current, posé par app.js) : rempli de la couleur du mouvement */
+.filtre:hover, .filtre[aria-current] { background: var(--c); color: #FFFFFF; }
+.filtre:hover .pastille, .filtre[aria-current] .pastille { background: #FFFFFF; }
+/* L’étoile : bordée comme les mouvements, noire quand elle est enfoncée (aria-pressed, posé par app.js) */
+.bouton-majeures { flex: none; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; white-space: nowrap;
+  font: 700 0.9rem var(--police-texte); font-variation-settings: "wdth" 76; padding: 0.3rem 0.65rem;
+  border: 2px solid var(--encre); background: var(--surface); }
+.bouton-majeures:hover, .bouton-majeures[aria-pressed="true"] { background: var(--encre); color: var(--fond); }
+
+/* Sous 1 220 px environ, la ligne des mouvements ne tient plus : le texte rapetisse, puis la ligne défile (D54) */
+@media (max-width: 1220px) {
+  .filtre, .bouton-majeures { font-size: 0.84rem; }
+}
+
 @media (max-width: 720px) {
-  .entete { grid-template-columns: 1fr; padding-top: 0.8rem; }
-  .outils { justify-content: flex-start; flex-wrap: nowrap; }
-  .recherche { flex: 1; min-width: 0; }
-  .recherche input { width: 100%; max-width: none; }
-  /* Accrochée à gauche : accrochée à droite, la liste déborderait hors de l’écran */
-  .resultats { left: 0; right: auto; }
-  .hasard .long { display: none; }
-  .hasard .court { display: inline; }
-  .filtres { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-  .filtre { flex: none; }
+  .entete-site { gap: 0.6rem 1rem; padding-top: 0.75rem; padding-bottom: 0.6rem; }
+  .marque strong { font-size: 1.65rem; }
+  /* Sous le titre, sur sa propre ligne et calée à gauche ; le menu passe en dessous, puis, sur la frise, les mouvements.
+     Provisoire : le ☰ réunira menu et thème à l’étape 4f. */
+  .outils-site { width: 100%; margin-left: 0; }
+  .menu { order: 1; width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .ligne-frise { order: 2; }
+  .hasard .long, .bouton-majeures .long { display: none; }
+  .hasard .court, .bouton-majeures .court { display: inline; }
 }
 
 
@@ -496,9 +509,10 @@ body.redimension .panneau { transition: none; }
   text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.15em; }
 .pages-site a:hover { background: var(--encre); color: var(--fond); text-decoration: none; }
 
-/* Onglets (même style que les boutons bordés de l’en-tête) et champ de recherche (même style que celui de l’en-tête) */
+/* Onglets (même style que les boutons bordés de l’en-tête) et champ de recherche, la seule de la frise (D53) */
 .onglets { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 1rem; }
-.champ-index { display: block; width: 100%; padding: 0.6rem 0.75rem; margin: 0 0 1.25rem; }
+.champ-index { display: block; width: 100%; padding: 0.6rem 0.75rem; margin: 0 0 1.25rem;
+  font: 500 1rem var(--police-texte); border: 2px solid var(--encre); border-radius: 0; background: var(--surface); color: var(--encre); }
 
 .compteur { margin: 0; padding-bottom: 0.35rem; border-bottom: 2px solid var(--encre); font-size: 0.8rem; font-weight: 600; }
 .index-liste { list-style: none; margin: 0; padding: 0; }

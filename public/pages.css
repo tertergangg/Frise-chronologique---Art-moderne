@@ -4,7 +4,8 @@
    Chargé après style.css, dont il reprend les variables : couleurs, polices et mode sombre.
    La frise est l’affiche, les pages sont le livre (D25) : l’en-tête garde le style de la frise ;
    le contenu utilise des filets, et la typographie porte la hiérarchie.
-   Les classes de style.css servent à la frise (.carte, .entete, .bande…) : les pages utilisent d’autres noms.
+   Les classes de style.css servent à la frise (.carte, .bande…) : les pages utilisent d’autres noms.
+   L’en-tête du site, commun à la frise et aux pages (EnteteSite.astro), a ses règles dans style.css.
    Rangé comme style.css : un bloc par élément, dans l’ordre de la page, chacun avec sa version téléphone.
    Le bloc « Mouvement réduit » est en toute fin.
    ===================================================================== */
@@ -17,37 +18,6 @@
 body.page { height: auto; display: block; overflow: visible; font-size: 16px; line-height: 1.55; }
 /* :where() ne compte pas dans la priorité des règles : les règles plus précises, plus bas, l’emportent */
 :where(body.page) a { color: inherit; text-underline-offset: 3px; }
-
-
-/* =====================================================================
-   En-tête du site
-   ===================================================================== */
-.entete-site { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem 2rem;
-  padding: 0.9rem clamp(1rem, 3vw, 2.25rem); border-bottom: 3px solid var(--encre); }
-.marque { display: flex; flex-direction: column; text-decoration: none; }
-.marque strong { font: 900 2.1rem/0.92 var(--police-titre); font-variation-settings: "wdth" 66; letter-spacing: -0.01em; }
-.marque span { margin-top: 0.2rem; font-weight: 700; font-size: 0.8rem; font-variation-settings: "wdth" 85; }
-/* Menu : la rubrique en cours est en noir, comme un bouton enfoncé de la frise */
-.menu { display: flex; gap: 0.15rem; }
-.menu a { padding: 0.45rem 0.7rem; border: 2px solid transparent; text-decoration: none; white-space: nowrap;
-  font-weight: 700; font-size: 0.96rem; font-variation-settings: "wdth" 85; }
-.menu a:hover { border-color: var(--encre); }
-.menu a[aria-current] { background: var(--encre); color: var(--fond); }
-/* À propos suit les rubriques, à l’écart et un peu moins gras : on voit qu’il n’en est pas une (D55) */
-.menu .a-part { margin-left: 0.8rem; font-weight: 600; }
-/* « Au hasard », l’Index et le bouton de thème, poussés au bout de la ligne (D54).
-   Les deux premiers sont des liens dessinés comme les boutons de la frise (style.css) : on retire le soulignement des liens */
-.outils-site { display: flex; align-items: center; gap: 0.6rem; margin-left: auto; }
-.outils-site a { text-decoration: none; }
-
-@media (max-width: 720px) {
-  .entete-site { gap: 0.6rem 1rem; padding-top: 0.75rem; padding-bottom: 0.6rem; }
-  .marque strong { font-size: 1.65rem; }
-  /* Sous le titre, sur sa propre ligne et calée à gauche, comme les outils de la frise ; le menu passe en dessous.
-     Provisoire : le ☰ réunira menu et thème à l’étape 4f. */
-  .outils-site { width: 100%; margin-left: 0; }
-  .menu { order: 1; width: 100%; overflow-x: auto; scrollbar-width: none; }
-}
 
 
 /* =====================================================================
@@ -224,7 +194,7 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
    Répertoires (artistes, œuvres) : la recherche et les filtres, puis un intertitre par mouvement
    ===================================================================== */
 .filtre-repertoire { margin: 0 0 1.6rem; }
-/* Même apparence que les champs de la frise (recherche, Index) */
+/* Même apparence que le champ de l’Index de la frise */
 .champ { display: block; width: 100%; padding: 0.55rem 0.75rem; border: 2px solid var(--encre); border-radius: 0;
   background: var(--surface); color: var(--encre); font: 500 1rem var(--police-texte); }
 .aucun-resultat { margin: 0; color: var(--doux); }

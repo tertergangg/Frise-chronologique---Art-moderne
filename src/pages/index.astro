@@ -3,7 +3,7 @@
 // style.css et le dossier images se trouvent dans le dossier public : Astro les publie tels quels.
 // Le script de la frise, src/scripts/app.js, est traité par Astro : il importe les données de src/data/frise.json et la librairie marked.
 import ScriptTheme from "../components/ScriptTheme.astro";
-import BoutonTheme from "../components/BoutonTheme.astro";
+import EnteteSite from "../components/EnteteSite.astro";
 
 // Adresse canonique de la frise : toujours « / » sur le site de production, même en vue mouvement (/?mouvement=…),
 // qui est la même page avec un autre affichage
@@ -26,30 +26,18 @@ const canonique = new URL("/", Astro.site);
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <!-- Première ligne : le titre et les outils. Seconde ligne : le sommaire, puis la case « Œuvres majeures » et le bouton de thème. -->
-  <header class="entete">
-    <div class="titre">
-      <h1>L’art moderne</h1>
-      <p class="sous-titre-site">1874–1960 · Une histoire en mouvements</p>
+  <!-- Le titre de la page, pour les lecteurs d’écran : l’en-tête n’affiche que la marque compacte du site (D54) -->
+  <h1 class="visuellement-cache">L’art moderne, 1874–1960 : la frise chronologique</h1>
+  <!-- L’en-tête commun du site (EnteteSite.astro). Sa seconde ligne, propre à la frise : les mouvements, que remplit app.js,
+       puis l’étoile « Œuvres majeures seulement », un bouton à deux états. Son nom complet est dans aria-label et dans la bulle ;
+       deux libellés, le long sur ordinateur, le court sur téléphone (style.css n’en affiche qu’un). -->
+  <EnteteSite chemin="/" surFrise>
+    <div class="ligne-frise">
+      <nav id="sommaire" class="filtres" aria-label="Aller à un mouvement"></nav>
+      <button type="button" id="majeures" class="bouton-majeures" aria-pressed="true" aria-label="Œuvres majeures seulement"
+        data-bulle="Œuvres majeures seulement"><span aria-hidden="true">★</span><span class="long">Œuvres majeures</span><span class="court">Majeures</span></button>
     </div>
-    <div class="outils">
-      <div class="recherche">
-        <label for="champ-recherche" class="visuellement-cache">Rechercher</label>
-        <input id="champ-recherche" type="search" placeholder="Chercher un artiste, une œuvre…" autocomplete="off">
-        <ul id="resultats" class="resultats" role="listbox" hidden></ul>
-      </div>
-      <!-- Deux libellés : le long sur ordinateur, le court sur téléphone (style.css n’en affiche qu’un) -->
-      <button type="button" id="hasard" class="hasard"><span class="long">Une œuvre au hasard</span><span class="court">Au hasard</span></button>
-      <!-- Ouvre l’Index dans le panneau des fiches (app.js, section « Index ») -->
-      <button type="button" id="ouvrir-index" class="bouton-index"><span class="trois-traits" aria-hidden="true"></span>Index</button>
-    </div>
-    <nav id="sommaire" class="filtres" aria-label="Aller à un mouvement"></nav>
-    <div class="reglages">
-      <label class="bascule"><input type="checkbox" id="majeures"> Œuvres majeures seulement</label>
-      <!-- Bouton commun à la frise et aux pages (BoutonTheme.astro, src/scripts/theme.js) -->
-      <BoutonTheme />
-    </div>
-  </header>
+  </EnteteSite>
 
   <div id="bandeau" class="bandeau" hidden></div>
 
