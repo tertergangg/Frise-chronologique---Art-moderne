@@ -489,9 +489,8 @@ body.redimension .panneau { transition: none; }
 .comment-lire summary { cursor: pointer; font: 800 0.95rem var(--police-titre); font-variation-settings: "wdth" 80; }
 .comment-lire p { margin: 0.5rem 0 0; line-height: 1.5; }
 
-/* Pages du site : une ligne de liens vers les pages, en attendant le menu du site dans l’en-tête (lot 4) */
-.pages-site { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 1rem; margin: 0 0 1.25rem; font-size: 0.92rem; }
-.pages-site p { margin: 0; font-weight: 600; color: var(--doux); }
+/* Au bas de l’Index : À propos et le plan du site, puisque la frise n’a pas de pied de page (D55) */
+.pages-site { margin: 1.5rem 0 0.5rem; font-size: 0.92rem; }
 .pages-site ul { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; list-style: none; margin: 0; padding: 0; }
 .pages-site a { font: 800 0.95rem var(--police-titre); font-variation-settings: "wdth" 80; color: var(--encre);
   text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.15em; }

@@ -22,4 +22,9 @@ const PAGES_FIXES = [
   { cle: "plan-du-site", texte: "Plan du site", href: "/plan-du-site/", menu: false, pied: true }
 ];
 
-export { PAGES_FIXES };
+// Les deux mots de l’adresse de la frise qui ne sont pas des identifiants : « /#index » ouvre l’Index,
+// « /#hasard » une œuvre au hasard. Les boutons de l’en-tête des pages y mènent (D53).
+// Un élément du tableur qui porterait l’un de ces identifiants ne s’ouvrirait plus par son adresse.
+const ANCRES_FRISE = { index: "index", hasard: "hasard" };
+
+export { PAGES_FIXES, ANCRES_FRISE };

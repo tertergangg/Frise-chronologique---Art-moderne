@@ -14,8 +14,8 @@ import { D, MOUV, ART, OEU, EVT, couleur, mouvementsTries } from "../lib/donnees
 import { esc, sansAccent, nomCourt, ONGLETS_INDEX, compter, estImage } from "../lib/outils.js";
 // Le contenu des fiches, partagé avec les pages : src/lib/fiches.js
 import { ficheOeuvre, ficheArtiste, ficheMouvement, ficheEvenement } from "../lib/fiches.js";
-// Les pages fixes du site (menu, pied de page, Index) : src/lib/site.js, partagé avec les pages
-import { PAGES_FIXES } from "../lib/site.js";
+// Les pages fixes du site (menu, pied de page, Index) et les mots « #index » et « #hasard » : src/lib/site.js, partagé avec les pages
+import { PAGES_FIXES, ANCRES_FRISE } from "../lib/site.js";
 
 /* ---------- Réglages : tu peux modifier ces valeurs ---------- */
 const REGLAGES = {
@@ -440,13 +440,15 @@ function oeuvreAuHasard() {
   if (!possibles.length) return null;
   return possibles[Math.floor(Math.random() * possibles.length)];
 }
-$("#hasard").addEventListener("click", () => {
+// Tire une œuvre et ouvre sa fiche : c’est le bouton « Au hasard », et l’adresse /#hasard (voir « Démarrage »)
+function ouvrirAuHasard() {
   const o = oeuvreAuHasard();
   if (!o) return;
   dernierHasard = o.id;
   if (etat.vue !== "detail") changerVue("detail");   // seule la vue détail montre toutes les œuvres
   ouvrir(o.id, true);
-});
+}
+$("#hasard").addEventListener("click", ouvrirAuHasard);
 
 /* ---------- Survol d’un artiste : ses œuvres ressortent ---------- */
 toile.addEventListener("pointerover", (ev) => {
@@ -667,34 +669,33 @@ function majListeIndex() {
   $("#liste-index").innerHTML = htmlListeIndex();
 }
 
-// Les pages du site, que la frise n’atteint pas encore autrement : toutes les pages fixes sauf la frise elle-même.
-// Ligne provisoire (D51), retirée à l’étape 4c. Ce sont de vrais liens : le clic du panneau n’intercepte que les liens « #id ».
-const PAGES_SITE = PAGES_FIXES.filter((p) => p.href !== "/");
+// Au bas de l’Index, les pages du pied de page des pages (À propos, Plan du site) : la frise n’a pas de pied de page (D55).
+// Ce sont de vrais liens : le clic du panneau n’intercepte que les liens « #id ».
+const PAGES_BAS_INDEX = PAGES_FIXES.filter((p) => p.pied);
 
 function afficherIndex() {
   etatIndex.actif = true;
   const onglets = Object.entries(ONGLETS_INDEX).map(([cle, o]) =>
     `<button type="button" class="onglet" data-onglet="${cle}" aria-pressed="${cle === etatIndex.onglet}">${o.titre}</button>`).join("");
-  // aria-labelledby : le lecteur d’écran annonce la navigation par son titre visible, sans le répéter
-  const lignePages = `<nav class="pages-site" aria-labelledby="titre-pages-site">
-      <p id="titre-pages-site">Pages du site</p>
-      <ul>${PAGES_SITE.map((p) => `<li><a href="${p.href}">${p.texte}</a></li>`).join("")}</ul>
+  const basIndex = `<nav class="pages-site" aria-label="Pages du site">
+      <ul>${PAGES_BAS_INDEX.map((p) => `<li><a href="${p.href}">${p.texte}</a></li>`).join("")}</ul>
     </nav>`;
   contenu.innerHTML = `<section class="index" aria-label="Index">
     <h2>Index.</h2>
     <details class="comment-lire"><summary>Comment lire la frise</summary><p>${AIDE_FRISE}</p></details>
-    ${lignePages}
     <div class="onglets">${onglets}</div>
     <label for="champ-index" class="visuellement-cache">Rechercher dans l’index</label>
     <input id="champ-index" class="champ-index" type="search" placeholder="Rechercher…" autocomplete="off" value="${esc(etatIndex.recherche)}">
     <div id="liste-index">${htmlListeIndex()}</div>
+    ${basIndex}
   </section>`;
   montrerPanneau();
   // Sans cela, un lecteur d’écran lirait tout l’Index à l’ouverture, puis à chaque lettre tapée
   panneau.setAttribute("aria-live", "off");
   $("#interieur-panneau").scrollTop = 0;
   toile.querySelectorAll(".choisi").forEach((n) => n.classList.remove("choisi"));
-  try { history.replaceState(null, "", location.pathname + location.search); } catch (err) { /* aperçu sans historique */ }
+  // L’adresse /#index rouvre l’Index au rechargement : c’est aussi là que mène le bouton Index des pages (D53)
+  try { history.replaceState(null, "", `${location.pathname}${location.search}#${ANCRES_FRISE.index}`); } catch (err) { /* aperçu sans historique */ }
   // Sur téléphone, le clavier s’ouvrirait d’office et cacherait la liste
   if (!petitEcran()) $("#champ-index").focus();
 }
@@ -789,6 +790,10 @@ if (mouvementDepart !== null && Object.hasOwn(MOUV, mouvementDepart)) {
 }
 let attente;
 window.addEventListener("resize", () => { clearTimeout(attente); attente = setTimeout(dessiner, 150); });
-// Le « #id » de l’adresse ouvre sa fiche, une fois la vue affichée : en vue mouvement, la fiche d’un mouvement n’a pas « Explorer… »
+// Le « #… » de l’adresse, lu une fois la vue affichée : « #index » ouvre l’Index, « #hasard » une œuvre au hasard
+// (les adresses des boutons de l’en-tête des pages), tout autre mot la fiche de cet identifiant.
+// En vue mouvement, la fiche d’un mouvement n’a pas « Explorer… »
 const depart = decodeURIComponent(location.hash.slice(1));
-if (depart) ouvrir(depart, true);
+if (depart === ANCRES_FRISE.index) afficherIndex();
+else if (depart === ANCRES_FRISE.hasard) ouvrirAuHasard();
+else if (depart) ouvrir(depart, true);
