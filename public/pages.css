@@ -33,11 +33,15 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
   font-weight: 700; font-size: 0.96rem; font-variation-settings: "wdth" 85; }
 .menu a:hover { border-color: var(--encre); }
 .menu a[aria-current] { background: var(--encre); color: var(--fond); }
+/* Bouton de thème, commun avec la frise (son dessin est dans style.css) : poussé au bout de la ligne (D54) */
+.entete-site .bouton-theme { margin-left: auto; }
 
 @media (max-width: 720px) {
   .entete-site { gap: 0.6rem 1rem; padding-top: 0.75rem; padding-bottom: 0.6rem; }
   .marque strong { font-size: 1.65rem; }
-  .menu { width: 100%; overflow-x: auto; scrollbar-width: none; }
+  /* Le menu passe après le bouton : le bouton reste sur la ligne du titre, le menu prend la ligne du dessous.
+     Provisoire : le ☰ réunira menu et thème à l’étape 4f. */
+  .menu { order: 1; width: 100%; overflow-x: auto; scrollbar-width: none; }
 }
 
 

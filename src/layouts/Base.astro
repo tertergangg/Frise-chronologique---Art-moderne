@@ -1,13 +1,18 @@
 ---
 // Gabarit commun des pages du site : <head>, en-tête avec le menu, fil d’Ariane, contenu de la page (<slot />), puis pied de page.
-// La frise (index.astro) ne l’utilise pas encore : elle recevra le menu au lot 4.
-// D’ici là, le <head> est écrit aux deux endroits : un changement des polices ou du script du thème se fait dans les deux.
+// La frise (index.astro) ne l’utilise pas encore : elle le rejoindra au lot 4 (étape 4e).
+// D’ici là, le <head> est écrit aux deux endroits : un changement des polices, de la description ou de la canonique
+// se fait dans les deux. Le script du thème, lui, est commun (ScriptTheme.astro).
 //
 // Ce que la page lui passe :
 //   titre        le titre de la page, affiché dans l’onglet du navigateur
 //   description  une phrase qui résume la page, montrée par les moteurs de recherche sous le titre ; facultative
-//   rubrique     l’entrée du menu à mettre en noir ("mouvements", "artistes"…)
+//   rubrique     l’entrée du menu à mettre en noir ("mouvements", "artistes"…), c’est-à-dire la « cle » d’une page de src/lib/site.js
 //   ariane       le fil d’Ariane : une liste de { texte, href } ; le dernier, sans href, est la page affichée
+import { PAGES_FIXES } from "../lib/site.js";
+import ScriptTheme from "../components/ScriptTheme.astro";
+import BoutonTheme from "../components/BoutonTheme.astro";
+
 const { titre, description = "", rubrique, ariane = [] } = Astro.props;
 
 // Adresse canonique : l’adresse officielle de la page, toujours sur le site de production (champ site d’astro.config.mjs)
@@ -16,19 +21,9 @@ const { titre, description = "", rubrique, ariane = [] } = Astro.props;
 const chemin = Astro.url.pathname.endsWith("/") ? Astro.url.pathname : `${Astro.url.pathname}/`;
 const canonique = new URL(chemin, Astro.site);
 
-// Le menu du site (D18). Comprendre arrive en phase 4 : une rubrique n’entre dans le menu qu’avec son contenu.
-const MENU = [
-  { rubrique: "frise", texte: "Frise", href: "/" },
-  { rubrique: "mouvements", texte: "Mouvements", href: "/mouvements/" },
-  { rubrique: "artistes", texte: "Artistes", href: "/artistes/" },
-  { rubrique: "oeuvres", texte: "Œuvres", href: "/oeuvres/" },
-];
-
-// Le pied de page (D18) : les pages utiles à tout le site, qui ne sont pas des rubriques du menu
-const PIED = [
-  { texte: "À propos", href: "/a-propos/" },
-  { texte: "Plan du site", href: "/plan-du-site/" },
-];
+// Le menu et le pied de page (D18) : la liste des pages fixes est dans src/lib/site.js
+const MENU = PAGES_FIXES.filter((p) => p.menu);
+const PIED = PAGES_FIXES.filter((p) => p.pied);
 ---
 <!DOCTYPE html>
 <html lang="fr">
@@ -39,22 +34,12 @@ const PIED = [
   <!-- Sans description, pas de balise : le moteur de recherche choisit alors lui-même un extrait de la page -->
   {description && <meta name="description" content={description}>}
   <link rel="canonical" href={canonique}>
-  <!-- Thème clair ou sombre, posé avant l’affichage pour éviter un flash du mauvais thème (copie du script de index.astro).
-       Les pages n’ont pas encore de bouton de thème : elles suivent le choix fait sur la frise, ou le réglage de l’appareil. -->
-  <script is:inline>
-    (() => {
-      let theme = null;
-      try { theme = localStorage.getItem("theme"); } catch (err) { /* stockage indisponible */ }
-      if (theme !== "light" && theme !== "dark") {
-        theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-      }
-      document.documentElement.dataset.theme = theme;
-    })();
-  </script>
+  <!-- Thème clair ou sombre, posé avant l’affichage : script commun avec la frise (ScriptTheme.astro) -->
+  <ScriptTheme />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
-  <!-- style.css apporte les variables (couleurs, polices, mode sombre) ; pages.css, l’apparence des pages -->
+  <!-- style.css apporte les variables (couleurs, polices, mode sombre) et le bouton de thème ; pages.css, l’apparence des pages -->
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/pages.css">
 </head>
@@ -62,10 +47,12 @@ const PIED = [
   <header class="entete-site">
     <a class="marque" href="/"><strong>L’art moderne</strong><span>1874–1960 · Une histoire en mouvements</span></a>
     <nav class="menu" aria-label="Rubriques du site">
-      {MENU.map((r) => (
-        <a href={r.href} aria-current={r.rubrique === rubrique ? "page" : undefined}>{r.texte}</a>
+      {MENU.map((p) => (
+        <a href={p.href} aria-current={p.cle === rubrique ? "page" : undefined}>{p.texte}</a>
       ))}
     </nav>
+    <!-- Le même bouton que sur la frise (BoutonTheme.astro) : le choix vaut pour tout le site -->
+    <BoutonTheme />
   </header>
 
   <main class="contenu">

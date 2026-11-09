@@ -1,0 +1,16 @@
+---
+// Thème clair ou sombre, posé sur <html> avant l’affichage, pour éviter un flash du mauvais thème.
+// À placer dans le <head> de chaque page. Sans choix mémorisé, on suit le réglage de l’appareil.
+// Il reste « is:inline » : un script traité par Astro s’exécuterait trop tard, une fois la page affichée.
+// La clé « theme » et les valeurs « light » et « dark » sont aussi écrites dans src/scripts/theme.js.
+---
+<script is:inline>
+  (() => {
+    let theme = null;
+    try { theme = localStorage.getItem("theme"); } catch (err) { /* stockage indisponible */ }
+    if (theme !== "light" && theme !== "dark") {
+      theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    document.documentElement.dataset.theme = theme;
+  })();
+</script>

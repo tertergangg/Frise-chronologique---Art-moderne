@@ -2,6 +2,8 @@
 // Page de la frise.
 // style.css et le dossier images se trouvent dans le dossier public : Astro les publie tels quels.
 // Le script de la frise, src/scripts/app.js, est traité par Astro : il importe les données de src/data/frise.json et la librairie marked.
+import ScriptTheme from "../components/ScriptTheme.astro";
+import BoutonTheme from "../components/BoutonTheme.astro";
 
 // Adresse canonique de la frise : toujours « / » sur le site de production, même en vue mouvement (/?mouvement=…),
 // qui est la même page avec un autre affichage
@@ -16,18 +18,8 @@ const canonique = new URL("/", Astro.site);
   <!-- Phrase montrée par les moteurs de recherche sous le titre (aussi écrite dans Base.astro pour les pages, jusqu’au lot 4) -->
   <meta name="description" content="Une frise chronologique interactive de l’art moderne (1874–1960) : mouvements, artistes et œuvres, pour voir ce qui se passe en même temps.">
     <link rel="canonical" href={canonique}>
-  <!-- Thème clair ou sombre, posé avant l’affichage pour éviter un flash du mauvais thème.
-       Sans choix mémorisé, on suit le réglage de l’appareil. Le bouton est géré dans app.js (section « Thème »). -->
-  <script is:inline>
-    (() => {
-      let theme = null;
-      try { theme = localStorage.getItem("theme"); } catch (err) { /* stockage indisponible */ }
-      if (theme !== "light" && theme !== "dark") {
-        theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-      }
-      document.documentElement.dataset.theme = theme;
-    })();
-  </script>
+  <!-- Thème clair ou sombre, posé avant l’affichage : script commun aux pages (ScriptTheme.astro) -->
+  <ScriptTheme />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&display=swap" rel="stylesheet">
@@ -54,11 +46,8 @@ const canonique = new URL("/", Astro.site);
     <nav id="sommaire" class="filtres" aria-label="Aller à un mouvement"></nav>
     <div class="reglages">
       <label class="bascule"><input type="checkbox" id="majeures"> Œuvres majeures seulement</label>
-      <!-- La lune s’affiche en mode clair, le soleil en mode sombre (style.css). app.js met à jour le libellé. -->
-      <button type="button" id="bouton-theme" class="bouton-theme" aria-label="Passer en mode sombre">
-        <svg class="icone icone-lune" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7.5 7.5 0 0 0 10.5 10.5z"/></svg>
-        <svg class="icone icone-soleil" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>
-      </button>
+      <!-- Bouton commun à la frise et aux pages (BoutonTheme.astro, src/scripts/theme.js) -->
+      <BoutonTheme />
     </div>
   </header>
 

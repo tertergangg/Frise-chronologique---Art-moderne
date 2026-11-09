@@ -736,27 +736,6 @@ contenu.addEventListener("click", (ev) => {
   ouvrir(a.dataset.id || a.getAttribute("href").slice(1), true);
 });
 
-/* ---------- Thème clair ou sombre ---------- */
-// Le script du <head> (index.astro) a déjà posé data-theme sur <html> avant l’affichage :
-// ici, on l’inverse au clic et on retient le choix pour les prochaines visites
-const racine = document.documentElement, boutonTheme = $("#bouton-theme");
-const LIBELLES_THEME = { light: "Passer en mode sombre", dark: "Passer en mode clair" };
-
-// Le libellé décrit l’action du bouton ; data-bulle l’affiche aussi au survol
-function majBoutonTheme() {
-  const libelle = LIBELLES_THEME[racine.dataset.theme] ?? LIBELLES_THEME.light;
-  boutonTheme.setAttribute("aria-label", libelle);
-  boutonTheme.dataset.bulle = libelle;
-}
-
-boutonTheme.addEventListener("click", () => {
-  const theme = racine.dataset.theme === "dark" ? "light" : "dark";
-  racine.dataset.theme = theme;
-  try { localStorage.setItem("theme", theme); } catch (err) { /* stockage indisponible */ }
-  majBoutonTheme();
-});
-majBoutonTheme();
-
 /* ---------- Démarrage ---------- */
 // « ?mouvement=<id> » ouvre la vue mouvement (D38) : c’est l’adresse que vise « Voir dans la frise » depuis une page mouvement.
 // URLSearchParams lit la partie « ?… » de l’adresse ; get() renvoie null si le paramètre est absent.
