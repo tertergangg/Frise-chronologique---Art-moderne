@@ -1,9 +1,9 @@
 ---
-id: l-homme-au-cafe
+id: homme-dans-un-cafe
 type: oeuvre
 ---
 
-# L'Homme au café
+# Homme dans un café
 
 <!-- Fiche ŒUVRE, en deux parties.
      1. La présentation (100 à 150 mots) : les trois rubriques ci-dessous. Elle suffit à publier la page de l’œuvre.

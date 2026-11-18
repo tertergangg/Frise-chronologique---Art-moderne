@@ -86,9 +86,13 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
    Sous l’en-tête, une seule colonne, sans sommaire : l’image et sa légende (ou l’encart des droits),
    les rubriques, le texte, les autres œuvres de l’artiste.
    ===================================================================== */
-/* Plus large que la colonne de texte des autres pages, pour l’image et les cartes ; les lignes de texte, elles, restent courtes */
+/* Comme dans un livre d’art : la page est centrée, l’image et les cartes prennent toute sa largeur,
+   et le texte de la fiche, titres compris, forme une colonne plus étroite, centrée sous l’image.
+   La fenêtre de l’image en grand (<dialog>) est exclue : elle garde la largeur que lui donne .visionneuse.
+   La première règle garde au moins la largeur du cartel dans un navigateur qui ne connaîtrait pas :has(). */
 .cartel { max-width: 56rem; }
-.cartel .corps :is(p, ul, ol, blockquote) { max-width: 44rem; }
+.contenu:has(> .cartel) > :not(dialog) { max-width: 56rem; margin-inline: auto; }
+.cartel .corps { max-width: 44rem; margin-inline: auto; }
 /* L’image, bordée et limitée en hauteur pour rester entière à l’écran, puis sa légende de cartel et son crédit (D10) */
 .cartel-image { margin: 0 0 1.6rem; }
 .cartel-image a { display: inline-block; max-width: 100%; cursor: zoom-in; }
@@ -153,6 +157,9 @@ body.page { height: auto; display: block; overflow: visible; font-size: 16px; li
 .texte > :first-child > h2:first-child { margin-top: 0; }
 .texte h3 { margin: 1.8rem 0 0.5rem; font: 800 1.25rem/1.2 var(--police-titre); font-variation-settings: "wdth" 75; }
 .texte p { margin: 0 0 1rem; }
+/* Le texte des fiches est justifié, comme dans un livre (D25). La césure évite les grands blancs entre les mots,
+   surtout sur téléphone ; elle suit la langue déclarée par <html lang="fr">. */
+.texte .corps p { text-align: justify; hyphens: auto; }
 .texte .corps ul { padding-left: 1.2rem; }
 .texte .corps li { margin-bottom: 0.4rem; }
 .texte blockquote { margin: 0.4rem 0 1.2rem; padding: 0.2rem 0 0.2rem 1.1rem; border-left: 5px solid var(--c);
