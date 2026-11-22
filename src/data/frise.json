@@ -792,10 +792,10 @@
    "domainePublic": true,
    "entreeDomainePublic": null,
    "lienOeuvre": null,
-   "resume": null,
-   "fiche": "",
-   "ficheVide": true,
-   "niveau": "referencee"
+   "resume": "L’envers du ballet : Degas peint l’attente, la fatigue et le travail des danseuses.",
+   "fiche": "<!-- Fiche ŒUVRE, en deux parties.\n     1. La présentation (100 à 150 mots) : les trois rubriques ci-dessous. Elle suffit à publier la page de l’œuvre.\n     2. L’analyse, facultative, commence au titre « ## Analyse ». Tant qu’elle est vide, l’œuvre reste « documentée ».\n     Ne renomme pas le titre « ## Analyse » : construire.py s’en sert pour reconnaître le niveau de l’œuvre. -->\n\n## Ce qu’on voit\nUne salle de répétition de l’Opéra. Au centre, un vieux maître de ballet, appuyé sur sa canne, bat la mesure. Une danseuse s’avance pour son exercice ; les autres attendent, en tutu blanc. L’une se gratte le dos, perchée sur le piano ; d’autres rajustent leur tenue. Au premier plan, un arrosoir, qui sert à mouiller le plancher.\n\n## Ce qui est nouveau\nLe ballet, en peinture, c’était la scène : la lumière, l’envol, la grâce. [[degas|Degas]] passe de l’autre côté. Il peint le travail, l’attente, la fatigue. Le cadre est décentré, le plancher vide envahit le bas de la toile, et l’œil entre par le côté, comme un habitué qui pousserait la porte.\n\n## Contexte\nDegas la peint entre 1873 et 1876 et la montre à la deuxième exposition du groupe. Il peindra des danseuses jusqu’à la fin de sa vie, le plus souvent loin de la scène. Le rêve, il le laisse au public. Lui reste en coulisse.",
+   "ficheVide": false,
+   "niveau": "documentee"
   },
   {
    "id": "l-absinthe",
@@ -813,10 +813,10 @@
    "domainePublic": true,
    "entreeDomainePublic": null,
    "lienOeuvre": null,
-   "resume": null,
-   "fiche": "",
-   "ficheVide": true,
-   "niveau": "referencee"
+   "resume": "Deux solitudes à une table de café : Degas peint l’ennui, sans morale.",
+   "fiche": "<!-- Fiche ŒUVRE, en deux parties.\n     1. La présentation (100 à 150 mots) : les trois rubriques ci-dessous. Elle suffit à publier la page de l’œuvre.\n     2. L’analyse, facultative, commence au titre « ## Analyse ». Tant qu’elle est vide, l’œuvre reste « documentée ».\n     Ne renomme pas le titre « ## Analyse » : construire.py s’en sert pour reconnaître le niveau de l’œuvre. -->\n\n## Ce qu’on voit\nUne salle de café, à une heure creuse. Une femme est assise devant un verre d’absinthe, d’un vert trouble. Elle a les épaules tombantes, le regard vide. À côté d’elle, un homme à la pipe regarde ailleurs. Ils partagent la banquette, sans un mot.\n\n## Ce qui est nouveau\nIl faut regarder les tables vides, en zigzag, qui occupent la moitié de la toile. Elles poussent le couple dans un coin, contre le bord, comme dans une photographie prise au vol. [[degas|Degas]] ne raconte rien : pas d’histoire, pas de morale, juste l’ennui d’une table de café. Au même moment, [[renoir|Renoir]] peint les dimanches de Montmartre ; Degas en peint les lendemains.\n\n## Contexte\nLes deux modèles sont des amis du peintre, l’actrice Ellen Andrée et le graveur Marcellin Desboutin, qui posent dans le décor de la Nouvelle-Athènes, un café de Pigalle. Exposée à Londres en 1893, la toile fait scandale : la critique y voit un sermon contre l’alcool. Degas n’avait rien prêché. Il avait regardé.",
+   "ficheVide": false,
+   "niveau": "documentee"
   },
   {
    "id": "danseuses-bleues",
@@ -834,10 +834,10 @@
    "domainePublic": true,
    "entreeDomainePublic": null,
    "lienOeuvre": null,
-   "resume": null,
-   "fiche": "",
-   "ficheVide": true,
-   "niveau": "referencee"
+   "resume": "Des danseuses fondues dans le bleu : Degas ne garde que le geste et la couleur.",
+   "fiche": "<!-- Fiche ŒUVRE, en deux parties.\n     1. La présentation (100 à 150 mots) : les trois rubriques ci-dessous. Elle suffit à publier la page de l’œuvre.\n     2. L’analyse, facultative, commence au titre « ## Analyse ». Tant qu’elle est vide, l’œuvre reste « documentée ».\n     Ne renomme pas le titre « ## Analyse » : construire.py s’en sert pour reconnaître le niveau de l’œuvre. -->\n\n## Ce qu’on voit\nQuelques danseuses en tutu bleu, serrées les unes contre les autres, rajustent leurs bretelles avant d’entrer en scène. Les bras se lèvent, les épaules se tournent, et l’on ne sait plus où finit un corps, où commence le suivant. Derrière, le décor n’est qu’un fond de verts et d’orangés.\n\n## Ce qui est nouveau\nVingt ans plus tôt, dans *La Classe de danse*, [[degas|Degas]] décrivait une salle entière, son parquet, sa perspective. Ici, plus de salle. Il ne reste que des gestes répétés et une couleur qui sature tout. Les traits de pastel, posés en hachures, vibrent comme des cordes. Le sujet s’efface ; le rythme reste.\n\n## Contexte\nÀ la fin du siècle, la vue de Degas baisse. Il travaille de plus près, surtout au pastel, avec des couleurs toujours plus franches. On y a souvent vu une annonce des [[fauvisme|fauves]]. Le peintre qui notait jusqu’à l’arrosoir d’une salle de répétition ne garde plus que l’élan des bras et la couleur.",
+   "ficheVide": false,
+   "niveau": "documentee"
   },
   {
    "id": "les-bords-de-l-oise-a-pontoise",

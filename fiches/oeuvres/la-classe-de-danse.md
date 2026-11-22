@@ -11,13 +11,13 @@ type: oeuvre
      Ne renomme pas le titre « ## Analyse » : construire.py s’en sert pour reconnaître le niveau de l’œuvre. -->
 
 ## Ce qu’on voit
-<!-- Description simple, comme devant le tableau. -->
+Une salle de répétition de l’Opéra. Au centre, un vieux maître de ballet, appuyé sur sa canne, bat la mesure. Une danseuse s’avance pour son exercice ; les autres attendent, en tutu blanc. L’une se gratte le dos, perchée sur le piano ; d’autres rajustent leur tenue. Au premier plan, un arrosoir, qui sert à mouiller le plancher.
 
 ## Ce qui est nouveau
-<!-- En quoi elle compte : la rupture, l’audace, l’idée. -->
+Le ballet, en peinture, c’était la scène : la lumière, l’envol, la grâce. [[degas|Degas]] passe de l’autre côté. Il peint le travail, l’attente, la fatigue. Le cadre est décentré, le plancher vide envahit le bas de la toile, et l’œil entre par le côté, comme un habitué qui pousserait la porte.
 
 ## Contexte
-<!-- Où, quand, pour qui, comment elle a été reçue. -->
+Degas la peint entre 1873 et 1876 et la montre à la deuxième exposition du groupe. Il peindra des danseuses jusqu’à la fin de sa vie, le plus souvent loin de la scène. Le rêve, il le laisse au public. Lui reste en coulisse.
 
 ## Analyse
 <!-- Facultative, longueur libre. Ses rubriques sont des sous-titres « ### », à ton choix :
