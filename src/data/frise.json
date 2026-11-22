@@ -730,9 +730,9 @@
    "entreeDomainePublic": null,
    "lienOeuvre": null,
    "resume": null,
-   "fiche": "",
-   "ficheVide": true,
-   "niveau": "referencee"
+   "fiche": "<!-- Fiche ŒUVRE, en deux parties.\n     1. La présentation (100 à 150 mots) : les trois rubriques ci-dessous. Elle suffit à publier la page de l’œuvre.\n     2. L’analyse, facultative, commence au titre « ## Analyse ». Tant qu’elle est vide, l’œuvre reste « documentée ».\n     Ne renomme pas le titre « ## Analyse » : construire.py s’en sert pour reconnaître le niveau de l’œuvre. -->\n\n## Ce qu’on voit\nUn dimanche après-midi, dans une guinguette de Montmartre. Des couples dansent, d’autres bavardent autour d’une table. Partout, des taches de soleil tombées des arbres se posent sur une veste, un chapeau de paille, le sol poussiéreux. Au fond, la foule se perd dans un brouhaha de couleurs.\n\n## Ce qui est nouveau\nIl faut regarder ces taches : du blanc, du rose, du bleu, posés sur les habits sombres sans souci des formes. [[renoir|Renoir]] peint la lumière qui bouge autant que les gens. Et ces gens, ouvrières du quartier et amis peintres, sont saisis à leur plaisir, sur une toile de près de deux mètres, un format longtemps réservé à l’histoire et aux dieux.\n\n## Contexte\nRenoir la peint en 1876, en partie sur place, et la montre l’année suivante à la troisième exposition du groupe. À la même époque, [[degas|Degas]] peint *L’Absinthe* : un café gris, deux buveurs muets. Le même Paris, deux humeurs. Chez Renoir, le dimanche ne finit jamais.",
+   "ficheVide": false,
+   "niveau": "documentee"
   },
   {
    "id": "le-dejeuner-des-canotiers",
@@ -751,9 +751,9 @@
    "entreeDomainePublic": null,
    "lienOeuvre": null,
    "resume": null,
-   "fiche": "",
-   "ficheVide": true,
-   "niveau": "referencee"
+   "fiche": "<!-- Fiche ŒUVRE, en deux parties.\n     1. La présentation (100 à 150 mots) : les trois rubriques ci-dessous. Elle suffit à publier la page de l’œuvre.\n     2. L’analyse, facultative, commence au titre « ## Analyse ». Tant qu’elle est vide, l’œuvre reste « documentée ».\n     Ne renomme pas le titre « ## Analyse » : construire.py s’en sert pour reconnaître le niveau de l’œuvre. -->\n\n## Ce qu’on voit\nSur la terrasse d’un restaurant au bord de la Seine, sous un auvent rayé rouge et blanc, une bande d’amis s’attarde après le déjeuner. Sur la nappe, les restes : des bouteilles, des verres, une grappe de raisin. On bavarde, on flirte, on joue avec un petit chien. Derrière la rambarde, des feuillages et quelques voiles sur l’eau.\n\n## Ce qui est nouveau\nUn festin, en peinture, avait ses convives illustres : des dieux, des saints, des rois. [[renoir|Renoir]] réunit une couturière, un collectionneur, un peintre en maillot de canotier, la fille du patron. Personne de célèbre, aucune histoire à raconter : le bonheur d’un dimanche suffit à remplir une grande toile.\n\n## Contexte\nRenoir la peint en 1880 et 1881 à la Maison Fournaise, à Chatou, le rendez-vous des canotiers. Elle est exposée en 1882 à la septième exposition du groupe. Les convives ont quitté la table depuis longtemps. Le tableau les y retient encore.\n\n## Analyse\n\n### Le bonheur, un sujet sérieux ?\nPour l’Académie, un grand tableau doit élever l’âme : une bataille, un martyre, une leçon. Quand un repas y entre, c’est avec un miracle, comme dans les *Noces de Cana* de Véronèse, au Louvre. Renoir, lui, n’a rien à prouver. « Pour moi, un tableau doit être une chose aimable, joyeuse et jolie », dira-t-il. Jolie : le mot fait sourire les esprits sérieux. Est-ce là de quoi faire un grand tableau ? Il faut regarder la table. Les bouteilles sont entamées, les verres délaissés, le raisin abandonné sur la nappe. Le repas est fini, et personne ne songe à partir. Rien ne se passe, sinon le temps qui s’étire. Voilà tout le sujet, et il est immense : un bonheur sans raison, partagé, qui n’a besoin ni d’un dieu ni d’un héros.\n\n### Une table sans rangs\nRegardons qui est assis. À gauche, Aline Charigot, une jeune couturière, future épouse du peintre, joue avec son chien. À droite, Gustave Caillebotte, peintre et riche collectionneur, s’est mis à califourchon sur sa chaise, en maillot de canotier. Accoudée à la rambarde, la fille du patron bavarde. Plus loin, un haut-de-forme côtoie des chapeaux de paille. Pour venir ici, il a suffi de prendre le train à la gare Saint-Lazare, celle que [[monet|Monet]] a peinte trois ans plus tôt. Le dimanche, au bord de l’eau, ouvriers, artistes et bourgeois se mêlent. Renoir ne les classe pas. Il les assoit à la même table.\n\n### La lumière ne dévore plus rien\nQuatre ans plus tôt, au *Bal du moulin de la Galette*, les taches de soleil mangeaient les vestes et les visages. Ici, la lumière glisse sur la nappe, s’allume dans les verres, rosit les joues, mais les corps gardent leur poids. Les visages sont dessinés, les bras modelés, la rambarde trace une diagonale ferme qui conduit l’œil jusqu’au fond. Comme si Renoir voulait que ce bonheur-là tienne debout, qu’il ait la solidité d’un monument. La fête est toujours impressionniste ; la charpente, déjà, ne l’est plus.\n\n### Le dernier dimanche\nLe tableau tient en équilibre au bord d’un tournant. Peu après, Renoir part pour l’Italie voir Raphaël, et confiera s’être senti arrivé au bout de l’impressionnisme. Le groupe, lui, se défait, chacun suivant sa route. Ce déjeuner est l’une de ses dernières grandes fêtes : le bonheur de l’impressionnisme, au moment même où il touche à sa fin.\n\nLes convives, eux, n’en savent rien. Le soleil filtre à travers l’auvent, une voile passe derrière les feuillages, quelqu’un rit au fond. On voudrait tirer une chaise. Renoir a peint le moment où personne n’a encore envie de rentrer.",
+   "ficheVide": false,
+   "niveau": "analysee"
   },
   {
    "id": "la-danse-a-bougival",
@@ -772,9 +772,9 @@
    "entreeDomainePublic": null,
    "lienOeuvre": null,
    "resume": null,
-   "fiche": "",
-   "ficheVide": true,
-   "niveau": "referencee"
+   "fiche": "<!-- Fiche ŒUVRE, en deux parties.\n     1. La présentation (100 à 150 mots) : les trois rubriques ci-dessous. Elle suffit à publier la page de l’œuvre.\n     2. L’analyse, facultative, commence au titre « ## Analyse ». Tant qu’elle est vide, l’œuvre reste « documentée ».\n     Ne renomme pas le titre « ## Analyse » : construire.py s’en sert pour reconnaître le niveau de l’œuvre. -->\n\n## Ce qu’on voit\nUn couple tourne, presque grandeur nature. Il la serre et se penche vers elle ; son chapeau de paille lui mange le visage. Elle, en robe blanche à volants et bonnet rouge, détourne la tête, emportée par le pas. La robe s’évase et vole avec eux : on devine le pas suivant avant qu’il soit fait. Autour, des arbres, des tables, quelques buveurs.\n\n## Ce qui est nouveau\nSept ans plus tôt, au moulin de la Galette, c’était la lumière qui dansait sur une foule. Ici, ce sont les corps. [[renoir|Renoir]] resserre le cadre sur un seul couple et en raffermit les contours, sans rien figer : l’élan court du bras qui enlace à la robe qui tourne, emportant le spectateur dans la danse.\n\n## Contexte\nEn 1883, Renoir peint trois danses ; celle-ci se passe à Bougival, où les Parisiens viennent danser le dimanche. La danseuse est Suzanne Valadon, alors modèle, qui deviendra peintre à son tour. La jeune femme qui détourne la tête finira par prendre le pinceau.",
+   "ficheVide": false,
+   "niveau": "documentee"
   },
   {
    "id": "la-classe-de-danse",
