@@ -1,6 +1,6 @@
 # Charte d’écriture des fiches œuvres
 
-À relire avant chaque fiche. Elle détaille D62. Les exemples viennent des deux fiches de référence : *La Danse* (`fiches/oeuvres/la-danse-matisse.md`, analysée) et *La Femme au chapeau* (documentée).
+À relire avant chaque fiche. Elle détaille D62 et D64. Les exemples viennent des fiches de référence : *La Danse* (`fiches/oeuvres/la-danse-matisse.md`, analysée), *Impression, soleil levant* (analysée, autour d’une idée directrice) et *La Femme au chapeau* (documentée).
 
 Ce dossier n’est pas lu par construire.py : ce fichier n’apparaît pas sur le site.
 
@@ -27,6 +27,9 @@ Le lecteur vient comprendre pourquoi une œuvre compte, apprendre à la regarder
 
 **La comparaison avec ce qui précède.** L’Académie, la tradition, une version antérieure de l’œuvre : la rupture ne se mesure qu’à ce qu’elle brise.
 > Pendant des siècles, un portrait se jugeait à la peau : nacrée, rosée, si lisse qu’on en oubliait le pinceau.
+
+**La comparaison avec une autre œuvre ou un autre artiste.** Du même mouvement ou non, seulement quand elle éclaire l’œuvre : elle met les peintres en relation.
+> Au même moment, Renoir peint les dimanches de Montmartre ; Degas en peint les lendemains.
 
 **Un détail concret à regarder.** Dire où poser les yeux. C’est ce qui apprend à regarder, et ce qu’aucune autre fiche ne pourrait dire.
 > Il faut regarder le premier plan, à gauche. Deux danseurs tendent le bras l’un vers l’autre, et leurs mains ne se touchent pas.
@@ -64,6 +67,12 @@ La seconde version compare, montre un geste précis, et finit sur une image.
 
 **Les superlatifs vides.** « Chef-d’œuvre absolu », « génie incontesté », « œuvre incontournable » : montrer pourquoi, au lieu de l’affirmer.
 
+**Les détails qui font perdre le fil.** Un nom, une date, une anecdote ou une citation qui ne sert pas l’idée de l’analyse. Chacun est vrai ; ensemble, ils noient l’œuvre. Une citation par analyse suffit le plus souvent, et elle doit dire quelque chose de la toile.
+
+Avant : une neurobiologiste nommée, le maître de Monet, Turner, la citation du critique et le vol de 1985, dans la même analyse d’*Impression, soleil levant*.
+
+Après : quatre intertitres qui font avancer une seule idée (le port tel qu’il est ce matin-là, vu par l’œil du peintre), et une seule citation, celle de Monet, qui explique le mot « impression ».
+
 **La même idée redite.** Dans 150 mots, une idée forte, dite une fois.
 
 **Le jargon non expliqué.** Un mot technique (aplat, cerne, perspective) s’explique dans la phrase même.
@@ -80,11 +89,12 @@ La seconde version compare, montre un geste précis, et finit sur une image.
 La fiche courte se suffit à elle-même : elle ne doit pas ressembler au début d’une analyse coupée.
 
 **Œuvre majeure : analysée.** La même présentation, puis une analyse sous `## Analyse`, d’environ 500 mots (400 à 600) :
+- une idée directrice, qui dit en quoi l’œuvre rompt avec ce qui précède et pourquoi elle saisit encore ;
 - trois à cinq intertitres `###`, propres à l’œuvre, courts et intrigants : « La main qui manque », pas « Composition » ;
-- une idée par intertitre ;
+- une idée par intertitre, et chacune fait avancer l’idée directrice ;
 - le dernier dit pourquoi l’œuvre compte encore, et finit sur le ressenti.
 
-**Le « Résumé » du tableur.** Une phrase de 10 à 15 mots : elle sert de chapeau à la page et de description dans Google.
+**Le « Résumé » du tableur.** Une phrase de 10 à 15 mots, livrée avec chaque fiche, pour la colonne « Résumé court (1 phrase) » de l’onglet Œuvres : elle sert de chapeau à la page et de description dans Google.
 > Cinq corps rouges, trois couleurs, une ronde : avec presque rien, Matisse peint l’élan pur.
 
 ## La forme
@@ -106,9 +116,11 @@ La fiche courte se suffit à elle-même : elle ne doit pas ressembler au début 
 - [ ] La longueur est dans la cible : 100 à 150 mots pour la présentation, 400 à 600 pour l’analyse.
 - [ ] Il y a au moins un détail concret à regarder.
 - [ ] La rupture est comparée à ce qui précède.
+- [ ] Analyse : une idée directrice, que chaque intertitre fait avancer ; chaque fait, nom ou citation la sert.
 - [ ] Chaque rubrique finit sur une phrase qui frappe ; la fiche, sur une chute.
 - [ ] Aucune formule de la liste à proscrire, et au plus un intensif.
 - [ ] Ni « vous », ni « tu », ni « je ».
 - [ ] Les liens ont le bon libellé, et les titres d’œuvres sont en italique.
 - [ ] Les faits sont vérifiés, les interprétations annoncées comme telles.
+- [ ] Le résumé court (10 à 15 mots) est donné avec la fiche.
 - [ ] Relue à voix haute : si une phrase sonne comme n’importe quel texte sur l’art, la réécrire.
