@@ -406,9 +406,10 @@ body.redimension .panneau { transition: none; }
 .fiche a { color: inherit; text-decoration-color: var(--c); text-decoration-thickness: 2px; text-underline-offset: 3px; }
 .fiche h3 { margin: 1.5rem 0 0.4rem; font-weight: 900; font-variation-settings: "wdth" 70; font-size: 1.35rem;
   border-top: 2px solid var(--encre); padding-top: 0.5rem; }
-/* Image d’une œuvre du domaine public, avec son crédit en dessous (D10) */
-.fiche .visuel { margin: 0 0 1rem; }
-.fiche .image { display: block; width: 100%; }
+/* Image d’une œuvre du domaine public, avec son crédit en dessous (D10).
+   Limitée en hauteur et centrée : une toile en hauteur (un portrait) ne doit pas remplir tout le panneau. */
+.fiche .visuel { margin: 0 0 1rem; text-align: center; }
+.fiche .image { display: block; max-width: 100%; max-height: 65vh; margin: 0 auto; }
 .fiche .credit { margin-top: 0.35rem; font-size: 0.75rem; line-height: 1.35; color: var(--doux); }
 /* L’image de la fiche est dans un bouton, pour s’ouvrir aussi au clavier ; le bouton lui-même ne se voit pas */
 .agrandir { display: block; width: 100%; padding: 0; border: none; background: none; cursor: zoom-in; }
