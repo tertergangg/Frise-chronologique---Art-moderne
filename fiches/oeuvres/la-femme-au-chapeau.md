@@ -5,20 +5,11 @@ type: oeuvre
 
 # La Femme au chapeau
 
-<!-- Fiche ŒUVRE, en deux parties.
-     1. La présentation (100 à 150 mots) : les trois rubriques ci-dessous. Elle suffit à publier la page de l’œuvre.
-     2. L’analyse, facultative, commence au titre « ## Analyse ». Tant qu’elle est vide, l’œuvre reste « documentée ».
-     Ne renomme pas le titre « ## Analyse » : construire.py s’en sert pour reconnaître le niveau de l’œuvre. -->
-
 ## Ce qu’on voit
-<!-- Description simple, comme devant le tableau. -->
+Une femme en buste, un éventail à la main, coiffée d’un chapeau immense. C’est Amélie, l’épouse du peintre. Mais son visage est vert, jaune, mauve ; son nez, une traînée de couleur ; le fond, une mosaïque de taches posées à la hâte.
 
 ## Ce qui est nouveau
-<!-- En quoi elle compte : la rupture, l’audace, l’idée. -->
+Pendant des siècles, un portrait se jugeait à la peau : nacrée, rosée, si lisse qu’on en oubliait le pinceau. [[matisse|Matisse]], lui, laisse chaque coup de brosse à vif et pose ses couleurs à pleine charge. Ce visage-là n’existe nulle part, sauf dans son œil. Et c’est lui qu’il nous jette en pleine figure.
 
 ## Contexte
-<!-- Où, quand, pour qui, comment elle a été reçue. -->
-
-## Analyse
-<!-- Facultative, longueur libre. Ses rubriques sont des sous-titres « ### », à ton choix :
-     composition, couleur, technique, sens, réception, postérité… -->
+Accrochée au Salon d’automne de 1905, dans la salle que la critique surnommera la « cage aux fauves », la toile déclenche les rires. Leo et Gertrude Stein l’achètent quand même. Le [[fauvisme|fauvisme]] vient de naître, et il a le visage de Madame Matisse.
