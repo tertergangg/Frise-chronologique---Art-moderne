@@ -11,13 +11,13 @@ type: oeuvre
      Ne renomme pas le titre « ## Analyse » : construire.py s’en sert pour reconnaître le niveau de l’œuvre. -->
 
 ## Ce qu’on voit
-<!-- Description simple, comme devant le tableau. -->
+Sous une immense verrière en pointe, une locomotive arrive de face, noyée dans sa propre vapeur. Les panaches montent, bleus et blancs, et avalent la moitié de la charpente. Au fond, des immeubles parisiens apparaissent dans un jour pâle. Sur le quai, quelques touches sombres : des voyageurs.
 
 ## Ce qui est nouveau
-<!-- En quoi elle compte : la rupture, l’audace, l’idée. -->
+Une gare n’a rien d’un sujet noble : c’est du fer, du charbon, du bruit. [[monet|Monet]] y plante son chevalet comme d’autres au bord d’une rivière. À la même exposition, Gustave Caillebotte montre le pont de l’Europe : un métal net, tracé à la règle. Monet, lui, dissout le fer dans la fumée.
 
 ## Contexte
-<!-- Où, quand, pour qui, comment elle a été reçue. -->
+Au début de 1877, Monet peint une douzaine de vues de la gare. Sept d’entre elles sont accrochées en avril à la troisième exposition du groupe. Émile Zola dit qu’on y entend gronder les trains. On y voit souvent la première série de Monet. Ce ne sera pas la dernière.
 
 ## Analyse
 <!-- Facultative, longueur libre. Ses rubriques sont des sous-titres « ### », à ton choix :
