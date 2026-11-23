@@ -27,9 +27,7 @@ const REGLAGES = {
   pxParAnMoyen: 28,      // largeur d’une année au zoom « Intermédiaire », en pixels
   largeurCarteMoyenne: 140, // largeur d’une carte au zoom « Intermédiaire », en pixels
   hauteurLigne: 48,      // hauteur d’une ligne de cartes dans un couloir
-  largeurEtiquettes: 220, // largeur de la colonne des noms à gauche
-  margeAvant: 10,        // vue mouvement : on montre aussi les œuvres jusqu’à 10 ans avant le début (les œuvres fondatrices)
-  margeApres: 5          // … et jusqu’à 5 ans après la fin du mouvement
+  largeurEtiquettes: 220 // largeur de la colonne des noms à gauche
 };
 
 /* ---------- Outils ---------- */
@@ -46,10 +44,12 @@ const zoomMoyen = () => etat.vue === "detail" && etat.moyen;
 const niveauAffiche = () => (etat.vue === "detail" ? (etat.moyen ? "moyen" : "detail") : etat.vue);
 const defile = $("#defile"), toile = $("#toile");
 
-// Les œuvres d’un mouvement, y compris celles un peu avant ou après ses dates (voir les marges)
+// Les œuvres de la vue mouvement, à toutes les dates : toutes celles des artistes dont c’est le mouvement principal,
+// même rattachées à un autre mouvement, et celles des artistes « invités » qui sont rattachées à celui-ci.
+// Celles d’avant ou d’après le mouvement ont un bord en pointillés (horsPeriode()).
 function oeuvresDuMouvement(m) {
-  return D.oeuvres.filter((o) => o.mouvement === m.id && o.annee != null
-    && o.annee >= m.debut - REGLAGES.margeAvant && o.annee <= m.fin + REGLAGES.margeApres);
+  return D.oeuvres.filter((o) => o.annee != null
+    && (ART[o.artiste]?.mouvement === m.id || o.mouvement === m.id));
 }
 
 /* ---------- Fenêtre : quelle période, à quelle échelle ---------- */
@@ -66,7 +66,7 @@ function fenetre() {
   if (etat.vue === "mouvement") {
     const m = MOUV[etat.mouvement];
     const annees = oeuvresDuMouvement(m).map((o) => o.annee);
-    const debut = Math.min(m.debut, ...annees) - 1;        // la fenêtre s’élargit pour inclure les œuvres fondatrices
+    const debut = Math.min(m.debut, ...annees) - 1;        // la fenêtre s’élargit pour inclure toutes les œuvres affichées
     const fin = Math.max(m.fin + 1, ...annees, debut + 9) + 1;
     return { debut, fin, lab, carte, ppa: Math.max(mobile ? 60 : 70, place / (fin - debut)) };
   }
@@ -112,9 +112,13 @@ function couloirContexte(f, largeurPiste) {
     </div></section>`;
 }
 
-// Une œuvre est « hors période » si elle date d’avant ou d’après son mouvement
+// Le mouvement auquel on compare la date d’une œuvre : en vue mouvement, celui de la vue, qui montre aussi
+// des œuvres rattachées à un autre mouvement ; ailleurs, le sien, celui du couloir où elle est placée
+const mouvementDeReference = (o) => MOUV[etat.vue === "mouvement" ? etat.mouvement : o.mouvement];
+
+// Une œuvre est « hors période » si elle date d’avant ou d’après ce mouvement
 function horsPeriode(o) {
-  const m = MOUV[o.mouvement];
+  const m = mouvementDeReference(o);
   if (!m || o.annee == null) return "";
   return o.annee < m.debut ? "avant" : o.annee > m.fin ? "apres" : "";
 }
@@ -483,7 +487,7 @@ function placerBulle(ev) {
 
 // Aperçu d’une œuvre au survol de sa carte : image, titre, artiste, date, résumé
 function apercu(o) {
-  const m = MOUV[o.mouvement], hp = horsPeriode(o);
+  const m = mouvementDeReference(o), hp = horsPeriode(o);
   const note = hp && m ? `<span class="note">${hp === "avant" ? "Antérieure" : "Postérieure"} au mouvement (${m.debut}–${m.fin})</span>` : "";
   return `${estImage(o.image) ? `<img src="${esc(o.image)}" alt="">` : ""}
     <strong>${esc(o.titre)}</strong>
